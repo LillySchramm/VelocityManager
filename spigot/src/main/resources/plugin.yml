@@ -1,0 +1,6 @@
+name: VelocityManager
+version: '${project.version}'
+main: de.epsdev.velocitymanager.spigot.VelocityManager
+load: STARTUP
+authors: [ EliasSchramm ]
+website: https://gitlab.eps-dev.de/Elias/velocitymanager
