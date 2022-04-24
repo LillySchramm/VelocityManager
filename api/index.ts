@@ -1,8 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
+import basicAuth from 'express-basic-auth';
 
 const prisma = new PrismaClient();
 const app = express();
+
+app.use(basicAuth({
+    users: { 'admin': 'admin' }
+}))
 
 app.use(express.json());
 
