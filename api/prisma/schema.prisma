@@ -11,5 +11,22 @@ datasource db {
 }
 
 model Server {
-    id  String @id @default(uuid())
+  id          String        @id @default(uuid())
+  name        String        @db.VarChar(255)
+  lastContact Int
+  createdAt  DateTime   @default(now())
+  GameServer  GameServer[]
+  ProxyServer ProxyServer[]
+}
+
+model GameServer {
+  serverId String @id
+  server   Server @relation(fields: [serverId], references: [id])
+
+  port Int
+}
+
+model ProxyServer {
+  serverId String @id
+  server   Server @relation(fields: [serverId], references: [id])
 }
