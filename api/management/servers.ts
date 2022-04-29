@@ -26,6 +26,30 @@ export async function registerProxyServer(): Promise<ProxyServer> {
     return proxyServer;
 }
 
+export async function pingProxyServer(id: string): Promise<boolean> {
+    try {
+        await prisma.proxyServer.update({ where: { id }, data: { lastContact: Date.now() } })
+
+        return true;
+    } catch (e) {
+        console.log(e);
+
+        return false;
+    }
+}
+
+export async function pingGameServer(id: string): Promise<boolean> {
+    try {
+        await prisma.gameServer.update({ where: { id }, data: { lastContact: Date.now() } })
+
+        return true;
+    } catch (e) {
+        console.log(e);
+
+        return false;
+    }
+}
+
 function generateName(): string {
-    return uniqueNamesGenerator({dictionaries: [adjectives, animals, colors]})
+    return uniqueNamesGenerator({ dictionaries: [adjectives, animals, colors] })
 }
