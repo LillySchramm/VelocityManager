@@ -1,7 +1,10 @@
 import { PrismaClient, GameServer, ProxyServer } from "@prisma/client";
 import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
+import { BackendGameServer, BackendProxyServer } from "../models/server.model";
 
 const prisma = new PrismaClient();
+
+const CONTACT_TIMEOUT = BigInt(10 * 1000);
 
 export async function registerGameServer(): Promise<GameServer> {
     const gameServer = await prisma.gameServer.create({
@@ -47,6 +50,42 @@ export async function pingGameServer(id: string): Promise<boolean> {
         console.log(e);
 
         return false;
+    }
+}
+
+export async function getGameServer(id: string): Promise<BackendGameServer | undefined> {
+    try {
+        const server: BackendGameServer | null = await prisma.gameServer.findFirst({ where: { id } })
+
+        if (!server) {
+            return undefined;
+        }
+
+        server.isOnline = server.lastContact + CONTACT_TIMEOUT >= Date.now();
+
+        return server;
+    } catch (e) {
+        console.log(e);
+
+        return undefined;
+    }
+}
+
+export async function getProxyServer(id: string): Promise<BackendProxyServer | undefined> {
+    try {
+        const server: BackendProxyServer | null = await prisma.gameServer.findFirst({ where: { id } })
+
+        if (!server) {
+            return undefined;
+        }
+
+        server.isOnline = server.lastContact + CONTACT_TIMEOUT >= Date.now();
+
+        return server;
+    } catch (e) {
+        console.log(e);
+
+        return undefined;
     }
 }
 

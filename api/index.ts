@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import basicAuth from 'express-basic-auth';
-import { pingGameServer, pingProxyServer, registerGameServer, registerProxyServer } from "./management/servers";
+import { getGameServer, getProxyServer, pingGameServer, pingProxyServer, registerGameServer, registerProxyServer } from "./management/servers";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -50,6 +50,34 @@ app.put(`/registerProxyServer`, async (req, res) => {
     const server = await registerProxyServer();
 
     res.json({ id: server.id, name: server.name });
+});
+
+app.get(`/gameServer/:id`, async (req, res) => {
+    const id = req.params.id;
+    const server = await getGameServer(id);
+
+    if (!server) {
+        res.status(404)
+        res.json({ msg: "Could not find server" })
+
+        return;
+    }
+
+    res.json({ ...server, lastContact: Number(server?.lastContact) });
+});
+
+app.get(`/proxyServer/:id`, async (req, res) => {
+    const id = req.params.id;
+    const server = await getProxyServer(id);
+
+    if (!server) {
+        res.status(404)
+        res.json({ msg: "Could not find server" })
+
+        return;
+    }
+
+    res.json({ ...server, lastContact: Number(server?.lastContact) });
 });
 
 const server = app.listen(3000, () =>
