@@ -1,7 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import basicAuth from 'express-basic-auth';
-import { getGameServer, getProxyServer, pingGameServer, pingProxyServer, registerGameServer, registerProxyServer } from "./management/servers";
+import {
+    getAllOnlineGameServer,
+    getAllOnlineProxyServer,
+    getGameServer,
+    getProxyServer,
+    pingGameServer,
+    pingProxyServer,
+    registerGameServer,
+    registerProxyServer
+} from "./management/servers";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -52,6 +61,16 @@ app.put(`/registerProxyServer`, async (req, res) => {
     res.json({ id: server.id, name: server.name });
 });
 
+app.get(`/gameServer/online`, async (req, res) => {
+    const servers = await getAllOnlineGameServer();
+
+    res.json({
+        servers: servers.map((server) => {
+            return { ...server, lastContact: Number(server?.lastContact) }
+        })
+    });
+});
+
 app.get(`/gameServer/:id`, async (req, res) => {
     const id = req.params.id;
     const server = await getGameServer(id);
@@ -64,6 +83,16 @@ app.get(`/gameServer/:id`, async (req, res) => {
     }
 
     res.json({ ...server, lastContact: Number(server?.lastContact) });
+});
+
+app.get(`/proxyServer/online`, async (req, res) => {
+    const servers = await getAllOnlineProxyServer();
+
+    res.json({
+        servers: servers.map((server) => {
+            return { ...server, lastContact: Number(server?.lastContact) }
+        })
+    });
 });
 
 app.get(`/proxyServer/:id`, async (req, res) => {

@@ -89,6 +89,26 @@ export async function getProxyServer(id: string): Promise<BackendProxyServer | u
     }
 }
 
+export async function getAllOnlineProxyServer(): Promise<ProxyServer[]> {
+    return await prisma.proxyServer.findMany({
+        where: {
+            lastContact: {
+                gte: Date.now() - Number(CONTACT_TIMEOUT)
+            }
+        }
+    })
+}
+
+export async function getAllOnlineGameServer(): Promise<GameServer[]> {
+    return await prisma.gameServer.findMany({
+        where: {
+            lastContact: {
+                gte: Date.now() - Number(CONTACT_TIMEOUT)
+            }
+        }
+    })
+}
+
 function generateName(): string {
     return uniqueNamesGenerator({ dictionaries: [adjectives, animals, colors] })
 }
