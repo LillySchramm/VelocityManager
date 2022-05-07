@@ -9,7 +9,8 @@ build_lib:
         untracked: false
         expire_in: 7 days
         paths:
-            - /root/.m2/**/*
+            - /root/.m2/repository/de/epsdev/velocitymanager/lib/0.0.1/lib-0.0.1.jar
+            - /root/.m2/repository/de/epsdev/velocitymanager/lib/0.0.1/lib-0.0.1.pom
     script:
         - cd lib && mvn clean install
 
@@ -22,8 +23,7 @@ build_spigot:
         untracked: false
         expire_in: 7 days
         paths:
-            - /root/.m2/repository/de/epsdev/velocitymanager/lib/0.0.1/lib-0.0.1.jar
-            - /root/.m2/repository/de/epsdev/velocitymanager/lib/0.0.1/lib-0.0.1.pom
+            - spigot/target/*.jar
     script:
         - cd ../spigot && mvn clean package
 
