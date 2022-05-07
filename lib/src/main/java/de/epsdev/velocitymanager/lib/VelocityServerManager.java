@@ -1,10 +1,10 @@
 package de.epsdev.velocitymanager.lib;
 
 import de.epsdev.velocitymanager.lib.config.IConfig;
+import de.epsdev.velocitymanager.lib.config.ILogger;
 import de.epsdev.velocitymanager.lib.tools.HTTP;
 import org.json.JSONObject;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class VelocityServerManager {
@@ -12,6 +12,7 @@ public class VelocityServerManager {
     private final IConfig config;
     private UUID uuid;
     private String name;
+    private ILogger logger = message -> System.out.println("[EPS] " + message);
 
     public VelocityServerManager(ServerType serverType, IConfig config) {
         this.serverType = serverType;
@@ -20,8 +21,17 @@ public class VelocityServerManager {
         initializeServer();
     }
 
+    public VelocityServerManager(ServerType serverType, IConfig config, ILogger logger) {
+        this.serverType = serverType;
+        this.config = config;
+        this.logger = logger;
+
+        initializeServer();
+    }
+
+
     public void ping() {
-        System.out.println("[EPS] Ping");
+        logger.logInfo("Ping");
         HTTP.GET("ping/gameServer/" + uuid.toString());
     }
 
@@ -40,19 +50,19 @@ public class VelocityServerManager {
 
         this.name = information.getString("name");
 
-        System.out.println("[EPS] Loaded information");
-        System.out.println("[EPS] ID: " + this.uuid.toString());
-        System.out.println("[EPS] Name: " + this.name);
+        logger.logInfo("Loaded information");
+        logger.logInfo("ID: " + this.uuid.toString());
+        logger.logInfo("Name: " + this.name);
     }
 
     private void initializeServer() {
-        System.out.println("[EPS] Initializing Server");
+        logger.logInfo("Initializing Server");
         HTTP.urlBase = this.config.getAPIUrl();
         HTTP.token = this.config.getToken();
         String rawUuid = this.config.getServerUUID();
 
         if (rawUuid.equals("")) {
-            System.out.println("[EPS] No UUID Found. Registering Server");
+            logger.logInfo("No UUID Found. Registering Server");
             rawUuid = registerServer();
         }
 
@@ -60,5 +70,9 @@ public class VelocityServerManager {
         this.config.setServerUUID(this.uuid);
 
         loadServerInformation();
+    }
+
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
     }
 }
