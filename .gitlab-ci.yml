@@ -16,20 +16,21 @@ build_lib:
 build_spigot:
     image: maven:3.8.4-eclipse-temurin-16
     stage: build
-    dependencies:
+    needs:
       - build_lib
     artifacts:
         untracked: false
         expire_in: 7 days
         paths:
-            - spigot/target/*.jar
+            - /root/.m2/repository/de/epsdev/velocitymanager/lib/0.0.1/lib-0.0.1.jar
+            - /root/.m2/repository/de/epsdev/velocitymanager/lib/0.0.1/lib-0.0.1.pom
     script:
         - cd ../spigot && mvn clean package
 
 build_velocity:
     image: maven:3.8.4-eclipse-temurin-16
     stage: build
-    dependencies:
+    needs:
       - build_lib
     artifacts:
         untracked: false
