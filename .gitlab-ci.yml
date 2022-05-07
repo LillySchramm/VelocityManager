@@ -12,3 +12,17 @@ build_spigot:
     script:
         - cd lib && mvn clean install
         - cd ../spigot && mvn clean package
+        - echo $PWD
+
+build_velocity:
+    image: maven:3.8.4-eclipse-temurin-16
+    stage: build
+    artifacts:
+        untracked: false
+        expire_in: 7 days
+        paths:
+            - velocity/target/*.jar
+    script:
+        - cd lib && mvn clean install
+        - cd ../velocity && mvn clean package
+        - echo $PWD
