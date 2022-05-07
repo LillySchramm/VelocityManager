@@ -73,7 +73,7 @@ export async function getGameServer(id: string): Promise<BackendGameServer | und
 
 export async function getProxyServer(id: string): Promise<BackendProxyServer | undefined> {
     try {
-        const server: BackendProxyServer | null = await prisma.gameServer.findFirst({ where: { id } })
+        const server: BackendProxyServer | null = await prisma.proxyServer.findFirst({ where: { id } })
 
         if (!server) {
             return undefined;
