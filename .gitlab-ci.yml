@@ -28,7 +28,6 @@ build_spigot:
         paths:
             - spigot/target/*.jar
     script:
-        - ls /builds/Elias/velocitymanager/.m2/repository/de/epsdev/velocitymanager/lib/0.0.1/
         - cd spigot && mvn clean package
 
 build_velocity:
