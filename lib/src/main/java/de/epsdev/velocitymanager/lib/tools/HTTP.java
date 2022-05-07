@@ -6,15 +6,22 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.json.JSONObject;
+
 public class HTTP {
+    public static String urlBase = "";
     public static String token = "";
 
-    public static String GET(String urlToRequest) {
-        return authenticatedRequest(urlToRequest, "GET");
+    public static JSONObject GET(String urlToRequest) {
+        return new JSONObject(authenticatedRequest(urlBase + urlToRequest, "GET"));
     }
 
-    public static String POST(String urlToRequest) {
-        return authenticatedRequest(urlToRequest, "POST");
+    public static JSONObject POST(String urlToRequest) {
+        return new JSONObject(authenticatedRequest(urlBase + urlToRequest, "POST"));
+    }
+
+    public static JSONObject PUT(String urlToRequest) {
+        return new JSONObject(authenticatedRequest(urlBase + urlToRequest, "PUT"));
     }
 
     private static String authenticatedRequest(String urlToRequest, String method) {
@@ -23,7 +30,7 @@ public class HTTP {
             URL url = new URL(urlToRequest);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestProperty("Authorization", "Basic" + token);
+            conn.setRequestProperty("Authorization", "Basic " + token);
             conn.setRequestMethod(method);
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(conn.getInputStream()))) {

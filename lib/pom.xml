@@ -7,6 +7,13 @@
     <groupId>de.epsdev.velocitymanager</groupId>
     <artifactId>lib</artifactId>
     <version>0.0.1</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20220320</version>
+        </dependency>
+    </dependencies>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
