@@ -1,5 +1,17 @@
 stages:
+    - pre-build
     - build
+
+build_lib:
+    image: maven:3.8.4-eclipse-temurin-16
+    stage: pre-build
+    artifacts:
+        untracked: false
+        expire_in: 7 days
+        paths:
+            - /root/.m2/*
+    script:
+        - cd lib && mvn clean install
 
 build_spigot:
     image: maven:3.8.4-eclipse-temurin-16
@@ -10,9 +22,7 @@ build_spigot:
         paths:
             - spigot/target/*.jar
     script:
-        - cd lib && mvn clean install
         - cd ../spigot && mvn clean package
-        - echo $PWD
 
 build_velocity:
     image: maven:3.8.4-eclipse-temurin-16
@@ -23,6 +33,4 @@ build_velocity:
         paths:
             - velocity/target/*.jar
     script:
-        - cd lib && mvn clean install
         - cd ../velocity && mvn clean package
-        - echo $PWD
