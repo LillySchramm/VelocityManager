@@ -109,6 +109,6 @@ app.get(`/proxyServer/:id`, async (req, res) => {
     res.json({ ...server, lastContact: Number(server?.lastContact) });
 });
 
-const server = app.listen(3000, () =>
-    console.log(`🚀 Server ready at: http://localhost:3000`),
+const server = app.listen(30001, () =>
+    console.log(`🚀 Server ready at: http://localhost:30001`),
 );
