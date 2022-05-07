@@ -13,12 +13,6 @@ cache:
 build_lib:
     image: maven:3.8.4-eclipse-temurin-16
     stage: pre-build
-    artifacts:
-        untracked: false
-        expire_in: 7 days
-        paths:
-            - /root/.m2/repository/de/epsdev/velocitymanager/lib/0.0.1/lib-0.0.1.jar
-            - /root/.m2/repository/de/epsdev/velocitymanager/lib/0.0.1/lib-0.0.1.pom
     script:
         - cd lib && mvn clean install
 
@@ -33,7 +27,7 @@ build_spigot:
         paths:
             - spigot/target/*.jar
     script:
-        - cd ../spigot && mvn clean package
+        - cd spigot && mvn clean package
 
 build_velocity:
     image: maven:3.8.4-eclipse-temurin-16
@@ -46,4 +40,4 @@ build_velocity:
         paths:
             - velocity/target/*.jar
     script:
-        - cd ../velocity && mvn clean package
+        - cd velocity && mvn clean package
