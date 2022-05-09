@@ -56,7 +56,7 @@ build_velocity:
 
 build_api:
     image: node:14-alpine
-    stage: pre-build
+    stage: build
     needs:
         - install_npm_dependencies
     artifacts:
