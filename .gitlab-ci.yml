@@ -67,4 +67,4 @@ build_api:
     script:
         - cd api
         - npm run build
-        - ./node_module/.bin/esbuild ./dist/index.js --bundle --outfile=index.js --platform=node
+        - esbuild ./dist/index.js --bundle --outfile=index.js --platform=node
