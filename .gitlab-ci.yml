@@ -3,8 +3,8 @@ stages:
     - build
 
 variables:
-  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
-  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+    MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+    MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
 
 build_lib:
     image: maven:3.8.4-eclipse-temurin-16
@@ -17,11 +17,22 @@ build_lib:
     script:
         - cd lib && mvn clean install
 
+install_npm_dependencies:
+    image: node:14-alpine
+    stage: pre-build
+    artifacts:
+        untracked: false
+        expire_in: 7 days
+        paths:
+            - api/node_modules
+    script:
+        - cd api && npm i
+
 build_spigot:
     image: maven:3.8.4-eclipse-temurin-16
     stage: build
     needs:
-      - build_lib
+        - build_lib
     artifacts:
         untracked: false
         expire_in: 7 days
@@ -34,7 +45,7 @@ build_velocity:
     image: maven:3.8.4-eclipse-temurin-16
     stage: build
     needs:
-      - build_lib
+        - build_lib
     artifacts:
         untracked: false
         expire_in: 7 days
@@ -42,3 +53,17 @@ build_velocity:
             - velocity/target/*.jar
     script:
         - cd velocity && mvn clean package
+
+build_api:
+    image: node:14-alpine
+    stage: build
+    needs:
+        - install_npm_dependencies
+    artifacts:
+        untracked: false
+        expire_in: 7 days
+        paths:
+            - api/index.js
+            - api/dist
+    script:
+        - cd api && npm run build
