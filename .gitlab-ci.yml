@@ -63,6 +63,7 @@ build_api:
         untracked: false
         expire_in: 7 days
         paths:
-            - api/dist
+            - api/index.js
     script:
         - cd api && npm run build
+        - ./node_module/.bin/esbuild ./dist/index.js --bundle --outfile=index.js --platform=node
