@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --removeComments",
+    "build": "tsc --removeComments && esbuild ./dist/index.js --bundle --outfile=index.js --platform=node",
     "prestart": "npm run build",
     "start": "node dist/",
     "test": "echo \"Error: no test specified\" && exit 1"
