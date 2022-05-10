@@ -47,6 +47,10 @@ public class Velocitymanager {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        this.serverManager = new VelocityServerManager(ServerType.PROXY_SERVER, iConfig);
+        this.serverManager = new VelocityServerManager(
+                ServerType.PROXY_SERVER,
+                iConfig,
+                message -> logger.info(message)
+        );
     }
 }
