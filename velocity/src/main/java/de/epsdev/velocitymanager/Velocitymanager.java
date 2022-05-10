@@ -4,11 +4,15 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import com.velocitypowered.api.proxy.ProxyServer;
+import de.epsdev.velocitymanager.config.VelocityConfig;
 import de.epsdev.velocitymanager.lib.ServerType;
 import de.epsdev.velocitymanager.lib.VelocityServerManager;
 import de.epsdev.velocitymanager.lib.config.IConfig;
 import org.slf4j.Logger;
 
+import java.nio.file.Path;
 import java.util.UUID;
 
 @Plugin(
@@ -20,36 +24,22 @@ import java.util.UUID;
 )
 public class Velocitymanager {
     public VelocityServerManager serverManager;
-    private IConfig iConfig = new IConfig() {
-        @Override
-        public String getServerUUID() {
-            return "";
-        }
-
-        @Override
-        public void setServerUUID(UUID uuid) {
-
-        }
-
-        @Override
-        public String getToken() {
-            return "YWRtaW46YWRtaW4=";
-        }
-
-        @Override
-        public String getAPIUrl() {
-            return "http://192.168.2.100:30001/";
-        }
-    };
+    private final Logger logger;
+    private final ProxyServer proxyServer;
+    private final Path configPath;
 
     @Inject
-    private Logger logger;
+    public Velocitymanager(ProxyServer server, Logger logger, @DataDirectory final Path folder) {
+        this.proxyServer = server;
+        this.logger = logger;
+        this.configPath = folder;
+    }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         this.serverManager = new VelocityServerManager(
                 ServerType.PROXY_SERVER,
-                iConfig,
+                new VelocityConfig(configPath),
                 message -> logger.info(message)
         );
     }
