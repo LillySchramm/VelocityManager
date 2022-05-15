@@ -32,7 +32,8 @@ public class VelocityServerManager {
 
     public void ping() {
         logger.logInfo("Ping");
-        HTTP.GET("ping/gameServer/" + uuid.toString());
+        HTTP.GET("ping/" +
+                (this.serverType == ServerType.GAME_SERVER ? "gameServer" : "proxyServer") + "/" + uuid.toString());
     }
 
     private String registerServer() {
