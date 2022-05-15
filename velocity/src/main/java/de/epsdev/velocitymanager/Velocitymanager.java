@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Plugin(
         id = "velocitymanager",
@@ -42,5 +43,10 @@ public class Velocitymanager {
                 new VelocityConfig(configPath),
                 message -> logger.info(message)
         );
+
+        this.proxyServer.getScheduler().buildTask(
+                this,
+                () -> this.serverManager.ping()
+        ).repeat(1L, TimeUnit.SECONDS).schedule();
     }
 }
