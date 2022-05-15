@@ -45,6 +45,13 @@ public final class VelocityManager extends JavaPlugin {
                 iConfig,
                 message -> getLogger().log(Level.INFO, message)
         );
+
+        this.getServer().getScheduler().scheduleSyncRepeatingTask(
+                this,
+                () -> this.serverManager.ping(),
+                0L,
+                20L
+        );
     }
 
     private void initializeConfig() {
