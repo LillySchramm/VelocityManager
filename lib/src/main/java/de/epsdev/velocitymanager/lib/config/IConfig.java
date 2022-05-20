@@ -8,4 +8,5 @@ public interface IConfig {
 
     String getToken();
     String getAPIUrl();
+    int getServerPort();
 }

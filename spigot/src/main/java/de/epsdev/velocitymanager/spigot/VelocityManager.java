@@ -34,6 +34,11 @@ public final class VelocityManager extends JavaPlugin {
         public String getAPIUrl() {
             return fileConfiguration.getString("api_url");
         }
+
+        @Override
+        public int getServerPort() {
+            return getServer().getPort();
+        }
     };
 
     @Override
