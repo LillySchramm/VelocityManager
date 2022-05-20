@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `GameServer` ADD COLUMN `ip` VARCHAR(191) NOT NULL DEFAULT '';

@@ -27,7 +27,7 @@ app.get(`/ping`, async (req, res) => {
     });
 });
 
-app.get(`/ping/proxyServer/:id`, async (req, res) => {
+app.post(`/ping/proxyServer/:id`, async (req, res) => {
     const id = req.params.id;
 
     const successful = await pingProxyServer(id);
@@ -38,10 +38,12 @@ app.get(`/ping/proxyServer/:id`, async (req, res) => {
     });
 });
 
-app.get(`/ping/gameServer/:id`, async (req, res) => {
+app.post(`/ping/gameServer/:id`, async (req, res) => {
     const id = req.params.id;
+    const ip: string = req.body.ip;
+    const port: number = req.body.port;
 
-    const successful = await pingGameServer(id);
+    const successful = await pingGameServer(id, ip, port);
 
     res.json({
         ping: "pong",

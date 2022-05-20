@@ -15,6 +15,7 @@ model GameServer {
   name        String   @db.VarChar(255)
   lastContact BigInt
   createdAt   DateTime @default(now())
+  ip          String   @default("")
   port        Int
 }
 

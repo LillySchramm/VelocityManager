@@ -41,9 +41,9 @@ export async function pingProxyServer(id: string): Promise<boolean> {
     }
 }
 
-export async function pingGameServer(id: string): Promise<boolean> {
+export async function pingGameServer(id: string, ip: string, port: number): Promise<boolean> {
     try {
-        await prisma.gameServer.update({ where: { id }, data: { lastContact: Date.now() } })
+        await prisma.gameServer.update({ where: { id }, data: { lastContact: Date.now(), ip, port } })
 
         return true;
     } catch (e) {
