@@ -78,4 +78,9 @@ public class VelocityConfig implements IConfig{
     public String getAPIUrl() {
         return this.properties.getProperty("api_url");
     }
+
+    @Override
+    public int getServerPort() {
+        return 0;
+    }
 }
