@@ -29,10 +29,21 @@ public class VelocityServerManager {
         initializeServer();
     }
 
-
     public void ping() {
-        HTTP.GET("ping/" +
-                (this.serverType == ServerType.GAME_SERVER ? "gameServer" : "proxyServer") + "/" + uuid.toString());
+        JSONObject serverInfo = null;
+
+        if (this.serverType == ServerType.GAME_SERVER) {
+            serverInfo = new JSONObject();
+            serverInfo.put("ip", "test");
+            serverInfo.put("port", 8888);
+        }
+
+        HTTP.POST("ping/" +
+                (this.serverType == ServerType.GAME_SERVER ? "gameServer" : "proxyServer") + "/" + uuid.toString(),
+                serverInfo
+        );
+
+        logger.logInfo("Ping");
     }
 
     private String registerServer() {

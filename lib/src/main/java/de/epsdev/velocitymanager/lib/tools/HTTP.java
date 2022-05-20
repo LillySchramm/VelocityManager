@@ -3,9 +3,15 @@ package de.epsdev.velocitymanager.lib.tools;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 public class HTTP {
@@ -13,36 +19,49 @@ public class HTTP {
     public static String token = "";
 
     public static JSONObject GET(String urlToRequest) {
-        return new JSONObject(authenticatedRequest(urlBase + urlToRequest, "GET"));
+        return authenticatedRequest(new HttpGet(urlBase + urlToRequest));
     }
 
-    public static JSONObject POST(String urlToRequest) {
-        return new JSONObject(authenticatedRequest(urlBase + urlToRequest, "POST"));
+    public static JSONObject POST(String urlToRequest, JSONObject body) {
+        HttpPost httpPost = new HttpPost(urlBase + urlToRequest);
+
+        if (body == null) {
+            return authenticatedRequest(httpPost);
+        }
+
+        httpPost.setEntity(
+            new StringEntity(
+                    body.toString(),
+                    ContentType.APPLICATION_JSON
+            )
+        );
+
+        return authenticatedRequest(httpPost);
     }
 
     public static JSONObject PUT(String urlToRequest) {
-        return new JSONObject(authenticatedRequest(urlBase + urlToRequest, "PUT"));
+        return authenticatedRequest(new HttpPost(urlBase + urlToRequest));
     }
 
-    private static String authenticatedRequest(String urlToRequest, String method) {
-        StringBuilder result = new StringBuilder();
+    private static JSONObject authenticatedRequest(HttpRequestBase request) {
+        String result = "";
         try {
-            URL url = new URL(urlToRequest);
+            HttpClient client = new DefaultHttpClient();
+            request.addHeader("Authorization", "Basic " + token);
+            HttpResponse response = client.execute(request);
 
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestProperty("Authorization", "Basic " + token);
-            conn.setRequestMethod(method);
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()))) {
-                for (String line; (line = reader.readLine()) != null; ) {
-                    result.append(line);
-                }
+            BufferedReader rd = new BufferedReader
+                    (new InputStreamReader(
+                            response.getEntity().getContent()));
+
+            String line = "";
+            while ((line = rd.readLine()) != null) {
+                result += line;
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return result.toString();
-    }
 
+        return new JSONObject(result);
+    }
 }
