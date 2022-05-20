@@ -2,9 +2,13 @@ package de.epsdev.velocitymanager.lib;
 
 import de.epsdev.velocitymanager.lib.config.IConfig;
 import de.epsdev.velocitymanager.lib.config.ILogger;
+import de.epsdev.velocitymanager.lib.tools.BasicServerInfo;
 import de.epsdev.velocitymanager.lib.tools.HTTP;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class VelocityServerManager {
@@ -34,16 +38,13 @@ public class VelocityServerManager {
 
         if (this.serverType == ServerType.GAME_SERVER) {
             serverInfo = new JSONObject();
-            serverInfo.put("ip", "test");
-            serverInfo.put("port", 8888);
+            serverInfo.put("port", config.getServerPort());
         }
 
         HTTP.POST("ping/" +
                 (this.serverType == ServerType.GAME_SERVER ? "gameServer" : "proxyServer") + "/" + uuid.toString(),
                 serverInfo
         );
-
-        logger.logInfo("Ping");
     }
 
     private String registerServer() {
@@ -81,6 +82,26 @@ public class VelocityServerManager {
         this.config.setServerUUID(this.uuid);
 
         loadServerInformation();
+    }
+
+    public List<BasicServerInfo> getAllOnlineGameServer() {
+        List<BasicServerInfo> server = new ArrayList<>();
+
+        JSONObject response = HTTP.GET("gameServer/online");
+        JSONArray serverArray = response.getJSONArray("servers");
+
+        for (int i = 0; i < serverArray.length(); i++) {
+            JSONObject rawServer = serverArray.getJSONObject(i);
+
+            server.add(new BasicServerInfo(
+                    UUID.fromString(rawServer.getString("id")),
+                    rawServer.getString("name"),
+                    rawServer.getString("ip"),
+                    rawServer.getInt("port")
+            ));
+        }
+
+        return server;
     }
 
     public void setLogger(ILogger logger) {
