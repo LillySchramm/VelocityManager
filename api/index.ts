@@ -40,7 +40,7 @@ app.post(`/ping/proxyServer/:id`, async (req, res) => {
 
 app.post(`/ping/gameServer/:id`, async (req, res) => {
     const id = req.params.id;
-    const ip: string = req.body.ip;
+    const ip: string = req.ip.split(':').pop() || '';
     const port: number = req.body.port;
 
     const successful = await pingGameServer(id, ip, port);
