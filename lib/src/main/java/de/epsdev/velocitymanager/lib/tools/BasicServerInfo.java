@@ -27,8 +27,17 @@ public class BasicServerInfo {
         return ip;
     }
 
-
     public int getPort() {
         return port;
+    }
+
+    @Override
+    public String toString() {
+        return "Server{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", ip='" + ip + '\'' +
+                ", port=" + port +
+                '}';
     }
 }

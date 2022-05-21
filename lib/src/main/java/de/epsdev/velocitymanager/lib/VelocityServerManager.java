@@ -16,7 +16,7 @@ public class VelocityServerManager {
     private final IConfig config;
     private UUID uuid;
     private String name;
-    private ILogger logger = message -> System.out.println("[EPS] " + message);
+    public ILogger logger = message -> System.out.println("[EPS] " + message);
 
     public VelocityServerManager(ServerType serverType, IConfig config) {
         this.serverType = serverType;

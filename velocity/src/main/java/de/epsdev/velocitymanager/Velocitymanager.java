@@ -1,12 +1,8 @@
 package de.epsdev.velocitymanager;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.LoginEvent;
-import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
-import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
@@ -17,15 +13,11 @@ import de.epsdev.velocitymanager.config.VelocityConfig;
 import de.epsdev.velocitymanager.lib.ServerType;
 import de.epsdev.velocitymanager.lib.VelocityServerManager;
 import de.epsdev.velocitymanager.lib.tools.BasicServerInfo;
-import net.kyori.adventure.text.TextComponent;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Plugin(
@@ -41,7 +33,7 @@ public class Velocitymanager {
     private final ProxyServer proxyServer;
     private final Path configPath;
 
-    private ArrayList<UUID> registeredServers = new ArrayList<>();
+    private HashMap<UUID, BasicServerInfo> registeredServers = new HashMap<>();
 
     @Inject
     public Velocitymanager(ProxyServer server, Logger logger, @DataDirectory final Path folder) {
@@ -84,24 +76,51 @@ public class Velocitymanager {
     private void updateGameServers() {
         List<BasicServerInfo> serverInfos = serverManager.getAllOnlineGameServer();
 
+        ArrayList<UUID> currentIds = new ArrayList<>();
         for (BasicServerInfo serverInfo : serverInfos) {
-            if (this.registeredServers.contains(serverInfo.getId())) {
+            currentIds.add(serverInfo.getId());
+            if (this.registeredServers.containsKey(serverInfo.getId())) {
                 continue;
             }
 
             this.proxyServer.registerServer(
-                    new ServerInfo(
-                            serverInfo.getName(),
-                            new InetSocketAddress(
-                                    serverInfo.getIp(),
-                                    serverInfo.getPort()
-                            )
-                    )
+                createServerInfo(serverInfo)
             );
 
+            this.registeredServers.put(serverInfo.getId(), serverInfo);
 
-            this.registeredServers.add(serverInfo.getId());
+            this.serverManager.logger.logInfo("New Server Registered");
+            this.serverManager.logger.logInfo(serverInfo.toString());
         }
+
+        ArrayList<UUID> toBeRemoved = new ArrayList<>();
+        for (UUID id : this.registeredServers.keySet()) {
+            if (currentIds.contains(id)) {
+                continue;
+            }
+
+            BasicServerInfo basicServerInfo = this.registeredServers.get(id);
+            RegisteredServer registeredServer = this.proxyServer.getServer(
+                    basicServerInfo.getName()
+            ).get();
+            this.proxyServer.unregisterServer(registeredServer.getServerInfo());
+            toBeRemoved.add(id);
+
+            this.serverManager.logger.logInfo("Server Disconnected");
+            this.serverManager.logger.logInfo(basicServerInfo.toString());
+        }
+
+        toBeRemoved.forEach((id) -> this.registeredServers.remove(id));
+    }
+
+    private ServerInfo createServerInfo(BasicServerInfo basicServerInfo) {
+        return new ServerInfo(
+                basicServerInfo.getName(),
+                new InetSocketAddress(
+                        basicServerInfo.getIp(),
+                        basicServerInfo.getPort()
+                )
+        );
     }
 
     private void unregisterAllServers() {
