@@ -13,16 +13,16 @@
   "author": "Elias Schramm",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^17.0.25",
-    "prisma": "^3.12.0",
+    "@types/node": "^17.0.35",
+    "express": "^4.18.1",
+    "prisma": "^3.14.0",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.3",
-    "express": "^4.17.2"
+    "typescript": "^4.6.4"
   },
   "dependencies": {
     "@prisma/client": "^3.14.0",
     "@types/express": "^4.17.13",
-    "esbuild": "^0.14.38",
+    "esbuild": "^0.14.39",
     "express-basic-auth": "^1.2.1",
     "unique-names-generator": "^4.7.1"
   }
