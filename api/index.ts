@@ -11,6 +11,7 @@ import {
     registerGameServer,
     registerProxyServer
 } from "./management/servers";
+import { getAllServerTypes } from "./management/serverTypes";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -109,6 +110,12 @@ app.get(`/proxyServer/:id`, async (req, res) => {
     }
 
     res.json({ ...server, lastContact: Number(server?.lastContact) });
+});
+
+app.get(`/serverType/all`, async (req, res) => {
+    const types = await getAllServerTypes();
+
+    res.json({ types });
 });
 
 const server = app.listen(30001, () =>

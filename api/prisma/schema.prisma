@@ -2,13 +2,21 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl"]
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model ServerType {
+  id         String       @id @default(uuid())
+  name       String       @unique
+  default    Boolean      @default(false)
+  deletable  Boolean      @default(true)
+  GameServer GameServer[]
 }
 
 model GameServer {
@@ -18,6 +26,9 @@ model GameServer {
   createdAt   DateTime @default(now())
   ip          String   @default("")
   port        Int
+
+  serverType   ServerType @relation(fields: [serverTypeId], references: [id])
+  serverTypeId String
 }
 
 model ProxyServer {

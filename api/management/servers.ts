@@ -5,13 +5,15 @@ import { BackendGameServer, BackendProxyServer } from "../models/server.model";
 const prisma = new PrismaClient();
 
 const CONTACT_TIMEOUT = BigInt(10 * 1000);
+const DEFAULT_SERVER_TYPE_ID = '00000000-0000-0000-0000-000000000001'
 
 export async function registerGameServer(): Promise<GameServer> {
     const gameServer = await prisma.gameServer.create({
         data: {
             name: generateName(),
             lastContact: 0,
-            port: 0
+            port: 0,
+            serverTypeId: DEFAULT_SERVER_TYPE_ID
         }
     })
 
@@ -56,7 +58,6 @@ export async function pingGameServer(id: string, ip: string, port: number): Prom
 export async function getGameServer(id: string): Promise<BackendGameServer | undefined> {
     try {
         const server: BackendGameServer | null = await prisma.gameServer.findFirst({ where: { id } })
-
         if (!server) {
             return undefined;
         }
