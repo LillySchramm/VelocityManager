@@ -1,6 +1,7 @@
 stages:
     - pre-build
     - build
+    - container-build
 
 variables:
     MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
@@ -67,3 +68,21 @@ build_api:
             - api/dist
     script:
         - cd api && npm run build
+
+build_api_container:
+    stage: container-build
+    image:
+        name: "gcr.io/kaniko-project/executor:debug"
+        entrypoint: [""]
+    needs:
+        - install_npm_dependencies
+        - build_api
+    script:
+        - mkdir -p /kaniko/.docker
+        - echo "{\"auths\":{\"registry01.eps-dev.de\":{\"auth\":\"$(printf "%s:%s" "${PRIVATE_REG_USER}" "${PRIVATE_REG_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+        - >-
+            /kaniko/executor
+            --context "${CI_PROJECT_DIR}/api"
+            --dockerfile "${CI_PROJECT_DIR}/api/Dockerfile"
+            --destination "registry01.eps-dev.de/velocitymanager/api/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}"
+            --destination "registry01.eps-dev.de/velocitymanager/api/${CI_COMMIT_REF_SLUG}:latest"
