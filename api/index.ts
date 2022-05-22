@@ -43,8 +43,9 @@ app.post(`/ping/gameServer/:id`, async (req, res) => {
     const id = req.params.id;
     const ip: string = req.ip.split(':').pop() || '';
     const port: number = req.body.port;
+    const maximumPlayers = req.body.maximumPlayers;
 
-    const successful = await pingGameServer(id, ip, port);
+    const successful = await pingGameServer(id, ip, port, maximumPlayers);
 
     res.json({
         ping: "pong",

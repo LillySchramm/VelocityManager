@@ -20,12 +20,13 @@ model ServerType {
 }
 
 model GameServer {
-  id          String   @id @default(uuid())
-  name        String   @db.VarChar(255)
-  lastContact BigInt
-  createdAt   DateTime @default(now())
-  ip          String   @default("")
-  port        Int
+  id             String   @id @default(uuid())
+  name           String   @db.VarChar(255)
+  lastContact    BigInt
+  createdAt      DateTime @default(now())
+  ip             String   @default("")
+  port           Int
+  maximumPlayers Int      @default(0)
 
   serverType   ServerType @relation(fields: [serverTypeId], references: [id])
   serverTypeId String
