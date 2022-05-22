@@ -39,6 +39,11 @@ public final class VelocityManager extends JavaPlugin {
         public int getServerPort() {
             return getServer().getPort();
         }
+
+        @Override
+        public int getMaxPlayers() {
+            return getServer().getMaxPlayers();
+        }
     };
 
     @Override

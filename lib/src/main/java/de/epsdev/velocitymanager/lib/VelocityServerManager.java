@@ -39,6 +39,7 @@ public class VelocityServerManager {
         if (this.serverType == ServerType.GAME_SERVER) {
             serverInfo = new JSONObject();
             serverInfo.put("port", config.getServerPort());
+            serverInfo.put("maximumPlayers", config.getMaxPlayers());
         }
 
         HTTP.POST("ping/" +

@@ -83,4 +83,9 @@ public class VelocityConfig implements IConfig{
     public int getServerPort() {
         return 0;
     }
+
+    @Override
+    public int getMaxPlayers() {
+        return 0;
+    }
 }
