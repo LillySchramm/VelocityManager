@@ -8,6 +8,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -40,7 +41,7 @@ public class HTTP {
     }
 
     public static JSONObject PUT(String urlToRequest) {
-        return authenticatedRequest(new HttpPost(urlBase + urlToRequest));
+        return authenticatedRequest(new HttpPut(urlBase + urlToRequest));
     }
 
     private static JSONObject authenticatedRequest(HttpRequestBase request) {
