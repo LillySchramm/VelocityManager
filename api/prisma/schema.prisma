@@ -11,6 +11,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Player {
+  id                 String       @id
+  name               String       @unique
+  currentGameServer  GameServer?  @relation(fields: [gameServerId], references: [id])
+  currentProxyServer ProxyServer? @relation(fields: [proxyServerId], references: [id])
+  gameServerId       String?
+  proxyServerId      String?
+}
+
 model ServerType {
   id         String       @id @default(uuid())
   name       String       @unique
@@ -30,6 +39,7 @@ model GameServer {
 
   serverType   ServerType @relation(fields: [serverTypeId], references: [id])
   serverTypeId String
+  Player       Player[]
 }
 
 model ProxyServer {
@@ -37,4 +47,5 @@ model ProxyServer {
   name        String   @db.VarChar(255)
   lastContact BigInt
   createdAt   DateTime @default(now())
+  Player      Player[]
 }

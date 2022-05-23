@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import basicAuth from 'express-basic-auth';
+import { upsertPlayer } from "./management/players";
 import {
     getAllOnlineGameServer,
     getAllOnlineProxyServer,
@@ -117,6 +118,15 @@ app.get(`/serverType/all`, async (req, res) => {
     const types = await getAllServerTypes();
 
     res.json({ types });
+});
+
+app.put(`/player/createIfNotExistent`, async (req, res) => {
+    const id: string = req.body.id;
+    const name: string = req.body.name;
+
+    const player = await upsertPlayer(id, name);
+
+    res.json(player)
 });
 
 const server = app.listen(30001, () =>
