@@ -3,6 +3,7 @@ package de.epsdev.velocitymanager.lib.tools;
 import java.util.UUID;
 
 public class BasicServerInfo {
+
     private UUID id;
     private String name;
     private String ip;
@@ -33,11 +34,19 @@ public class BasicServerInfo {
 
     @Override
     public String toString() {
-        return "Server{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", ip='" + ip + '\'' +
-                ", port=" + port +
-                '}';
+        return (
+            "Server{" +
+            "id=" +
+            id +
+            ", name='" +
+            name +
+            '\'' +
+            ", ip='" +
+            ip +
+            '\'' +
+            ", port=" +
+            port +
+            '}'
+        );
     }
 }

@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
-import basicAuth from 'express-basic-auth';
+import basicAuth from "express-basic-auth";
 import { upsertPlayer } from "./management/players";
 import {
     getAllOnlineGameServer,
@@ -10,22 +10,24 @@ import {
     pingGameServer,
     pingProxyServer,
     registerGameServer,
-    registerProxyServer
+    registerProxyServer,
 } from "./management/servers";
 import { getAllServerTypes } from "./management/serverTypes";
 
 const prisma = new PrismaClient();
 const app = express();
 
-app.use(basicAuth({
-    users: { 'admin': 'admin' }
-}))
+app.use(
+    basicAuth({
+        users: { admin: "admin" },
+    })
+);
 
 app.use(express.json());
 
 app.get(`/ping`, async (req, res) => {
     res.json({
-        ping: "pong"
+        ping: "pong",
     });
 });
 
@@ -36,13 +38,13 @@ app.post(`/ping/proxyServer/:id`, async (req, res) => {
 
     res.json({
         ping: "pong",
-        successful
+        successful,
     });
 });
 
 app.post(`/ping/gameServer/:id`, async (req, res) => {
     const id = req.params.id;
-    const ip: string = req.ip.split(':').pop() || '';
+    const ip: string = req.ip.split(":").pop() || "";
     const port: number = req.body.port;
     const maximumPlayers = req.body.maximumPlayers;
 
@@ -50,7 +52,7 @@ app.post(`/ping/gameServer/:id`, async (req, res) => {
 
     res.json({
         ping: "pong",
-        successful
+        successful,
     });
 });
 
@@ -71,8 +73,8 @@ app.get(`/gameServer/online`, async (req, res) => {
 
     res.json({
         servers: servers.map((server) => {
-            return { ...server, lastContact: Number(server?.lastContact) }
-        })
+            return { ...server, lastContact: Number(server?.lastContact) };
+        }),
     });
 });
 
@@ -81,8 +83,8 @@ app.get(`/gameServer/:id`, async (req, res) => {
     const server = await getGameServer(id);
 
     if (!server) {
-        res.status(404)
-        res.json({ msg: "Could not find server" })
+        res.status(404);
+        res.json({ msg: "Could not find server" });
 
         return;
     }
@@ -95,8 +97,8 @@ app.get(`/proxyServer/online`, async (req, res) => {
 
     res.json({
         servers: servers.map((server) => {
-            return { ...server, lastContact: Number(server?.lastContact) }
-        })
+            return { ...server, lastContact: Number(server?.lastContact) };
+        }),
     });
 });
 
@@ -105,8 +107,8 @@ app.get(`/proxyServer/:id`, async (req, res) => {
     const server = await getProxyServer(id);
 
     if (!server) {
-        res.status(404)
-        res.json({ msg: "Could not find server" })
+        res.status(404);
+        res.json({ msg: "Could not find server" });
 
         return;
     }
@@ -126,9 +128,9 @@ app.put(`/player/createIfNotExistent`, async (req, res) => {
 
     const player = await upsertPlayer(id, name);
 
-    res.json(player)
+    res.json(player);
 });
 
 const server = app.listen(30001, () =>
-    console.log(`🚀 Server ready at: http://localhost:30001`),
+    console.log(`🚀 Server ready at: http://localhost:30001`)
 );

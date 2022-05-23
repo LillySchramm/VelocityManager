@@ -13,30 +13,33 @@ import de.epsdev.velocitymanager.config.VelocityConfig;
 import de.epsdev.velocitymanager.lib.ServerType;
 import de.epsdev.velocitymanager.lib.VelocityServerManager;
 import de.epsdev.velocitymanager.lib.tools.BasicServerInfo;
-import org.slf4j.Logger;
-
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
 
 @Plugin(
-        id = "velocitymanager",
-        name = "VelocityManager",
-        version = "0.0.1",
-        url = "https://gitlab.eps-dev.de/Elias/velocitymanager",
-        authors = {"EliasSchramm"}
+    id = "velocitymanager",
+    name = "VelocityManager",
+    version = "0.0.1",
+    url = "https://gitlab.eps-dev.de/Elias/velocitymanager",
+    authors = { "EliasSchramm" }
 )
 public class Velocitymanager {
-    public VelocityServerManager serverManager;
+
     private final Logger logger;
     private final ProxyServer proxyServer;
     private final Path configPath;
-
-    private HashMap<UUID, BasicServerInfo> registeredServers = new HashMap<>();
+    public VelocityServerManager serverManager;
+    private final HashMap<UUID, BasicServerInfo> registeredServers = new HashMap<>();
 
     @Inject
-    public Velocitymanager(ProxyServer server, Logger logger, @DataDirectory final Path folder) {
+    public Velocitymanager(
+        ProxyServer server,
+        Logger logger,
+        @DataDirectory final Path folder
+    ) {
         this.proxyServer = server;
         this.logger = logger;
         this.configPath = folder;
@@ -44,31 +47,38 @@ public class Velocitymanager {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        this.serverManager = new VelocityServerManager(
+        this.serverManager =
+            new VelocityServerManager(
                 ServerType.PROXY_SERVER,
                 new VelocityConfig(configPath),
                 message -> logger.info(message)
-        );
+            );
 
-        this.proxyServer.getScheduler().buildTask(
+        this.proxyServer.getScheduler()
+            .buildTask(
                 this,
                 () -> {
                     this.serverManager.ping();
                     this.updateGameServers();
                 }
-        ).repeat(1L, TimeUnit.SECONDS).schedule();
+            )
+            .repeat(1L, TimeUnit.SECONDS)
+            .schedule();
 
-        proxyServer.getEventManager()
-                .register(
-                        this,
-                        PlayerChooseInitialServerEvent.class,
-                        chooseInitialServerEvent
-                                -> chooseInitialServerEvent.setInitialServer(
-                                        proxyServer.getServer("straight_impala_lavender"
-                                        ).get()
-                        )
-                );
+        proxyServer
+            .getEventManager()
+            .register(
+                this,
+                PlayerChooseInitialServerEvent.class,
+                chooseInitialServerEvent -> {
+                    chooseInitialServerEvent.getPlayer().getUniqueId();
+                    chooseInitialServerEvent.getPlayer().getUsername();
 
+                    chooseInitialServerEvent.setInitialServer(
+                        proxyServer.getServer("straight_impala_lavender").get()
+                    );
+                }
+            );
 
         unregisterAllServers();
     }
@@ -83,9 +93,7 @@ public class Velocitymanager {
                 continue;
             }
 
-            this.proxyServer.registerServer(
-                createServerInfo(serverInfo)
-            );
+            this.proxyServer.registerServer(createServerInfo(serverInfo));
 
             this.registeredServers.put(serverInfo.getId(), serverInfo);
 
@@ -100,9 +108,8 @@ public class Velocitymanager {
             }
 
             BasicServerInfo basicServerInfo = this.registeredServers.get(id);
-            RegisteredServer registeredServer = this.proxyServer.getServer(
-                    basicServerInfo.getName()
-            ).get();
+            RegisteredServer registeredServer =
+                this.proxyServer.getServer(basicServerInfo.getName()).get();
             this.proxyServer.unregisterServer(registeredServer.getServerInfo());
             toBeRemoved.add(id);
 
@@ -110,21 +117,22 @@ public class Velocitymanager {
             this.serverManager.logger.logInfo(basicServerInfo.toString());
         }
 
-        toBeRemoved.forEach((id) -> this.registeredServers.remove(id));
+        toBeRemoved.forEach(id -> this.registeredServers.remove(id));
     }
 
     private ServerInfo createServerInfo(BasicServerInfo basicServerInfo) {
         return new ServerInfo(
-                basicServerInfo.getName(),
-                new InetSocketAddress(
-                        basicServerInfo.getIp(),
-                        basicServerInfo.getPort()
-                )
+            basicServerInfo.getName(),
+            new InetSocketAddress(
+                basicServerInfo.getIp(),
+                basicServerInfo.getPort()
+            )
         );
     }
 
     private void unregisterAllServers() {
-        Collection<RegisteredServer> allServers = this.proxyServer.getAllServers();
+        Collection<RegisteredServer> allServers =
+            this.proxyServer.getAllServers();
 
         for (RegisteredServer server : allServers) {
             this.proxyServer.unregisterServer(server.getServerInfo());

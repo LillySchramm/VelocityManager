@@ -4,14 +4,14 @@ import de.epsdev.velocitymanager.lib.config.IConfig;
 import de.epsdev.velocitymanager.lib.config.ILogger;
 import de.epsdev.velocitymanager.lib.tools.BasicServerInfo;
 import de.epsdev.velocitymanager.lib.tools.HTTP;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class VelocityServerManager {
+
     private final ServerType serverType;
     private final IConfig config;
     private UUID uuid;
@@ -25,7 +25,11 @@ public class VelocityServerManager {
         initializeServer();
     }
 
-    public VelocityServerManager(ServerType serverType, IConfig config, ILogger logger) {
+    public VelocityServerManager(
+        ServerType serverType,
+        IConfig config,
+        ILogger logger
+    ) {
         this.serverType = serverType;
         this.config = config;
         this.logger = logger;
@@ -42,23 +46,40 @@ public class VelocityServerManager {
             serverInfo.put("maximumPlayers", config.getMaxPlayers());
         }
 
-        HTTP.POST("ping/" +
-                (this.serverType == ServerType.GAME_SERVER ? "gameServer" : "proxyServer") + "/" + uuid.toString(),
-                serverInfo
+        HTTP.POST(
+            "ping/" +
+            (
+                this.serverType == ServerType.GAME_SERVER
+                    ? "gameServer"
+                    : "proxyServer"
+            ) +
+            "/" +
+            uuid.toString(),
+            serverInfo
         );
     }
 
     private String registerServer() {
         JSONObject result = HTTP.PUT(
-                "register" + (this.serverType == ServerType.GAME_SERVER ? "gameServer" : "proxyServer")
+            "register" +
+            (
+                this.serverType == ServerType.GAME_SERVER
+                    ? "gameServer"
+                    : "proxyServer"
+            )
         );
         return result.getString("id");
     }
 
     private void loadServerInformation() {
         JSONObject information = HTTP.GET(
-                (this.serverType == ServerType.GAME_SERVER ? "gameServer" : "proxyServer") + "/" +
-                        this.uuid.toString()
+            (
+                this.serverType == ServerType.GAME_SERVER
+                    ? "gameServer"
+                    : "proxyServer"
+            ) +
+            "/" +
+            this.uuid.toString()
         );
 
         this.name = information.getString("name");
@@ -94,12 +115,14 @@ public class VelocityServerManager {
         for (int i = 0; i < serverArray.length(); i++) {
             JSONObject rawServer = serverArray.getJSONObject(i);
 
-            server.add(new BasicServerInfo(
+            server.add(
+                new BasicServerInfo(
                     UUID.fromString(rawServer.getString("id")),
                     rawServer.getString("name"),
                     rawServer.getString("ip"),
                     rawServer.getInt("port")
-            ));
+                )
+            );
         }
 
         return server;
