@@ -92,6 +92,8 @@ prettier:
     image: node:14-alpine
     stage: linting
     allow_failure: true
-    script:
+    needs: []
+    before_script:
         - npm install -g prettier prettier-plugin-java
+    script:
         - npx prettier --check .
