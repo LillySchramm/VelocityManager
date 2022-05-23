@@ -2,6 +2,7 @@ stages:
     - pre-build
     - build
     - container-build
+    - linting
 
 variables:
     MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
@@ -86,3 +87,11 @@ build_api_container:
             --dockerfile "${CI_PROJECT_DIR}/api/Dockerfile"
             --destination "registry01.eps-dev.de/velocitymanager/api/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}"
             --destination "registry01.eps-dev.de/velocitymanager/api/${CI_COMMIT_REF_SLUG}:latest"
+
+prettier:
+    image: node:14-alpine
+    stage: linting
+    allow_failure: true
+    script:
+        - npm install -g prettier prettier-plugin-java
+        - npx prettier --check .

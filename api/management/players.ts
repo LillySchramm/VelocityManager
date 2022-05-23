@@ -9,6 +9,6 @@ export async function upsertPlayer(id: string, name: string): Promise<Player> {
             name,
         },
         update: {},
-        where: { id },
+        where: { id }
     });
 }
