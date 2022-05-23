@@ -1,22 +1,25 @@
 package de.epsdev.velocitymanager.config;
 
 import de.epsdev.velocitymanager.lib.config.IConfig;
-
 import java.io.*;
 import java.nio.file.Path;
 import java.util.Properties;
 import java.util.UUID;
 
-public class VelocityConfig implements IConfig{
+public class VelocityConfig implements IConfig {
+
     private final File configFile;
     private final Properties properties;
 
     public VelocityConfig(Path configPath) {
-        this.configFile = new File(configPath.toAbsolutePath() + "/velocity.properties");
+        this.configFile =
+            new File(configPath.toAbsolutePath() + "/velocity.properties");
 
         if (!this.configFile.exists()) {
             try {
-                File directory = new File(configPath.toAbsolutePath().toString());
+                File directory = new File(
+                    configPath.toAbsolutePath().toString()
+                );
                 directory.mkdirs();
                 configFile.createNewFile();
             } catch (IOException e) {

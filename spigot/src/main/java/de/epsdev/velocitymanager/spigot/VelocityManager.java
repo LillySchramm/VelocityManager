@@ -3,13 +3,13 @@ package de.epsdev.velocitymanager.spigot;
 import de.epsdev.velocitymanager.lib.ServerType;
 import de.epsdev.velocitymanager.lib.VelocityServerManager;
 import de.epsdev.velocitymanager.lib.config.IConfig;
+import java.util.UUID;
+import java.util.logging.Level;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.UUID;
-import java.util.logging.Level;
-
 public final class VelocityManager extends JavaPlugin {
+
     public VelocityServerManager serverManager;
     private FileConfiguration fileConfiguration;
 
@@ -50,18 +50,21 @@ public final class VelocityManager extends JavaPlugin {
     public void onEnable() {
         initializeConfig();
 
-        this.serverManager = new VelocityServerManager(
+        this.serverManager =
+            new VelocityServerManager(
                 ServerType.GAME_SERVER,
                 iConfig,
                 message -> getLogger().log(Level.INFO, message)
-        );
+            );
 
-        this.getServer().getScheduler().scheduleSyncRepeatingTask(
+        this.getServer()
+            .getScheduler()
+            .scheduleSyncRepeatingTask(
                 this,
                 () -> this.serverManager.ping(),
                 0L,
                 20L
-        );
+            );
     }
 
     private void initializeConfig() {

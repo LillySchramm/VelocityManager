@@ -6,7 +6,9 @@ export async function upsertPlayer(id: string, name: string): Promise<Player> {
     return await prisma.player.upsert({
         create: {
             id,
-            name
-        }, update: {}, where: { id }
+            name,
+        },
+        update: {},
+        where: { id },
     });
 }
