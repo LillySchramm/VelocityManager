@@ -16,6 +16,9 @@ public class VelocityServerManager {
     private final IConfig config;
     private UUID uuid;
     private String name;
+    private final UUID DEFAULT_SERVER_TYPE_ID = UUID.fromString(
+        "00000000-0000-0000-0000-000000000001"
+    );
     public ILogger logger = message -> System.out.println("[EPS] " + message);
 
     public VelocityServerManager(ServerType serverType, IConfig config) {
@@ -126,6 +129,20 @@ public class VelocityServerManager {
         }
 
         return server;
+    }
+
+    public UUID getJoinableServer() {
+        return getJoinableServer(DEFAULT_SERVER_TYPE_ID);
+    }
+
+    public UUID getJoinableServer(UUID serverTypeId) {
+        JSONObject server = HTTP.GET(
+            "serverType/" + serverTypeId + "/joinableServer"
+        );
+
+        return server.getBoolean("found")
+            ? UUID.fromString(server.getString("id"))
+            : null;
     }
 
     public void setLogger(ILogger logger) {
