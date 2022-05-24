@@ -71,11 +71,19 @@ public class Velocitymanager {
                 this,
                 PlayerChooseInitialServerEvent.class,
                 chooseInitialServerEvent -> {
-                    chooseInitialServerEvent.getPlayer().getUniqueId();
-                    chooseInitialServerEvent.getPlayer().getUsername();
+                    UUID serverID = serverManager.getJoinableServer();
+
+                    if (serverID == null) {
+                        chooseInitialServerEvent.setInitialServer(null);
+                        return;
+                    }
 
                     chooseInitialServerEvent.setInitialServer(
-                        proxyServer.getServer("straight_impala_lavender").get()
+                        proxyServer
+                            .getServer(
+                                registeredServers.get(serverID).getName()
+                            )
+                            .get()
                     );
                 }
             );
