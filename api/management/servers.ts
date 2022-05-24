@@ -143,8 +143,10 @@ export async function getJoinableServer(
                 lastContact: {
                     gte: Date.now() - Number(CONTACT_TIMEOUT),
                 },
-                serverTypeId: {
-                    equals: requestedServerTypeId,
+                serverType: {
+                    default: {
+                        equals: true,
+                    },
                 },
             },
         },
