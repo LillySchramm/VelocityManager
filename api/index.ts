@@ -6,6 +6,7 @@ import {
     getAllOnlineGameServer,
     getAllOnlineProxyServer,
     getGameServer,
+    getJoinableServer,
     getProxyServer,
     pingGameServer,
     pingProxyServer,
@@ -120,6 +121,18 @@ app.get(`/serverType/all`, async (req, res) => {
     const types = await getAllServerTypes();
 
     res.json({ types });
+});
+
+app.get(`/serverType/:id/joinableServer`, async (req, res) => {
+    const serverTypeId = req.params.id;
+    const server = await getJoinableServer(serverTypeId);
+
+    if (!server) {
+        res.json({ found: false });
+        return;
+    }
+
+    res.json({ found: true, id: server.id, name: server.name });
 });
 
 app.put(`/player/createIfNotExistent`, async (req, res) => {

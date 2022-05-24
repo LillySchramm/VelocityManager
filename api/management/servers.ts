@@ -134,6 +134,36 @@ export async function getAllOnlineGameServer(): Promise<GameServer[]> {
     });
 }
 
+export async function getJoinableServer(
+    requestedServerTypeId: string
+): Promise<GameServer | undefined> {
+    const onlineLobbyServers = await prisma.gameServer.findMany({
+        where: {
+            AND: {
+                lastContact: {
+                    gte: Date.now() - Number(CONTACT_TIMEOUT),
+                },
+                serverTypeId: {
+                    equals: requestedServerTypeId,
+                },
+            },
+        },
+        include: {
+            Player: true,
+        },
+        orderBy: {
+            Player: {
+                _count: "desc",
+            },
+        },
+    });
+
+    const notFullLobbyServers = onlineLobbyServers.filter(
+        (server) => server.Player.length !== server.maximumPlayers
+    );
+    return notFullLobbyServers.shift();
+}
+
 function generateName(): string {
     return uniqueNamesGenerator({
         dictionaries: [adjectives, animals, colors],
