@@ -137,7 +137,7 @@ export async function getAllOnlineGameServer(): Promise<GameServer[]> {
 export async function getJoinableServer(
     requestedServerTypeId: string
 ): Promise<GameServer | undefined> {
-    const onlineLobbyServers = await prisma.gameServer.findMany({
+    const onlineServers = await prisma.gameServer.findMany({
         where: {
             AND: {
                 lastContact: {
@@ -160,7 +160,7 @@ export async function getJoinableServer(
         },
     });
 
-    const notFullLobbyServers = onlineLobbyServers.filter(
+    const notFullLobbyServers = onlineServers.filter(
         (server) => server.Player.length !== server.maximumPlayers
     );
     return notFullLobbyServers.shift();
