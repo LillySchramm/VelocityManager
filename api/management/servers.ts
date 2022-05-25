@@ -9,7 +9,7 @@ import { BackendGameServer, BackendProxyServer } from "../models/server.model";
 
 const prisma = new PrismaClient();
 
-const CONTACT_TIMEOUT = BigInt(10 * 1000);
+const CONTACT_TIMEOUT = BigInt(100 * 1000);
 const DEFAULT_SERVER_TYPE_ID = "00000000-0000-0000-0000-000000000001";
 
 function getTTLQuery(): any {
@@ -135,7 +135,7 @@ export async function getAllOnlineGameServer(): Promise<GameServer[]> {
 }
 
 export async function getJoinableServer(
-    requestedServerTypeId: string
+    requestedServerTypeId: string | undefined
 ): Promise<GameServer | undefined> {
     const onlineServers = await prisma.gameServer.findMany({
         where: {
@@ -143,11 +143,7 @@ export async function getJoinableServer(
                 lastContact: {
                     gte: Date.now() - Number(CONTACT_TIMEOUT),
                 },
-                serverType: {
-                    default: {
-                        equals: true,
-                    },
-                },
+                serverTypeId: requestedServerTypeId,
             },
         },
         include: {
@@ -164,6 +160,15 @@ export async function getJoinableServer(
         (server) => server.Player.length !== server.maximumPlayers
     );
     return notFullLobbyServers.shift();
+}
+
+export async function isServerFull(serverId: string): Promise<boolean> {
+    const server = await prisma.gameServer.findFirst({
+        where: { id: serverId },
+        include: { Player: { where: getTTLQuery() } },
+    });
+
+    return !!server && server?.Player.length >= server?.maximumPlayers;
 }
 
 function generateName(): string {

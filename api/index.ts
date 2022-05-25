@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import basicAuth from "express-basic-auth";
-import { upsertPlayer } from "./management/players";
+import { setPlayerGameServer, upsertPlayer } from "./management/players";
 import {
     getAllOnlineGameServer,
     getAllOnlineProxyServer,
@@ -141,7 +141,16 @@ app.put(`/player/createIfNotExistent`, async (req, res) => {
 
     const player = await upsertPlayer(id, name);
 
-    res.json(player);
+    res.json({ ...player, lastContact: Number(player.lastContact) });
+});
+
+app.post(`/player/:id/join`, async (req, res) => {
+    const playerId: string = req.params.id;
+    const serverId: string = req.body.serverId;
+
+    const player = await setPlayerGameServer(playerId, serverId);
+
+    res.json({ success: !!player });
 });
 
 const server = app.listen(30001, () =>

@@ -14,6 +14,7 @@ datasource db {
 model Player {
   id                 String       @id
   name               String       @unique
+  lastContact        BigInt       @default(0)
   currentGameServer  GameServer?  @relation(fields: [gameServerId], references: [id])
   currentProxyServer ProxyServer? @relation(fields: [proxyServerId], references: [id])
   gameServerId       String?
