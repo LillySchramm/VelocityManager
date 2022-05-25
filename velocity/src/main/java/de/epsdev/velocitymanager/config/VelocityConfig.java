@@ -3,6 +3,7 @@ package de.epsdev.velocitymanager.config;
 import de.epsdev.velocitymanager.lib.config.IConfig;
 import java.io.*;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -90,5 +91,10 @@ public class VelocityConfig implements IConfig {
     @Override
     public int getMaxPlayers() {
         return 0;
+    }
+
+    @Override
+    public List<UUID> getPlayerIds() {
+        return null;
     }
 }

@@ -6,12 +6,14 @@ import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import de.epsdev.velocitymanager.config.VelocityConfig;
 import de.epsdev.velocitymanager.lib.ServerType;
 import de.epsdev.velocitymanager.lib.VelocityServerManager;
+import de.epsdev.velocitymanager.lib.basic.BasicPlayer;
 import de.epsdev.velocitymanager.lib.basic.BasicServerInfo;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
@@ -70,25 +72,35 @@ public class Velocitymanager {
             .register(
                 this,
                 PlayerChooseInitialServerEvent.class,
-                chooseInitialServerEvent -> {
-                    UUID serverID = serverManager.getJoinableServer();
-
-                    if (serverID == null) {
-                        chooseInitialServerEvent.setInitialServer(null);
-                        return;
-                    }
-
-                    chooseInitialServerEvent.setInitialServer(
-                        proxyServer
-                            .getServer(
-                                registeredServers.get(serverID).getName()
-                            )
-                            .get()
-                    );
-                }
+                this::handlePlayerConnect
             );
 
         unregisterAllServers();
+    }
+
+    private BasicPlayer marshalPlayer(Player player) {
+        return new BasicPlayer(player.getUniqueId(), player.getUsername());
+    }
+
+    private void handlePlayerConnect(PlayerChooseInitialServerEvent event) {
+        BasicPlayer player = this.marshalPlayer(event.getPlayer());
+        player.createPlayerIfNotExists();
+
+        UUID serverID = serverManager.getJoinableServer();
+        boolean canJoinServer = player.joinServer(serverID);
+
+        if (!canJoinServer) {
+            event.setInitialServer(null);
+            return;
+        }
+
+        event.setInitialServer(
+            proxyServer
+                .getServer(registeredServers.get(serverID).getName())
+                .get()
+        );
+
+        logger.info("Player connected: " + player);
     }
 
     private void updateGameServers() {
