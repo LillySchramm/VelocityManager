@@ -3,9 +3,12 @@ package de.epsdev.velocitymanager.spigot;
 import de.epsdev.velocitymanager.lib.ServerType;
 import de.epsdev.velocitymanager.lib.VelocityServerManager;
 import de.epsdev.velocitymanager.lib.config.IConfig;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class VelocityManager extends JavaPlugin {
@@ -43,6 +46,17 @@ public final class VelocityManager extends JavaPlugin {
         @Override
         public int getMaxPlayers() {
             return getServer().getMaxPlayers();
+        }
+
+        @Override
+        public List<UUID> getPlayerIds() {
+            List<UUID> playerIds = new ArrayList<>();
+
+            for (Player player : getServer().getOnlinePlayers()) playerIds.add(
+                player.getUniqueId()
+            );
+
+            return playerIds;
         }
     };
 
