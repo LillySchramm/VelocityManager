@@ -1,8 +1,8 @@
 package de.epsdev.velocitymanager.lib;
 
+import de.epsdev.velocitymanager.lib.basic.BasicServerInfo;
 import de.epsdev.velocitymanager.lib.config.IConfig;
 import de.epsdev.velocitymanager.lib.config.ILogger;
-import de.epsdev.velocitymanager.lib.tools.BasicServerInfo;
 import de.epsdev.velocitymanager.lib.tools.HTTP;
 import java.util.ArrayList;
 import java.util.List;

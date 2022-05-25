@@ -1,4 +1,4 @@
-package de.epsdev.velocitymanager.lib.tools;
+package de.epsdev.velocitymanager.lib.basic;
 
 import java.util.UUID;
 

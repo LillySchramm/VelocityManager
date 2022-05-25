@@ -12,7 +12,7 @@ import com.velocitypowered.api.proxy.server.ServerInfo;
 import de.epsdev.velocitymanager.config.VelocityConfig;
 import de.epsdev.velocitymanager.lib.ServerType;
 import de.epsdev.velocitymanager.lib.VelocityServerManager;
-import de.epsdev.velocitymanager.lib.tools.BasicServerInfo;
+import de.epsdev.velocitymanager.lib.basic.BasicServerInfo;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.*;
