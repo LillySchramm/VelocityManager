@@ -1,7 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import basicAuth from "express-basic-auth";
-import { setPlayerGameServer, upsertPlayer } from "./management/players";
+import {
+    pingPlayers,
+    setPlayerGameServer,
+    upsertPlayer,
+} from "./management/players";
 import {
     getAllOnlineGameServer,
     getAllOnlineProxyServer,
@@ -48,8 +52,10 @@ app.post(`/ping/gameServer/:id`, async (req, res) => {
     const ip: string = req.ip.split(":").pop() || "";
     const port: number = req.body.port;
     const maximumPlayers = req.body.maximumPlayers;
+    const players: string[] = req.body.players || [];
 
     const successful = await pingGameServer(id, ip, port, maximumPlayers);
+    await pingPlayers(players);
 
     res.json({
         ping: "pong",

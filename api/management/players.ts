@@ -33,3 +33,14 @@ export async function setPlayerGameServer(
         },
     });
 }
+
+export async function pingPlayers(playerIds: string[]): Promise<void> {
+    if (!playerIds) {
+        return;
+    }
+
+    await prisma.player.updateMany({
+        where: { id: { in: playerIds } },
+        data: { lastContact: Date.now() },
+    });
+}
