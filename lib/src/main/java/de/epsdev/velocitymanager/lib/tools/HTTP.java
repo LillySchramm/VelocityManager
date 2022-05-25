@@ -38,7 +38,21 @@ public class HTTP {
     }
 
     public static JSONObject PUT(String urlToRequest) {
-        return authenticatedRequest(new HttpPut(urlBase + urlToRequest));
+        return PUT(urlToRequest, null);
+    }
+
+    public static JSONObject PUT(String urlToRequest, JSONObject body) {
+        HttpPut httpPut = new HttpPut(urlBase + urlToRequest);
+
+        if (body == null) {
+            return authenticatedRequest(httpPut);
+        }
+
+        httpPut.setEntity(
+            new StringEntity(body.toString(), ContentType.APPLICATION_JSON)
+        );
+
+        return authenticatedRequest(httpPut);
     }
 
     private static JSONObject authenticatedRequest(HttpRequestBase request) {

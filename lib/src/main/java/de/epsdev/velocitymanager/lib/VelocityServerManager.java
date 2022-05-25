@@ -1,5 +1,6 @@
 package de.epsdev.velocitymanager.lib;
 
+import de.epsdev.velocitymanager.lib.basic.BasicPlayer;
 import de.epsdev.velocitymanager.lib.basic.BasicServerInfo;
 import de.epsdev.velocitymanager.lib.config.IConfig;
 import de.epsdev.velocitymanager.lib.config.ILogger;
@@ -47,6 +48,8 @@ public class VelocityServerManager {
             serverInfo = new JSONObject();
             serverInfo.put("port", config.getServerPort());
             serverInfo.put("maximumPlayers", config.getMaxPlayers());
+
+            serverInfo.put("players", new JSONArray(config.getPlayerIds()));
         }
 
         HTTP.POST(
