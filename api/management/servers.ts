@@ -12,6 +12,14 @@ const prisma = new PrismaClient();
 const CONTACT_TIMEOUT = BigInt(10 * 1000);
 const DEFAULT_SERVER_TYPE_ID = "00000000-0000-0000-0000-000000000001";
 
+function getTTLQuery(): any {
+    return {
+        lastContact: {
+            gte: Date.now() - Number(CONTACT_TIMEOUT),
+        },
+    };
+}
+
 export async function registerGameServer(): Promise<GameServer> {
     const gameServer = await prisma.gameServer.create({
         data: {
@@ -116,21 +124,13 @@ export async function getProxyServer(
 
 export async function getAllOnlineProxyServer(): Promise<ProxyServer[]> {
     return await prisma.proxyServer.findMany({
-        where: {
-            lastContact: {
-                gte: Date.now() - Number(CONTACT_TIMEOUT),
-            },
-        },
+        where: getTTLQuery(),
     });
 }
 
 export async function getAllOnlineGameServer(): Promise<GameServer[]> {
     return await prisma.gameServer.findMany({
-        where: {
-            lastContact: {
-                gte: Date.now() - Number(CONTACT_TIMEOUT),
-            },
-        },
+        where: getTTLQuery(),
     });
 }
 
@@ -151,7 +151,7 @@ export async function getJoinableServer(
             },
         },
         include: {
-            Player: true,
+            Player: { where: getTTLQuery() },
         },
         orderBy: {
             Player: {
