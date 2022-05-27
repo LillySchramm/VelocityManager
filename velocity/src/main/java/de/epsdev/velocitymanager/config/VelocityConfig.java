@@ -69,7 +69,13 @@ public class VelocityConfig implements IConfig {
 
     @Override
     public void setServerUUID(UUID uuid) {
-        this.properties.setProperty("uuid", uuid.toString());
+        String uuidString = "";
+
+        if (uuid != null) {
+            uuidString = uuid.toString();
+        }
+
+        this.properties.setProperty("uuid", uuidString);
         saveConfig();
     }
 

@@ -41,7 +41,13 @@ public class Config implements IConfig {
 
     @Override
     public void setServerUUID(UUID uuid) {
-        fileConfiguration.set("uuid", uuid.toString());
+        String uuidString = "";
+
+        if (uuid != null) {
+            uuidString = uuid.toString();
+        }
+
+        fileConfiguration.set("uuid", uuidString);
         saveConfig();
     }
 
