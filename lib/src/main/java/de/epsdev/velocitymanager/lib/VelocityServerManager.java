@@ -1,10 +1,11 @@
 package de.epsdev.velocitymanager.lib;
 
-import de.epsdev.velocitymanager.lib.basic.BasicPlayer;
 import de.epsdev.velocitymanager.lib.basic.BasicServerInfo;
+import de.epsdev.velocitymanager.lib.config.DefaultLogger;
 import de.epsdev.velocitymanager.lib.config.IConfig;
 import de.epsdev.velocitymanager.lib.config.ILogger;
 import de.epsdev.velocitymanager.lib.tools.HTTP;
+import de.epsdev.velocitymanager.lib.tools.HTTPRequestResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +21,7 @@ public class VelocityServerManager {
     private final UUID DEFAULT_SERVER_TYPE_ID = UUID.fromString(
         "00000000-0000-0000-0000-000000000001"
     );
-    public ILogger logger = message -> System.out.println("[EPS] " + message);
+    public ILogger logger = new DefaultLogger();
 
     public VelocityServerManager(ServerType serverType, IConfig config) {
         this.serverType = serverType;
@@ -80,17 +81,26 @@ public class VelocityServerManager {
     }
 
     private void loadServerInformation() {
-        JSONObject information = HTTP
-            .GET(
-                (
-                    this.serverType == ServerType.GAME_SERVER
-                        ? "gameServer"
-                        : "proxyServer"
-                ) +
-                "/" +
-                this.uuid.toString()
-            )
-            .getJsonResponse();
+        HTTPRequestResponse serverInfoResponse = HTTP.GET(
+            (
+                this.serverType == ServerType.GAME_SERVER
+                    ? "gameServer"
+                    : "proxyServer"
+            ) +
+            "/" +
+            this.uuid.toString()
+        );
+
+        if (serverInfoResponse.getResponseCode() != 200) {
+            logger.logWarning("Server ID wasn't found in the database.");
+            logger.logWarning("Will register as a new server.");
+            config.setServerUUID(null);
+
+            initializeServer();
+            return;
+        }
+
+        JSONObject information = serverInfoResponse.getJsonResponse();
 
         this.name = information.getString("name");
 
