@@ -36,7 +36,9 @@ public class BasicPlayer {
         JSONObject body = new JSONObject();
         body.put("serverId", serverId.toString());
 
-        JSONObject response = HTTP.POST("player/" + id + "/join", body);
+        JSONObject response = HTTP
+            .POST("player/" + id + "/join", body)
+            .getJsonResponse();
 
         return response.getBoolean("success");
     }

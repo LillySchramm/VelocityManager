@@ -1,8 +1,6 @@
 package de.epsdev.velocitymanager.lib.tools;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -19,11 +17,14 @@ public class HTTP {
     public static String urlBase = "";
     public static String token = "";
 
-    public static JSONObject GET(String urlToRequest) {
+    public static HTTPRequestResponse GET(String urlToRequest) {
         return authenticatedRequest(new HttpGet(urlBase + urlToRequest));
     }
 
-    public static JSONObject POST(String urlToRequest, JSONObject body) {
+    public static HTTPRequestResponse POST(
+        String urlToRequest,
+        JSONObject body
+    ) {
         HttpPost httpPost = new HttpPost(urlBase + urlToRequest);
 
         if (body == null) {
@@ -37,11 +38,14 @@ public class HTTP {
         return authenticatedRequest(httpPost);
     }
 
-    public static JSONObject PUT(String urlToRequest) {
+    public static HTTPRequestResponse PUT(String urlToRequest) {
         return PUT(urlToRequest, null);
     }
 
-    public static JSONObject PUT(String urlToRequest, JSONObject body) {
+    public static HTTPRequestResponse PUT(
+        String urlToRequest,
+        JSONObject body
+    ) {
         HttpPut httpPut = new HttpPut(urlBase + urlToRequest);
 
         if (body == null) {
@@ -55,25 +59,20 @@ public class HTTP {
         return authenticatedRequest(httpPut);
     }
 
-    private static JSONObject authenticatedRequest(HttpRequestBase request) {
-        String result = "";
+    private static HTTPRequestResponse authenticatedRequest(
+        HttpRequestBase request
+    ) {
+        HTTPRequestResponse result = null;
         try {
             HttpClient client = new DefaultHttpClient();
             request.addHeader("Authorization", "Basic " + token);
             HttpResponse response = client.execute(request);
 
-            BufferedReader rd = new BufferedReader(
-                new InputStreamReader(response.getEntity().getContent())
-            );
-
-            String line = "";
-            while ((line = rd.readLine()) != null) {
-                result += line;
-            }
+            result = new HTTPRequestResponse(response);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return new JSONObject(result);
+        return result;
     }
 }

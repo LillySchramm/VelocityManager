@@ -66,27 +66,31 @@ public class VelocityServerManager {
     }
 
     private String registerServer() {
-        JSONObject result = HTTP.PUT(
-            "register" +
-            (
-                this.serverType == ServerType.GAME_SERVER
-                    ? "gameServer"
-                    : "proxyServer"
+        JSONObject result = HTTP
+            .PUT(
+                "register" +
+                (
+                    this.serverType == ServerType.GAME_SERVER
+                        ? "gameServer"
+                        : "proxyServer"
+                )
             )
-        );
+            .getJsonResponse();
         return result.getString("id");
     }
 
     private void loadServerInformation() {
-        JSONObject information = HTTP.GET(
-            (
-                this.serverType == ServerType.GAME_SERVER
-                    ? "gameServer"
-                    : "proxyServer"
-            ) +
-            "/" +
-            this.uuid.toString()
-        );
+        JSONObject information = HTTP
+            .GET(
+                (
+                    this.serverType == ServerType.GAME_SERVER
+                        ? "gameServer"
+                        : "proxyServer"
+                ) +
+                "/" +
+                this.uuid.toString()
+            )
+            .getJsonResponse();
 
         this.name = information.getString("name");
 
@@ -115,7 +119,7 @@ public class VelocityServerManager {
     public List<BasicServerInfo> getAllOnlineGameServer() {
         List<BasicServerInfo> server = new ArrayList<>();
 
-        JSONObject response = HTTP.GET("gameServer/online");
+        JSONObject response = HTTP.GET("gameServer/online").getJsonResponse();
         JSONArray serverArray = response.getJSONArray("servers");
 
         for (int i = 0; i < serverArray.length(); i++) {
@@ -139,9 +143,9 @@ public class VelocityServerManager {
     }
 
     public UUID getJoinableServer(UUID serverTypeId) {
-        JSONObject server = HTTP.GET(
-            "serverType/" + serverTypeId + "/joinableServer"
-        );
+        JSONObject server = HTTP
+            .GET("serverType/" + serverTypeId + "/joinableServer")
+            .getJsonResponse();
 
         return server.getBoolean("found")
             ? UUID.fromString(server.getString("id"))
