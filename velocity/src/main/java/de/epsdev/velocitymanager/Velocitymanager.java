@@ -10,11 +10,13 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
+import de.epsdev.velocitymanager.config.PluginLogger;
 import de.epsdev.velocitymanager.config.VelocityConfig;
 import de.epsdev.velocitymanager.lib.ServerType;
 import de.epsdev.velocitymanager.lib.VelocityServerManager;
 import de.epsdev.velocitymanager.lib.basic.BasicPlayer;
 import de.epsdev.velocitymanager.lib.basic.BasicServerInfo;
+import de.epsdev.velocitymanager.lib.config.ILogger;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.*;
@@ -30,11 +32,11 @@ import org.slf4j.Logger;
 )
 public class Velocitymanager {
 
-    private final Logger logger;
     private final ProxyServer proxyServer;
     private final Path configPath;
     public VelocityServerManager serverManager;
     private final HashMap<UUID, BasicServerInfo> registeredServers = new HashMap<>();
+    private final ILogger logger;
 
     @Inject
     public Velocitymanager(
@@ -43,7 +45,7 @@ public class Velocitymanager {
         @DataDirectory final Path folder
     ) {
         this.proxyServer = server;
-        this.logger = logger;
+        this.logger = new PluginLogger(logger);
         this.configPath = folder;
     }
 
@@ -53,7 +55,7 @@ public class Velocitymanager {
             new VelocityServerManager(
                 ServerType.PROXY_SERVER,
                 new VelocityConfig(configPath),
-                message -> logger.info(message)
+                this.logger
             );
 
         this.proxyServer.getScheduler()
@@ -100,7 +102,7 @@ public class Velocitymanager {
                 .get()
         );
 
-        logger.info("Player connected: " + player);
+        logger.logInfo("Player connected: " + player);
     }
 
     private void updateGameServers() {
@@ -117,8 +119,8 @@ public class Velocitymanager {
 
             this.registeredServers.put(serverInfo.getId(), serverInfo);
 
-            this.serverManager.logger.logInfo("New Server Registered");
-            this.serverManager.logger.logInfo(serverInfo.toString());
+            logger.logInfo("New Server Registered");
+            logger.logInfo(serverInfo.toString());
         }
 
         ArrayList<UUID> toBeRemoved = new ArrayList<>();
@@ -133,11 +135,11 @@ public class Velocitymanager {
             this.proxyServer.unregisterServer(registeredServer.getServerInfo());
             toBeRemoved.add(id);
 
-            this.serverManager.logger.logInfo("Server Disconnected");
-            this.serverManager.logger.logInfo(basicServerInfo.toString());
+            logger.logInfo("Server Disconnected");
+            logger.logInfo(basicServerInfo.toString());
         }
 
-        toBeRemoved.forEach(id -> this.registeredServers.remove(id));
+        toBeRemoved.forEach(this.registeredServers::remove);
     }
 
     private ServerInfo createServerInfo(BasicServerInfo basicServerInfo) {
