@@ -4,6 +4,7 @@ import de.epsdev.velocitymanager.lib.basic.BasicServerInfo;
 import de.epsdev.velocitymanager.lib.config.DefaultLogger;
 import de.epsdev.velocitymanager.lib.config.IConfig;
 import de.epsdev.velocitymanager.lib.config.ILogger;
+import de.epsdev.velocitymanager.lib.exeptions.TokenInvalidException;
 import de.epsdev.velocitymanager.lib.tools.HTTP;
 import de.epsdev.velocitymanager.lib.tools.HTTPRequestResponse;
 import java.util.ArrayList;
@@ -23,7 +24,8 @@ public class VelocityServerManager {
     );
     public ILogger logger = new DefaultLogger();
 
-    public VelocityServerManager(ServerType serverType, IConfig config) {
+    public VelocityServerManager(ServerType serverType, IConfig config)
+        throws TokenInvalidException {
         this.serverType = serverType;
         this.config = config;
 
@@ -34,7 +36,7 @@ public class VelocityServerManager {
         ServerType serverType,
         IConfig config,
         ILogger logger
-    ) {
+    ) throws TokenInvalidException {
         this.serverType = serverType;
         this.config = config;
         this.logger = logger;
@@ -80,7 +82,7 @@ public class VelocityServerManager {
         return result.getString("id");
     }
 
-    private void loadServerInformation() {
+    private void loadServerInformation() throws TokenInvalidException {
         HTTPRequestResponse serverInfoResponse = HTTP.GET(
             (
                 this.serverType == ServerType.GAME_SERVER
@@ -109,11 +111,15 @@ public class VelocityServerManager {
         logger.logInfo("Name: " + this.name);
     }
 
-    private void initializeServer() {
+    private void initializeServer() throws TokenInvalidException {
         logger.logInfo("Initializing Server");
         HTTP.urlBase = this.config.getAPIUrl();
         HTTP.token = this.config.getToken();
         String rawUuid = this.config.getServerUUID();
+
+        if (!tokenIsValid()) {
+            throw new TokenInvalidException();
+        }
 
         if (rawUuid.equals("")) {
             logger.logInfo("No UUID Found. Registering Server");
@@ -160,6 +166,12 @@ public class VelocityServerManager {
         return server.getBoolean("found")
             ? UUID.fromString(server.getString("id"))
             : null;
+    }
+
+    public boolean tokenIsValid() {
+        HTTPRequestResponse response = HTTP.GET("ping");
+
+        return response.getResponseCode() != 401;
     }
 
     public void setLogger(ILogger logger) {

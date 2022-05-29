@@ -17,6 +17,7 @@ import de.epsdev.velocitymanager.lib.VelocityServerManager;
 import de.epsdev.velocitymanager.lib.basic.BasicPlayer;
 import de.epsdev.velocitymanager.lib.basic.BasicServerInfo;
 import de.epsdev.velocitymanager.lib.config.ILogger;
+import de.epsdev.velocitymanager.lib.exeptions.TokenInvalidException;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.*;
@@ -50,7 +51,8 @@ public class Velocitymanager {
     }
 
     @Subscribe
-    public void onProxyInitialization(ProxyInitializeEvent event) {
+    public void onProxyInitialization(ProxyInitializeEvent event)
+        throws TokenInvalidException {
         this.serverManager =
             new VelocityServerManager(
                 ServerType.PROXY_SERVER,
