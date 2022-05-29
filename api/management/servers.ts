@@ -6,6 +6,7 @@ import {
     animals,
 } from "unique-names-generator";
 import { BackendGameServer, BackendProxyServer } from "../models/server.model";
+import { cleanBackendGameServer } from "../tools/cleanup";
 
 const prisma = new PrismaClient();
 
@@ -83,17 +84,20 @@ export async function getGameServer(
     id: string
 ): Promise<BackendGameServer | undefined> {
     try {
-        const server: BackendGameServer | null =
-            await prisma.gameServer.findFirst({
-                where: { id },
-            });
+        const server = await prisma.gameServer.findFirst({
+            where: { id },
+            include: { Player: { where: getTTLQuery(), select: { id: true } } },
+        });
         if (!server) {
             return undefined;
         }
 
-        server.isOnline = server.lastContact + CONTACT_TIMEOUT >= Date.now();
+        const backendServer: BackendGameServer = server;
+        backendServer.playerCount = server.Player.length;
+        backendServer.isOnline =
+            server.lastContact + CONTACT_TIMEOUT >= Date.now();
 
-        return server;
+        return cleanBackendGameServer(backendServer);
     } catch (e) {
         console.log(e);
 
@@ -128,10 +132,20 @@ export async function getAllOnlineProxyServer(): Promise<ProxyServer[]> {
     });
 }
 
-export async function getAllOnlineGameServer(): Promise<GameServer[]> {
-    return await prisma.gameServer.findMany({
+export async function getAllOnlineGameServer(): Promise<BackendGameServer[]> {
+    const servers = await prisma.gameServer.findMany({
         where: getTTLQuery(),
+        include: { Player: { where: getTTLQuery(), select: { id: true } } },
     });
+
+    const gameServers: BackendGameServer[] = servers.map((server) => {
+        const gameServer: BackendGameServer = server;
+        gameServer.playerCount = server.Player.length;
+
+        return cleanBackendGameServer(gameServer);
+    });
+
+    return gameServers;
 }
 
 export async function getJoinableServer(
