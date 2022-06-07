@@ -29,6 +29,7 @@ install_npm_dependencies:
             - api/node_modules
             - api/website
     script:
+        - npm install -g @angular/cli
         - cd api && npm i
         - cd ../website && npm i
 
