@@ -27,8 +27,10 @@ install_npm_dependencies:
         expire_in: 1 hrs
         paths:
             - api/node_modules
+            - api/website
     script:
         - cd api && npm i
+        - cd ../website && npm i
 
 build_spigot:
     image: maven:3.8.4-eclipse-temurin-16
