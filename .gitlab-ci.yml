@@ -28,9 +28,7 @@ install_npm_dependencies:
         paths:
             - api/node_modules
             - website/node_modules
-            - /usr/local/lib/node_modules
     script:
-        - npm install -g @angular/cli
         - cd api && npm i
         - cd ../website && npm i
 
@@ -85,7 +83,7 @@ build_website:
         paths:
             - website/dist
     script:
-        - cd website && ng build --configuration production
+        - cd website && npx ng build --configuration production
 
 build_api_container:
     stage: container-build
