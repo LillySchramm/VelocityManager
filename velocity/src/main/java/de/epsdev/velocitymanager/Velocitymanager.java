@@ -64,7 +64,7 @@ public class Velocitymanager {
             .buildTask(
                 this,
                 () -> {
-                    this.serverManager.ping();
+                    this.serverManager.auth.ping();
                     this.updateGameServers();
                 }
             )
@@ -90,7 +90,7 @@ public class Velocitymanager {
         BasicPlayer player = this.marshalPlayer(event.getPlayer());
         player.createPlayerIfNotExists();
 
-        UUID serverID = serverManager.getJoinableServer();
+        UUID serverID = serverManager.server.getJoinableServer();
         boolean canJoinServer = player.joinServer(serverID);
 
         if (!canJoinServer) {
@@ -108,7 +108,7 @@ public class Velocitymanager {
     }
 
     private void updateGameServers() {
-        List<BasicServerInfo> serverInfos = serverManager.getAllOnlineGameServer();
+        List<BasicServerInfo> serverInfos = BasicServerInfo.getAllOnlineGameServer();
 
         ArrayList<UUID> currentIds = new ArrayList<>();
         for (BasicServerInfo serverInfo : serverInfos) {
