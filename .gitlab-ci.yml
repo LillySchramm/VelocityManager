@@ -72,6 +72,19 @@ build_api:
     script:
         - cd api && npm run build
 
+build_website:
+    image: node:14-alpine
+    stage: build
+    needs:
+        - install_npm_dependencies
+    artifacts:
+        untracked: false
+        expire_in: 1 hrs
+        paths:
+            - website/dist
+    script:
+        - cd website && npx ng build --configuration production
+
 build_api_container:
     stage: container-build
     image:
