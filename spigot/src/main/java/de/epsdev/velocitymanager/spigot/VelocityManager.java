@@ -34,7 +34,7 @@ public final class VelocityManager extends JavaPlugin {
                 .getScheduler()
                 .scheduleSyncRepeatingTask(
                     this,
-                    () -> this.serverManager.ping(),
+                    () -> this.serverManager.auth.ping(),
                     0L,
                     20L
                 );
