@@ -27,7 +27,7 @@ install_npm_dependencies:
         expire_in: 1 hrs
         paths:
             - api/node_modules
-            - api/website
+            - website/node_modules
             - /usr/local/lib/node_modules
     script:
         - npm install -g @angular/cli
