@@ -28,6 +28,7 @@ install_npm_dependencies:
         paths:
             - api/node_modules
             - api/website
+            - /usr/local/lib/node_modules
     script:
         - npm install -g @angular/cli
         - cd api && npm i
