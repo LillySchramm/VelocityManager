@@ -103,6 +103,23 @@ build_api_container:
             --destination "registry01.eps-dev.de/velocitymanager/api/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}"
             --destination "registry01.eps-dev.de/velocitymanager/api/${CI_COMMIT_REF_SLUG}:latest"
 
+build_website_container:
+    stage: container-build
+    image:
+        name: "gcr.io/kaniko-project/executor:debug"
+        entrypoint: [""]
+    needs:
+        - build_website
+    script:
+        - mkdir -p /kaniko/.docker
+        - echo "{\"auths\":{\"registry01.eps-dev.de\":{\"auth\":\"$(printf "%s:%s" "${PRIVATE_REG_USER}" "${PRIVATE_REG_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+        - >-
+            /kaniko/executor
+            --context "${CI_PROJECT_DIR}/website"
+            --dockerfile "${CI_PROJECT_DIR}/website/Dockerfile"
+            --destination "registry01.eps-dev.de/velocitymanager/website/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}"
+            --destination "registry01.eps-dev.de/velocitymanager/website/${CI_COMMIT_REF_SLUG}:latest"
+
 prettier:
     image: node:14-alpine
     stage: linting
