@@ -1,5 +1,5 @@
-import express from "express";
-import { setPlayerGameServer, upsertPlayer } from "../management/players";
+import express from 'express';
+import { setPlayerGameServer, upsertPlayer } from '../management/players';
 
 const router = express.Router();
 

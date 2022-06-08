@@ -1,6 +1,6 @@
-import express from "express";
-import { getJoinableServer } from "../management/servers";
-import { getAllServerTypes } from "../management/serverTypes";
+import express from 'express';
+import { getJoinableServer } from '../management/servers';
+import { getAllServerTypes } from '../management/serverTypes';
 const router = express.Router();
 
 router.get(`/all`, async (req, res) => {

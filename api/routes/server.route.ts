@@ -1,5 +1,5 @@
-import express from "express";
-import { pingPlayers } from "../management/players";
+import express from 'express';
+import { pingPlayers } from '../management/players';
 import {
     getAllOnlineGameServer,
     getAllOnlineProxyServer,
@@ -9,7 +9,7 @@ import {
     pingProxyServer,
     registerGameServer,
     registerProxyServer,
-} from "../management/servers";
+} from '../management/servers';
 const router = express.Router();
 
 router.get(`/proxyServer/online`, async (req, res) => {
@@ -28,7 +28,7 @@ router.get(`/proxyServer/:id`, async (req, res) => {
 
     if (!server) {
         res.status(404);
-        res.json({ msg: "Could not find server" });
+        res.json({ msg: 'Could not find server' });
 
         return;
     }
@@ -42,14 +42,14 @@ router.post(`/ping/proxyServer/:id`, async (req, res) => {
     const successful = await pingProxyServer(id);
 
     res.json({
-        ping: "pong",
+        ping: 'pong',
         successful,
     });
 });
 
 router.post(`/ping/gameServer/:id`, async (req, res) => {
     const id = req.params.id;
-    const ip: string = req.ip.split(":").pop() || "";
+    const ip: string = req.ip.split(':').pop() || '';
     const port: number = req.body.port;
     const maximumPlayers = req.body.maximumPlayers;
     const players: string[] = req.body.players || [];
@@ -58,7 +58,7 @@ router.post(`/ping/gameServer/:id`, async (req, res) => {
     await pingPlayers(players);
 
     res.json({
-        ping: "pong",
+        ping: 'pong',
         successful,
     });
 });
@@ -91,7 +91,7 @@ router.get(`/gameServer/:id`, async (req, res) => {
 
     if (!server) {
         res.status(404);
-        res.json({ msg: "Could not find server" });
+        res.json({ msg: 'Could not find server' });
 
         return;
     }

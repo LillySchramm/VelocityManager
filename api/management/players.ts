@@ -1,5 +1,5 @@
-import { Player, PrismaClient } from "@prisma/client";
-import { isServerFull } from "./servers";
+import { Player, PrismaClient } from '@prisma/client';
+import { isServerFull } from './servers';
 
 const prisma = new PrismaClient();
 
