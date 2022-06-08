@@ -1,4 +1,4 @@
-import { BackendGameServer } from "../models/server.model";
+import { BackendGameServer } from '../models/server.model';
 
 export function cleanBackendGameServer(
     backendServer: BackendGameServer
