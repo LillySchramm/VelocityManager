@@ -13,6 +13,7 @@
     "author": "Elias Schramm",
     "license": "MIT",
     "devDependencies": {
+        "@types/cors": "^2.8.12",
         "@types/node": "^17.0.35",
         "express": "^4.18.1",
         "prettier": "2.6.2",
@@ -24,6 +25,7 @@
     "dependencies": {
         "@prisma/client": "^3.14.0",
         "@types/express": "^4.17.13",
+        "cors": "^2.8.5",
         "esbuild": "^0.14.39",
         "express-basic-auth": "^1.2.1",
         "unique-names-generator": "^4.7.1"
