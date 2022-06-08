@@ -1,4 +1,4 @@
-import { GameServer, ProxyServer } from "@prisma/client";
+import { GameServer, ProxyServer } from '@prisma/client';
 
 export type BackendGameServer = GameServer & {
     isOnline?: boolean;

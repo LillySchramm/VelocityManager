@@ -1,17 +1,17 @@
-import { PrismaClient, GameServer, ProxyServer } from "@prisma/client";
+import { PrismaClient, GameServer, ProxyServer } from '@prisma/client';
 import {
     uniqueNamesGenerator,
     adjectives,
     colors,
     animals,
-} from "unique-names-generator";
-import { BackendGameServer, BackendProxyServer } from "../models/server.model";
-import { cleanBackendGameServer } from "../tools/cleanup";
+} from 'unique-names-generator';
+import { BackendGameServer, BackendProxyServer } from '../models/server.model';
+import { cleanBackendGameServer } from '../tools/cleanup';
 
 const prisma = new PrismaClient();
 
 const CONTACT_TIMEOUT = BigInt(10 * 1000);
-const DEFAULT_SERVER_TYPE_ID = "00000000-0000-0000-0000-000000000001";
+const DEFAULT_SERVER_TYPE_ID = '00000000-0000-0000-0000-000000000001';
 
 function getTTLQuery(): any {
     return {
@@ -165,7 +165,7 @@ export async function getJoinableServer(
         },
         orderBy: {
             Player: {
-                _count: "desc",
+                _count: 'desc',
             },
         },
     });
