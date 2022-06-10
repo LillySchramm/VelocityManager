@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import {  Observable, of } from 'rxjs';
-import { catchError,  map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { PingResponse } from '../models/httpResponses.models';
 import { environment } from './../../environments/environment';
 
@@ -10,10 +10,7 @@ import { environment } from './../../environments/environment';
     providedIn: 'root',
 })
 export class AuthService {
-    constructor(
-        private http: HttpClient,
-        private router: Router
-    ) {}
+    constructor(private http: HttpClient, private router: Router) {}
 
     public isLoggedIn(): Observable<boolean> {
         const credentials = this.getSavedCredentials();
@@ -45,8 +42,8 @@ export class AuthService {
     }
 
     public logout(): void {
-        localStorage.removeItem('credentials')
-        this.router.navigate(['login'])
+        localStorage.removeItem('credentials');
+        this.router.navigate(['login']);
     }
 
     public login(username: String, password: String): Observable<boolean> {

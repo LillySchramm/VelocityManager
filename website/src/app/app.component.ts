@@ -13,9 +13,7 @@ export class AppComponent implements OnInit {
     items: MenuItem[] = [];
     activeItem!: MenuItem;
 
-    constructor(
-        private authService: AuthService
-    ) {}
+    constructor(private authService: AuthService) {}
 
     ngOnInit() {
         this.items = [
@@ -24,8 +22,8 @@ export class AppComponent implements OnInit {
         ];
 
         this.activeItem = this.items[0];
-        this.items[1].command = (() => {
-            this.authService.logout()
-        })
+        this.items[1].command = () => {
+            this.authService.logout();
+        };
     }
 }
