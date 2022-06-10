@@ -19,6 +19,12 @@ import { MessagesModule } from 'primeng/messages';
 
 import { LoginComponent } from './components/pages/login/login.component';
 import { HomeComponent } from './components/pages/home/home.component';
+import { StoreModule } from '@ngrx/store';
+import { reducers, metaReducers } from './store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
+import { EffectsModule } from '@ngrx/effects';
+import { AuthEffects } from './store/auth/auth.effects';
 
 @NgModule({
     declarations: [AppComponent, LoginComponent, HomeComponent],
@@ -37,6 +43,14 @@ import { HomeComponent } from './components/pages/home/home.component';
         ReactiveFormsModule,
         ToastModule,
         MessagesModule,
+        StoreModule.forRoot(reducers, {
+            metaReducers,
+        }),
+        StoreDevtoolsModule.instrument({
+            maxAge: 25,
+            logOnly: environment.production,
+        }),
+        EffectsModule.forRoot([AuthEffects]),
     ],
     providers: [],
     bootstrap: [AppComponent],

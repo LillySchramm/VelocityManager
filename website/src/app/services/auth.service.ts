@@ -14,6 +14,11 @@ export class AuthService {
 
     public isLoggedIn(): Observable<boolean> {
         const credentials = this.getSavedCredentials();
+
+        return this.verifyCredentials(credentials);
+    }
+
+    public verifyCredentials(credentials: String | null): Observable<boolean> {
         if (!credentials) {
             return of(false);
         }
@@ -37,7 +42,7 @@ export class AuthService {
         return { Authorization: 'Basic ' + credentials };
     }
 
-    private getSavedCredentials(): String | null {
+    public getSavedCredentials(): String | null {
         return localStorage.getItem('credentials');
     }
 
@@ -46,7 +51,10 @@ export class AuthService {
         this.router.navigate(['login']);
     }
 
-    public login(username: String, password: String): Observable<boolean> {
+    public login(
+        username: String,
+        password: String
+    ): Observable<String | null> {
         const credentials = btoa(`${username}:${password}`);
 
         return this.http
@@ -56,10 +64,10 @@ export class AuthService {
             .pipe(
                 map(() => {
                     localStorage.setItem('credentials', credentials);
-                    return true;
+                    return credentials;
                 }),
                 catchError(() => {
-                    return of(false);
+                    return of(null);
                 })
             );
     }

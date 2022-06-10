@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { MenuItem, MessageService } from 'primeng/api';
 import { AuthService } from './services/auth.service';
+import { loadCredentials, logout } from './store/auth/auth.actions';
 
 @Component({
     selector: 'app-root',
@@ -13,7 +15,7 @@ export class AppComponent implements OnInit {
     items: MenuItem[] = [];
     activeItem!: MenuItem;
 
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService, private store: Store) {}
 
     ngOnInit() {
         this.items = [
@@ -23,7 +25,9 @@ export class AppComponent implements OnInit {
 
         this.activeItem = this.items[0];
         this.items[1].command = () => {
-            this.authService.logout();
+            this.store.dispatch(logout());
         };
+
+        this.store.dispatch(loadCredentials());
     }
 }
