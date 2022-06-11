@@ -9,3 +9,8 @@ export const selectAuthLoaded = createSelector(
     selectAuth,
     (auth) => auth.loaded
 );
+
+export const selectIsLoggedIn = createSelector(
+    selectAuth,
+    (auth) => !!auth.token && auth.token !== ''
+);

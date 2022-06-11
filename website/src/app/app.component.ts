@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { MenuItem, MessageService } from 'primeng/api';
+import { Observable } from 'rxjs';
 import { AuthService } from './services/auth.service';
 import { loadCredentials, logout } from './store/auth/auth.actions';
+import { selectIsLoggedIn } from './store/auth/auth.selectors';
 import { removeMessagesFromQueue } from './store/message/message.actions';
 import { selectMessageQueue } from './store/message/message.selectors';
 
@@ -18,9 +20,13 @@ export class AppComponent implements OnInit {
     items: MenuItem[] = [];
     activeItem!: MenuItem;
 
+    isLoggedIn$: Observable<Boolean>;
+
     displayedMessageIds: String[] = [];
 
-    constructor(private store: Store, private messageService: MessageService) {}
+    constructor(private store: Store, private messageService: MessageService) {
+        this.isLoggedIn$ = store.select(selectIsLoggedIn);
+    }
 
     ngOnInit() {
         this.items = [

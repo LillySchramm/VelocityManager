@@ -25,9 +25,15 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { EffectsModule } from '@ngrx/effects';
 import { AuthEffects } from './store/auth/auth.effects';
+import { HeaderComponent } from './components/core/header/header.component';
 
 @NgModule({
-    declarations: [AppComponent, LoginComponent, HomeComponent],
+    declarations: [
+        AppComponent,
+        LoginComponent,
+        HomeComponent,
+        HeaderComponent,
+    ],
     imports: [
         BrowserModule,
         AppRoutingModule,

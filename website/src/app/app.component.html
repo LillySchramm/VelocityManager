@@ -1,6 +1,6 @@
 <p-toast></p-toast>
 
-<p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
 <div class="p-component">
+    <app-header *ngIf="isLoggedIn$ | async"></app-header>
     <router-outlet></router-outlet>
 </div>
