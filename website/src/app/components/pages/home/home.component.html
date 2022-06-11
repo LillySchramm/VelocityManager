@@ -1,1 +1,76 @@
-<p>home works!</p>
+<div class="surface-ground px-4 py-5 md:px-6 lg:px-8" *ngIf="currentKpis">
+    <div class="grid">
+        <div class="col-12 md:col-6 lg:col-3">
+            <div class="surface-card shadow-2 p-3 border-round">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-500 font-medium mb-3"
+                            >Total Players</span
+                        >
+                        <div class="text-900 font-medium text-xl">
+                            {{ currentKpis.players.totalPlayers }}
+                        </div>
+                    </div>
+                    <div
+                        class="flex align-items-center justify-content-center bg-blue-100 border-round"
+                        style="width: 2.5rem; height: 2.5rem"
+                    >
+                        <i class="pi pi-user text-blue-500 text-xl"></i>
+                    </div>
+                </div>
+                <span class="text-green-500 font-medium"
+                    >{{ currentKpis.players.currentPlayers }}
+                </span>
+                <span class="text-500">currently online</span>
+            </div>
+        </div>
+        <div class="col-12 md:col-6 lg:col-3">
+            <div class="surface-card shadow-2 p-3 border-round">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-500 font-medium mb-3"
+                            >Total Game Server</span
+                        >
+                        <div class="text-900 font-medium text-xl">
+                            {{ currentKpis.gameServer.totalServers }}
+                        </div>
+                    </div>
+                    <div
+                        class="flex align-items-center justify-content-center bg-blue-100 border-round"
+                        style="width: 2.5rem; height: 2.5rem"
+                    >
+                        <i class="pi pi-user text-green-500 text-xl"></i>
+                    </div>
+                </div>
+                <span class="text-green-500 font-medium"
+                    >{{ currentKpis.gameServer.currentServers }}
+                </span>
+                <span class="text-500">currently online</span>
+            </div>
+        </div>
+        <div class="col-12 md:col-6 lg:col-3">
+            <div class="surface-card shadow-2 p-3 border-round">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-500 font-medium mb-3"
+                            >Total Proxy Server</span
+                        >
+                        <div class="text-900 font-medium text-xl">
+                            {{ currentKpis.proxyServer.totalServers }}
+                        </div>
+                    </div>
+                    <div
+                        class="flex align-items-center justify-content-center bg-blue-100 border-round"
+                        style="width: 2.5rem; height: 2.5rem"
+                    >
+                        <i class="pi pi-user text-green-500 text-xl"></i>
+                    </div>
+                </div>
+                <span class="text-green-500 font-medium"
+                    >{{ currentKpis.proxyServer.currentServers }}
+                </span>
+                <span class="text-500">currently online</span>
+            </div>
+        </div>
+    </div>
+</div>

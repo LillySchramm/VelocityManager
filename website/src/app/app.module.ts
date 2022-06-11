@@ -26,6 +26,7 @@ import { environment } from '../environments/environment';
 import { EffectsModule } from '@ngrx/effects';
 import { AuthEffects } from './store/auth/auth.effects';
 import { HeaderComponent } from './components/core/header/header.component';
+import { KpiEffects } from './store/kpi/kpi.effects';
 
 @NgModule({
     declarations: [
@@ -56,7 +57,7 @@ import { HeaderComponent } from './components/core/header/header.component';
             maxAge: 25,
             logOnly: environment.production,
         }),
-        EffectsModule.forRoot([AuthEffects]),
+        EffectsModule.forRoot([AuthEffects, KpiEffects]),
     ],
     providers: [],
     bootstrap: [AppComponent],

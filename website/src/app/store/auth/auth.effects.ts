@@ -1,15 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { of } from 'rxjs';
-import {
-    catchError,
-    exhaustMap,
-    map,
-    mergeMap,
-    switchMap,
-    tap,
-} from 'rxjs/operators';
+import { exhaustMap, map, switchMap } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 import { addMessagesToQueue } from '../message/message.actions';
 import {

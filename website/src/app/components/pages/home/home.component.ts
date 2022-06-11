@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { KPIS } from 'src/app/models/kpi.model';
+import { loadKPIs } from 'src/app/store/kpi/kpi.actions';
+import { selectLoadedKPIs } from 'src/app/store/kpi/kpi.selectors';
 
 @Component({
     selector: 'app-home',
@@ -6,7 +10,14 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-    constructor() {}
+    public currentKpis?: KPIS;
 
-    ngOnInit(): void {}
+    constructor(private store: Store) {}
+
+    ngOnInit(): void {
+        this.store.dispatch(loadKPIs());
+        this.store.select(selectLoadedKPIs).subscribe((kpis) => {
+            this.currentKpis = kpis;
+        });
+    }
 }

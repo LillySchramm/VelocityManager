@@ -25,7 +25,7 @@ export class AuthService {
 
         return this.http
             .get<PingResponse>(environment.apiUrl + '/ping', {
-                headers: this.generateHeader(credentials),
+                headers: this._generateHeader(credentials),
             })
             .pipe(
                 map(() => {
@@ -38,7 +38,11 @@ export class AuthService {
             );
     }
 
-    private generateHeader(credentials: String): { [header: string]: string } {
+    public generateHeader(): { [header: string]: string } {
+        return { Authorization: 'Basic ' + this.getSavedCredentials() };
+    }
+
+    private _generateHeader(credentials: String): { [header: string]: string } {
         return { Authorization: 'Basic ' + credentials };
     }
 
@@ -59,7 +63,7 @@ export class AuthService {
 
         return this.http
             .get<PingResponse>(environment.apiUrl + '/ping', {
-                headers: this.generateHeader(credentials),
+                headers: this._generateHeader(credentials),
             })
             .pipe(
                 map(() => {
