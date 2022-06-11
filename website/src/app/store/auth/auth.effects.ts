@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import {
     catchError,
@@ -10,6 +11,7 @@ import {
     tap,
 } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
+import { addMessagesToQueue } from '../message/message.actions';
 import {
     loadCredentials,
     loadCredentialsFail,
@@ -51,8 +53,30 @@ export class AuthEffects {
             ),
             map((token) => {
                 if (!token) {
+                    this.store.dispatch(
+                        addMessagesToQueue({
+                            messages: [
+                                {
+                                    severity: 'error',
+                                    summary: 'Login failed!',
+                                    detail: 'Please check username and password',
+                                },
+                            ],
+                        })
+                    );
                     return loginFail();
                 }
+
+                this.store.dispatch(
+                    addMessagesToQueue({
+                        messages: [
+                            {
+                                severity: 'success',
+                                summary: 'Login successful!',
+                            },
+                        ],
+                    })
+                );
 
                 return loginSuccess({ token });
             })
@@ -68,5 +92,9 @@ export class AuthEffects {
             })
         )
     );
-    constructor(private actions$: Actions, private authService: AuthService) {}
+    constructor(
+        private actions$: Actions,
+        private authService: AuthService,
+        private store: Store
+    ) {}
 }

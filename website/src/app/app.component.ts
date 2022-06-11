@@ -3,11 +3,14 @@ import { Store } from '@ngrx/store';
 import { MenuItem, MessageService } from 'primeng/api';
 import { AuthService } from './services/auth.service';
 import { loadCredentials, logout } from './store/auth/auth.actions';
+import { removeMessagesFromQueue } from './store/message/message.actions';
+import { selectMessageQueue } from './store/message/message.selectors';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
+    providers: [MessageService],
 })
 export class AppComponent implements OnInit {
     title = 'website';
@@ -15,7 +18,9 @@ export class AppComponent implements OnInit {
     items: MenuItem[] = [];
     activeItem!: MenuItem;
 
-    constructor(private authService: AuthService, private store: Store) {}
+    displayedMessageIds: String[] = [];
+
+    constructor(private store: Store, private messageService: MessageService) {}
 
     ngOnInit() {
         this.items = [
@@ -29,5 +34,26 @@ export class AppComponent implements OnInit {
         };
 
         this.store.dispatch(loadCredentials());
+
+        this.store.select(selectMessageQueue).subscribe((messages) => {
+            if (messages.length === 0) {
+                return;
+            }
+
+            const messagesToBeShown = messages
+                .filter(
+                    (message) => !this.displayedMessageIds.includes(message.id)
+                )
+                .map((message) => message.message);
+            this.messageService.addAll(messagesToBeShown);
+
+            this.displayedMessageIds = messages.map((message) => message.id);
+
+            this.store.dispatch(
+                removeMessagesFromQueue({
+                    ids: messages.map((message) => message.id),
+                })
+            );
+        });
     }
 }
