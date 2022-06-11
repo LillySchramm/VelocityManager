@@ -1,5 +1,6 @@
 import { Player, PrismaClient } from '@prisma/client';
-import { isServerFull } from './servers';
+import { PlayerKPIS } from '../models/kpi.model';
+import { getTTLQuery, isServerFull } from './servers';
 
 const prisma = new PrismaClient();
 
@@ -43,4 +44,11 @@ export async function pingPlayers(playerIds: string[]): Promise<void> {
         where: { id: { in: playerIds } },
         data: { lastContact: Date.now() },
     });
+}
+
+export async function getPlayerKPIs(): Promise<PlayerKPIS> {
+    const totalPlayers = await prisma.player.count();
+    const currentPlayers = await prisma.player.count({ where: getTTLQuery() });
+
+    return { currentPlayers, totalPlayers };
 }

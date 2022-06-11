@@ -24,6 +24,7 @@ app.get(`/ping`, async (req, res) => {
 app.use(require('./routes/server.route'));
 app.use('/serverType', require('./routes/serverType.route'));
 app.use('/player', require('./routes/player.route'));
+app.use('/kpi', require('./routes/kpi.route'));
 
 const server = app.listen(30001, () =>
     console.log(`🚀 Server ready at: http://localhost:30001`)

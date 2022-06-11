@@ -13,7 +13,7 @@ const prisma = new PrismaClient();
 const CONTACT_TIMEOUT = BigInt(10 * 1000);
 const DEFAULT_SERVER_TYPE_ID = '00000000-0000-0000-0000-000000000001';
 
-function getTTLQuery(): any {
+export function getTTLQuery(): any {
     return {
         lastContact: {
             gte: Date.now() - Number(CONTACT_TIMEOUT),
