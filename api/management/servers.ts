@@ -5,6 +5,7 @@ import {
     colors,
     animals,
 } from 'unique-names-generator';
+import { GameServerKPIS, ProxyServerKPIS } from '../models/kpi.model';
 import { BackendGameServer, BackendProxyServer } from '../models/server.model';
 import { cleanBackendGameServer } from '../tools/cleanup';
 
@@ -183,6 +184,28 @@ export async function isServerFull(serverId: string): Promise<boolean> {
     });
 
     return !!server && server?.Player.length >= server?.maximumPlayers;
+}
+
+export async function getGameServerKPIs(): Promise<GameServerKPIS> {
+    const totalServers = await prisma.gameServer.count({
+        where: { lastContact: { not: 0 } },
+    });
+    const currentServers = await prisma.gameServer.count({
+        where: getTTLQuery(),
+    });
+
+    return { totalServers, currentServers };
+}
+
+export async function getProxyServerKPIs(): Promise<ProxyServerKPIS> {
+    const totalServers = await prisma.proxyServer.count({
+        where: { lastContact: { not: 0 } },
+    });
+    const currentServers = await prisma.proxyServer.count({
+        where: getTTLQuery(),
+    });
+
+    return { totalServers, currentServers };
 }
 
 function generateName(): string {
