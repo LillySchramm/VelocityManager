@@ -88,6 +88,18 @@ export class AuthEffects {
             ofType(logout),
             map(() => {
                 this.authService.logout();
+
+                this.store.dispatch(
+                    addMessagesToQueue({
+                        messages: [
+                            {
+                                severity: 'info',
+                                summary: 'Logout successful!',
+                            },
+                        ],
+                    })
+                );
+
                 return logoutSuccess();
             })
         )
