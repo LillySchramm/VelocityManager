@@ -13,7 +13,35 @@ export class HeaderComponent implements OnInit {
     items: MenuItem[] = [];
 
     ngOnInit() {
-        this.items = [];
+        this.items = [
+            {
+                label: 'Home',
+                icon: 'pi pi-home',
+                routerLink: 'home',
+            },
+            {
+                label: 'Server',
+                icon: 'pi pi-server',
+                disabled: true,
+                items: [
+                    {
+                        label: 'Proxy Server',
+                    },
+                    {
+                        label: 'Game Server',
+                    },
+                    {
+                        label: 'Game Server Types',
+                    },
+                ],
+            },
+            {
+                label: 'Player',
+                icon: 'pi pi-user',
+                routerLink: 'player',
+                style: '.p-menuitem-link-active { background-color: aquamarine; }',
+            },
+        ];
     }
 
     onLogout(): void {

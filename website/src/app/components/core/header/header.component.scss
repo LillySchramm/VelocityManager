@@ -3,5 +3,15 @@ h1 {
     margin-bottom: 0;
     font-weight: 800;
 
+    margin-right: 0.5rem;
+
     font-size: 1rem;
+}
+
+::ng-deep .p-menuitem-link-active {
+    background-color: var(--blue-800);
+
+    &.p-menuitem-link:hover {
+        background-color: var(--blue-900) !important;
+    }
 }
