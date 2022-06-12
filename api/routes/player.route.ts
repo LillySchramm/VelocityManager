@@ -28,11 +28,9 @@ router.post(`/:id/join`, async (req, res) => {
 router.get(`/all`, async (req, res) => {
     const players = (await getPlayers()).map((playerStatus) => {
         return {
-            ...playerStatus,
-            player: {
-                ...playerStatus.player,
-                lastContact: Number(playerStatus.player.lastContact),
-            },
+            ...playerStatus.player,
+            lastContact: Number(playerStatus.player.lastContact),
+            online: playerStatus.online,
         };
     });
     res.json({ players });
