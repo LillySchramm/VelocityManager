@@ -1,5 +1,9 @@
 import express from 'express';
-import { setPlayerGameServer, upsertPlayer } from '../management/players';
+import {
+    getPlayers,
+    setPlayerGameServer,
+    upsertPlayer,
+} from '../management/players';
 
 const router = express.Router();
 
@@ -19,6 +23,19 @@ router.post(`/:id/join`, async (req, res) => {
     const player = await setPlayerGameServer(playerId, serverId);
 
     res.json({ success: !!player });
+});
+
+router.get(`/all`, async (req, res) => {
+    const players = (await getPlayers()).map((playerStatus) => {
+        return {
+            ...playerStatus,
+            player: {
+                ...playerStatus.player,
+                lastContact: Number(playerStatus.player.lastContact),
+            },
+        };
+    });
+    res.json({ players });
 });
 
 module.exports = router;

@@ -11,7 +11,7 @@ import { cleanBackendGameServer } from '../tools/cleanup';
 
 const prisma = new PrismaClient();
 
-const CONTACT_TIMEOUT = BigInt(10 * 1000);
+export const CONTACT_TIMEOUT = BigInt(10 * 1000);
 const DEFAULT_SERVER_TYPE_ID = '00000000-0000-0000-0000-000000000001';
 
 export function getTTLQuery(): any {

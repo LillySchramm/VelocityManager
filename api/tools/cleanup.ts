@@ -16,3 +16,20 @@ export function cleanBackendGameServer(
         playerCount: backendServer.playerCount,
     };
 }
+
+export function cleanPlayer(
+    backendServer: BackendGameServer
+): BackendGameServer {
+    return {
+        createdAt: backendServer.createdAt,
+        id: backendServer.id,
+        ip: backendServer.ip,
+        lastContact: backendServer.lastContact,
+        maximumPlayers: backendServer.maximumPlayers,
+        name: backendServer.name,
+        port: backendServer.port,
+        serverTypeId: backendServer.serverTypeId,
+        isOnline: backendServer.isOnline,
+        playerCount: backendServer.playerCount,
+    };
+}

@@ -1,6 +1,7 @@
 import { Player, PrismaClient } from '@prisma/client';
 import { PlayerKPIS } from '../models/kpi.model';
-import { getTTLQuery, isServerFull } from './servers';
+import { PlayerStatus } from '../models/player.model';
+import { CONTACT_TIMEOUT, getTTLQuery, isServerFull } from './servers';
 
 const prisma = new PrismaClient();
 
@@ -43,6 +44,21 @@ export async function pingPlayers(playerIds: string[]): Promise<void> {
     await prisma.player.updateMany({
         where: { id: { in: playerIds } },
         data: { lastContact: Date.now() },
+    });
+}
+
+export async function getPlayers(
+    playerIds: string[] = []
+): Promise<PlayerStatus[]> {
+    const players = await prisma.player.findMany({
+        where: playerIds.length ? { id: { in: playerIds } } : {},
+    });
+
+    return players.map((player) => {
+        return {
+            player: player,
+            online: player.lastContact > Date.now() - Number(CONTACT_TIMEOUT),
+        };
     });
 }
 
