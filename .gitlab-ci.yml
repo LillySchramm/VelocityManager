@@ -3,6 +3,7 @@ stages:
     - build
     - container-build
     - linting
+    - java-docs
 
 variables:
     MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
@@ -129,3 +130,15 @@ prettier:
         - npm install -g prettier prettier-plugin-java
     script:
         - npx prettier --check .
+
+build-lib-javadocs:
+    image: maven:3.8.4-eclipse-temurin-16
+    stage: java-docs
+    needs: []
+    artifacts:
+        untracked: false
+        expire_in: 1 hrs
+        paths:
+            - lib/target/site/apidocs/**
+    script:
+        - cd lib && mvn javadoc:javadoc
