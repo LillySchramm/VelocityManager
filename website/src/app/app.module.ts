@@ -16,6 +16,10 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { MessagesModule } from 'primeng/messages';
+import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
 
 import { LoginComponent } from './components/pages/login/login.component';
 import { HomeComponent } from './components/pages/home/home.component';
@@ -27,6 +31,8 @@ import { EffectsModule } from '@ngrx/effects';
 import { AuthEffects } from './store/auth/auth.effects';
 import { HeaderComponent } from './components/core/header/header.component';
 import { KpiEffects } from './store/kpi/kpi.effects';
+import { PlayerComponent } from './components/pages/player/player.component';
+import { PlayerEffects } from './store/player/player.effects';
 
 @NgModule({
     declarations: [
@@ -34,6 +40,7 @@ import { KpiEffects } from './store/kpi/kpi.effects';
         LoginComponent,
         HomeComponent,
         HeaderComponent,
+        PlayerComponent,
     ],
     imports: [
         BrowserModule,
@@ -50,6 +57,10 @@ import { KpiEffects } from './store/kpi/kpi.effects';
         ReactiveFormsModule,
         ToastModule,
         MessagesModule,
+        AvatarModule,
+        AvatarGroupModule,
+        TableModule,
+        TagModule,
         StoreModule.forRoot(reducers, {
             metaReducers,
         }),
@@ -57,7 +68,7 @@ import { KpiEffects } from './store/kpi/kpi.effects';
             maxAge: 25,
             logOnly: environment.production,
         }),
-        EffectsModule.forRoot([AuthEffects, KpiEffects]),
+        EffectsModule.forRoot([AuthEffects, KpiEffects, PlayerEffects]),
     ],
     providers: [],
     bootstrap: [AppComponent],

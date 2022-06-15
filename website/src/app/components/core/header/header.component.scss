@@ -8,6 +8,10 @@ h1 {
     font-size: 1rem;
 }
 
+header {
+    margin-bottom: 1rem;
+}
+
 ::ng-deep .p-menuitem-link-active {
     background-color: var(--blue-800);
 

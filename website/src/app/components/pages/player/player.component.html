@@ -1,0 +1,59 @@
+<p-table
+    #dt
+    [value]="(players$ | async) || []"
+    dataKey="name"
+    styleClass="p-datatable-customers"
+    [rowHover]="true"
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [loading]="!(loading$ | async)"
+    responsiveLayout="scroll"
+    [paginator]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [filterDelay]="0"
+    [globalFilterFields]="[
+        'name',
+        'country.name',
+        'representative.name',
+        'status'
+    ]"
+>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-player>
+        <tr>
+            <td>
+                <div class="name">
+                    <p-avatar
+                        [image]="
+                            'https://mc-heads.net/avatar/' + player.id + '/100'
+                        "
+                        pBadge
+                        styleClass="mr-2"
+                    ></p-avatar>
+                    {{ player.name }}
+                </div>
+            </td>
+            <td>
+                <p-tag
+                    value="Online"
+                    severity="success"
+                    *ngIf="player.online; else online"
+                ></p-tag>
+                <ng-template #online>
+                    <p-tag value="Offline" severity="danger"></p-tag>
+                </ng-template>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td colspan="8">No customers found.</td>
+        </tr>
+    </ng-template>
+</p-table>
