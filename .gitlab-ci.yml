@@ -140,10 +140,24 @@ build-javadocs:
         untracked: false
         expire_in: 1 hrs
         paths:
-            - public
+            - lib/target/site/apidocs/**
+            - spigot/target/site/apidocs/**
+            - velocity/target/site/apidocs/**
     script:
         - cd lib && mvn javadoc:javadoc
         - cd ../spigot && mvn javadoc:javadoc
         - cd ../velocity && mvn javadoc:javadoc
         - cd .. && mkdir public
         - mkdir public/lib && mv lib/target/site/apidocs/** public/lib
+
+pages:
+    image: ruby:2.7
+    needs:
+      - build-javadocs
+    script:
+        - gem install bundler
+        - bundle install
+        - cd lib/target/site/apidocs/ && bundle exec jekyll build -d ~/public
+    artifacts:
+        paths:
+        - public
