@@ -152,6 +152,7 @@ build-javadocs:
 
 pages:
     image: ruby:2.7
+    stage: java-docs
     needs:
       - build-javadocs
     script:
