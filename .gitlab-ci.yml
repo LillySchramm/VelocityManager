@@ -140,10 +140,10 @@ build-javadocs:
         untracked: false
         expire_in: 1 hrs
         paths:
-            - lib/target/site/apidocs/**
-            - spigot/target/site/apidocs/**
-            - velocity/target/site/apidocs/**
+            - public
     script:
         - cd lib && mvn javadoc:javadoc
         - cd ../spigot && mvn javadoc:javadoc
         - cd ../velocity && mvn javadoc:javadoc
+        - cd .. && mkdir public
+        - mkdir public/lib && mv lib/target/site/apidocs/** public/lib
