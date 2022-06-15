@@ -148,13 +148,18 @@ build-javadocs:
         - cd ../spigot && mvn javadoc:javadoc
         - cd ../velocity && mvn javadoc:javadoc
 
-pages:
-    image: alpine:3.16.0
+build-javadocs-container:
+    image:
+        name: "gcr.io/kaniko-project/executor:debug"
+        entrypoint: [""]
     stage: java-docs
     needs:
       - build-javadocs
     script:
-        - mkdir public/ && mv lib/target/site/apidocs/** public/
-    artifacts:
-        paths:
-        - public
+        - mkdir -p /kaniko/.docker
+        - echo "{\"auths\":{\"registry01.eps-dev.de\":{\"auth\":\"$(printf "%s:%s" "${PRIVATE_REG_USER}" "${PRIVATE_REG_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+        - >-
+            /kaniko/executor
+            --context "${CI_PROJECT_DIR}/"
+            --dockerfile "${CI_PROJECT_DIR}/docs/javadocs/Dockerfile"
+            --destination "registry01.eps-dev.de/velocitymanager/javadocs/${CI_COMMIT_REF_SLUG}:latest"
