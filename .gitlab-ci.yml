@@ -2,6 +2,7 @@ stages:
     - pre-build
     - build
     - container-build
+    - java-docs
     - linting
 
 variables:
@@ -129,3 +130,60 @@ prettier:
         - npm install -g prettier prettier-plugin-java
     script:
         - npx prettier --check .
+
+build-javadocs:
+    image: maven:3.8.4-eclipse-temurin-16
+    stage: java-docs
+    needs:
+        - build_lib
+    artifacts:
+        untracked: false
+        expire_in: 1 hrs
+        paths:
+            - lib/target/site/apidocs/**
+            - spigot/target/site/apidocs/**
+            - velocity/target/site/apidocs/**
+    script:
+        - cd lib && mvn javadoc:javadoc
+        - cd ../spigot && mvn javadoc:javadoc
+        - cd ../velocity && mvn javadoc:javadoc
+    only:
+        - main
+
+build-javadocs-container:
+    image:
+        name: "gcr.io/kaniko-project/executor:debug"
+        entrypoint: [""]
+    stage: java-docs
+    needs:
+        - build-javadocs
+    script:
+        - mkdir -p /kaniko/.docker
+        - echo "{\"auths\":{\"registry01.eps-dev.de\":{\"auth\":\"$(printf "%s:%s" "${PRIVATE_REG_USER}" "${PRIVATE_REG_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+        - >-
+            /kaniko/executor
+            --context "${CI_PROJECT_DIR}/"
+            --dockerfile "${CI_PROJECT_DIR}/docs/javadocs/Dockerfile"
+            --destination "registry01.eps-dev.de/velocitymanager/javadocs/${CI_COMMIT_REF_SLUG}:latest"
+    only:
+        - main
+
+deploy-javadocs-container:
+    stage: java-docs
+    image:
+        name: "registry01.eps-dev.de/devops/deployment-containers/helmctl:latest"
+        entrypoint: [""]
+    needs:
+        - build-javadocs-container
+    script:
+        - helm uninstall javadocs --namespace build-javadocs-container || true
+        - helm upgrade --install javadocs ./docs/javadocs/deployment/
+          --values ./docs/javadocs/deployment/values.yaml
+          --set image.repository=registry01.eps-dev.de/velocitymanager/javadocs/${CI_COMMIT_REF_SLUG}
+          --set image.tag=latest
+          --set ingress.hosts[0].host=velocitymanager.docs.eps-dev.de
+          --set ingress.tls[0].secretName=velocitymanager.docs.eps-dev.de-tls
+          --set ingress.tls[0].hosts[0]=velocitymanager.docs.eps-dev.de
+          --namespace velocity-manager-dev
+    only:
+        - main
