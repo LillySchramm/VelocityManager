@@ -147,18 +147,14 @@ build-javadocs:
         - cd lib && mvn javadoc:javadoc
         - cd ../spigot && mvn javadoc:javadoc
         - cd ../velocity && mvn javadoc:javadoc
-        - cd .. && mkdir public
-        - mkdir public/lib && mv lib/target/site/apidocs/** public/lib
 
 pages:
-    image: ruby:2.7
+    image: alpine:3.16.0
     stage: java-docs
     needs:
       - build-javadocs
     script:
-        - gem install bundler
-        - bundle install
-        - cd lib/target/site/apidocs/ && bundle exec jekyll build -d ~/public
+        - mkdir public/ && mv lib/target/site/apidocs/** public/
     artifacts:
         paths:
         - public
