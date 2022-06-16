@@ -203,4 +203,7 @@ build_electron:
         paths:
             - website/packages
     script:
-        - cd website && npm run package:all
+        - cd website
+        - npm run package:linux
+        - npm run package:osx
+        - npm run package:win

@@ -10,9 +10,9 @@
     "electron": "electron ./src/electron.dev",
     "start-electron": "concurrently \"ng serve\" \"npm run electron\"",
     "package:win": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=win32 --arch=all --overwrite ",
-    "package:linux": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=linux --arch=all --overwrite ",
-    "package:osx": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=darwin --arch=all --overwrite ",
-    "package:all": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=all --arch=x64,arm64 --overwrite "
+    "package:linux": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=linux --arch=x64 --overwrite ",
+    "package:osx": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=darwin --arch=x64 --overwrite ",
+    "package:all": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=all --arch=x64 --overwrite "
   },
   "private": true,
   "dependencies": {
