@@ -207,3 +207,20 @@ build_electron:
         - npm run package:linux
         - npm run package:osx
         - npm run package:win
+
+build_electron_2:
+    image: electronuserland/builder:wine-mono
+    stage: electron
+    needs:
+        - install_npm_dependencies
+        - build_website
+    artifacts:
+        untracked: false
+        expire_in: 1 hrs
+        paths:
+            - website/packages
+    script:
+        - cd website
+        - npm run package:linux
+        - npm run package:osx
+        - npm run package:win
