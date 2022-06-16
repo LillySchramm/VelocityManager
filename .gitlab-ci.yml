@@ -192,7 +192,7 @@ deploy-javadocs-container:
         - main
 
 build_electron:
-    image: node:14-alpine
+    image: registry01.eps-dev.de/devops/pipeline/debian-wine:latest
     stage: electron
     needs:
         - install_npm_dependencies
