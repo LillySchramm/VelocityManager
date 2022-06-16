@@ -4,6 +4,7 @@ stages:
     - container-build
     - java-docs
     - linting
+    - electron
 
 variables:
     MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
@@ -189,3 +190,17 @@ deploy-javadocs-container:
           --namespace velocity-manager-dev
     only:
         - main
+
+build_electron:
+    image: node:14-alpine
+    stage: electron
+    needs:
+        - install_npm_dependencies
+        - build_website
+    artifacts:
+        untracked: false
+        expire_in: 1 hrs
+        paths:
+            - website/packages
+    script:
+        - cd website && npm run package:all

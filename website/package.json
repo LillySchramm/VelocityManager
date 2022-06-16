@@ -9,10 +9,10 @@
     "test": "ng test",
     "electron": "electron ./src/electron.dev",
     "start-electron": "concurrently \"ng serve\" \"npm run electron\"",
-    "package:win": "npm run build && cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=win32 --arch=all --overwrite ",
-    "package:linux": "npm run build && cross-var electron-packager dist/angular-cli-electron $npm_package_name-$npm_package_version --out=packages --platform=linux --arch=all --overwrite ",
-    "package:osx": "npm run build && cross-var electron-packager dist/angular-cli-electron $npm_package_name-$npm_package_version --out=packages --platform=darwin --arch=all --overwrite ",
-    "package:all": "npm run build && cross-var electron-packager dist/angular-cli-electron $npm_package_name-$npm_package_version --out=packages --all --arch=all --overwrite "
+    "package:win": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=win32 --arch=all --overwrite ",
+    "package:linux": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=linux --arch=all --overwrite ",
+    "package:osx": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=darwin --arch=all --overwrite ",
+    "package:all": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --all --arch=all --overwrite "
   },
   "private": true,
   "dependencies": {
