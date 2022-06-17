@@ -9,6 +9,13 @@ variables:
     MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
     MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
 
+cache: &npm-cache
+  key: $CI_COMMIT_REF_SLUG
+  paths:
+    - website/node_modules/
+    - api/node_modules/
+  policy: pull
+
 build_lib:
     image: maven:3.8.4-eclipse-temurin-16
     stage: pre-build
@@ -23,12 +30,9 @@ build_lib:
 install_npm_dependencies:
     image: node:14-alpine
     stage: pre-build
-    artifacts:
-        untracked: false
-        expire_in: 1 hrs
-        paths:
-            - api/node_modules
-            - website/node_modules
+    cache:
+      <<: *npm-cache
+      policy: pull-push
     script:
         - cd api && npm i
         - cd ../website && npm i
@@ -62,6 +66,8 @@ build_velocity:
 build_api:
     image: node:14-alpine
     stage: build
+    cache:
+      <<: *npm-cache
     needs:
         - install_npm_dependencies
     artifacts:
@@ -76,6 +82,8 @@ build_api:
 build_website:
     image: node:14-alpine
     stage: build
+    cache:
+      <<: *npm-cache
     needs:
         - install_npm_dependencies
     artifacts:
