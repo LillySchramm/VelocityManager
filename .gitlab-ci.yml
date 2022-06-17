@@ -136,6 +136,8 @@ build-javadocs:
     stage: java-docs
     needs:
         - build_lib
+        - build_velocity
+        - build_spigot
     artifacts:
         untracked: false
         expire_in: 1 hrs
