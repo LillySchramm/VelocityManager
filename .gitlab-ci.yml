@@ -204,6 +204,7 @@ build_electron:
             - website/packages
     script:
         - cd website
+        - rm node_modules/rcedit/bin/rcedit-x64.exe && mv node_modules/rcedit/bin/rcedit.exe node_modules/rcedit/bin/rcedit-x64.exe
         - npm run package:linux
         - npm run package:osx
         - npm run package:win
