@@ -192,24 +192,6 @@ deploy-javadocs-container:
         - main
 
 build_electron:
-    image: electronuserland/builder:wine
-    stage: electron
-    needs:
-        - install_npm_dependencies
-        - build_website
-    artifacts:
-        untracked: false
-        expire_in: 1 hrs
-        paths:
-            - website/packages
-    script:
-        - cd website
-        - rm node_modules/rcedit/bin/rcedit-x64.exe && mv node_modules/rcedit/bin/rcedit.exe node_modules/rcedit/bin/rcedit-x64.exe
-        - npm run package:linux
-        - npm run package:osx
-        - npm run package:win
-
-build_electron_2:
     image: leifcr/electronuserland-builder-wine-mono-updated:latest
     stage: electron
     needs:
@@ -222,7 +204,6 @@ build_electron_2:
             - website/packages
     script:
         - cd website
-        - rm node_modules/rcedit/bin/rcedit-x64.exe && mv node_modules/rcedit/bin/rcedit.exe node_modules/rcedit/bin/rcedit-x64.exe
         - npm run package:linux
         - npm run package:osx
         - npm run package:win
