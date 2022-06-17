@@ -3,3 +3,6 @@ api/dist
 website/dist
 *.json
 docs/
+velocity/target
+spigot/target
+lib/target
