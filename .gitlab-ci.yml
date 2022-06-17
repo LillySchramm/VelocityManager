@@ -201,10 +201,14 @@ build_electron:
         untracked: false
         expire_in: 1 hrs
         paths:
-            - website/packages
+            - website/.packages
     script:
         - cd website
         - rm node_modules/rcedit/bin/rcedit-x64.exe && mv node_modules/rcedit/bin/rcedit.exe node_modules/rcedit/bin/rcedit-x64.exe
         - npm run package:linux
         - npm run package:osx
         - npm run package:win
+        - mkdir .packages
+        - tar -czvf .packages/linux64.tar.gz packages/website-0.0.0-linux-x64
+        - tar -czvf .packages/darwin64.tar.gz packages/website-0.0.0-darwin-x64
+        - tar -czvf .packages/win32.tar.gz packages/website-0.0.0-win32-ia32
