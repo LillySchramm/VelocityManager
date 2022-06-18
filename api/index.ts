@@ -32,6 +32,7 @@ function startExpressServer(): void {
     app.use('/serverType', require('./routes/serverType.route'));
     app.use('/player', require('./routes/player.route'));
     app.use('/kpi', require('./routes/kpi.route'));
+    app.use('/config', require('./routes/config.route'));
 
     const server = app.listen(30001, async () => {
         console.log(`🚀 Server ready at: http://localhost:30001`);
