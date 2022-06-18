@@ -9,9 +9,9 @@
     "test": "ng test",
     "electron": "electron ./src/electron.dev",
     "start-electron": "concurrently \"ng serve\" \"npm run electron\"",
-    "package:win": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=win32 --arch=ia32 --overwrite ",
-    "package:linux": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=linux --arch=x64 --overwrite ",
-    "package:osx": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=darwin --arch=x64 --overwrite "
+    "package:win": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=win32 --arch=ia32 --asar --overwrite ",
+    "package:linux": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=linux --arch=x64 --asar --overwrite ",
+    "package:osx": "cross-var electron-packager dist/website $npm_package_name-$npm_package_version --out=packages --platform=darwin --arch=x64 --asar --overwrite "
   },
   "private": true,
   "dependencies": {
