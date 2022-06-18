@@ -1,6 +1,7 @@
 api/index.js
 api/dist
 website/dist
+website/packages
 *.json
 docs/
 velocity/target
