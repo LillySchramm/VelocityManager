@@ -4,6 +4,7 @@ import de.epsdev.velocitymanager.lib.ServerType;
 import de.epsdev.velocitymanager.lib.VelocityServerManager;
 import de.epsdev.velocitymanager.lib.config.IConfig;
 import de.epsdev.velocitymanager.lib.exeptions.TokenInvalidException;
+import de.epsdev.velocitymanager.lib.rabbitmq.RabbitMQ;
 import de.epsdev.velocitymanager.lib.tools.HTTP;
 import de.epsdev.velocitymanager.lib.tools.HTTPRequestResponse;
 import java.util.UUID;
@@ -57,6 +58,10 @@ public class AuthWrapper extends BaseWrapper {
 
         this.serverManager.uuid = UUID.fromString(rawUuid);
         this.config.setServerUUID(this.serverManager.uuid);
+        RabbitMQ.rabbitMqUrl = getRabbitMqUri();
+        if (RabbitMQ.rabbitMqUrl.equals("")) {
+            logger.logWarning("Couldn't fetch RabbitMQ Url");
+        }
 
         loadServerInformation();
     }
@@ -102,6 +107,11 @@ public class AuthWrapper extends BaseWrapper {
         logger.logInfo("Loaded information");
         logger.logInfo("ID: " + this.serverManager.uuid.toString());
         logger.logInfo("Name: " + this.serverManager.name);
+    }
+
+    private String getRabbitMqUri() {
+        JSONObject result = HTTP.GET("config/rabbitmq").getJsonResponse();
+        return result.getString("url");
     }
 
     private boolean tokenIsValid() {
