@@ -178,7 +178,7 @@ deploy-javadocs-container:
     needs:
         - build-javadocs-container
     script:
-        - helm uninstall javadocs --namespace build-javadocs-container || true
+        - helm uninstall javadocs --namespace velocity-manager-dev || true
         - helm upgrade --install javadocs ./docs/javadocs/deployment/
           --values ./docs/javadocs/deployment/values.yaml
           --set image.repository=registry01.eps-dev.de/velocitymanager/javadocs/${CI_COMMIT_REF_SLUG}
