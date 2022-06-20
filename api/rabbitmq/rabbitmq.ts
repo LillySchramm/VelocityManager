@@ -1,6 +1,6 @@
 import * as amqp from 'amqplib';
 import { env } from 'process';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 export class RabbitMQ {
     private URI = env.RABBIT_MQ_URL || 'amqp://localhost';
@@ -19,31 +19,32 @@ export class RabbitMQ {
         queueName: string,
         message: string
     ): Promise<void> {
-        await this.channel.assertQueue(queueName, {
-            durable: false,
-        });
-
         this.channel.sendToQueue(queueName, Buffer.from(message));
     }
 
+    public async assertQueue(
+        queueName: string,
+        durable: boolean = false,
+        _arguments: any = {}
+    ) {
+        await this.channel.assertQueue(queueName, {
+            durable,
+            arguments: _arguments,
+        });
+    }
+
     public listen(queueName: string): Observable<string> {
-        const messageObservable = new BehaviorSubject<string>('');
+        const messageObservable = new Subject<string>();
 
-        this.channel
-            .assertQueue(queueName, {
-                durable: false,
-            })
-            .then(() => {
-                this.channel.consume(
-                    queueName,
-                    async (message) => {
-                        if (!message) return;
+        this.channel.consume(
+            queueName,
+            async (message) => {
+                if (!message) return;
 
-                        messageObservable.next(message.content.toString());
-                    },
-                    { noAck: true }
-                );
-            });
+                messageObservable.next(message.content.toString());
+            },
+            { noAck: true }
+        );
 
         return messageObservable;
     }

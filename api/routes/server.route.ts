@@ -1,4 +1,5 @@
 import express from 'express';
+import { rabbitmq } from '..';
 import { pingPlayers } from '../management/players';
 import {
     getAllOnlineGameServer,
@@ -97,6 +98,16 @@ router.get(`/gameServer/:id`, async (req, res) => {
     }
 
     res.json({ ...server, lastContact: Number(server?.lastContact) });
+});
+
+router.put(`/gameServer/all/message`, async (req, res) => {
+    const message: string = req.body.message;
+    rabbitmq.sendMessage(
+        'game-server-message-broadcast',
+        JSON.stringify({ message })
+    );
+
+    res.json({ done: true });
 });
 
 module.exports = router;
