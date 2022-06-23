@@ -1,6 +1,6 @@
 package de.epsdev.velocitymanager.lib.basic;
 
-import de.epsdev.velocitymanager.lib.tools.HTTP;
+import de.epsdev.velocitymanager.lib.http.HTTP;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

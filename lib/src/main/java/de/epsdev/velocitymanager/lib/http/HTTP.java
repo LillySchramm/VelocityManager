@@ -1,4 +1,4 @@
-package de.epsdev.velocitymanager.lib.tools;
+package de.epsdev.velocitymanager.lib.http;
 
 import java.io.IOException;
 import org.apache.http.HttpResponse;

@@ -1,6 +1,6 @@
 package de.epsdev.velocitymanager.lib.basic;
 
-import de.epsdev.velocitymanager.lib.tools.HTTP;
+import de.epsdev.velocitymanager.lib.http.HTTP;
 import java.util.UUID;
 import org.json.JSONObject;
 

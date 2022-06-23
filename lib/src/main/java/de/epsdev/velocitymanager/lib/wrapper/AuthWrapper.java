@@ -2,11 +2,10 @@ package de.epsdev.velocitymanager.lib.wrapper;
 
 import de.epsdev.velocitymanager.lib.ServerType;
 import de.epsdev.velocitymanager.lib.VelocityServerManager;
-import de.epsdev.velocitymanager.lib.config.IConfig;
 import de.epsdev.velocitymanager.lib.exeptions.TokenInvalidException;
+import de.epsdev.velocitymanager.lib.http.HTTP;
+import de.epsdev.velocitymanager.lib.http.HTTPRequestResponse;
 import de.epsdev.velocitymanager.lib.rabbitmq.RabbitMQ;
-import de.epsdev.velocitymanager.lib.tools.HTTP;
-import de.epsdev.velocitymanager.lib.tools.HTTPRequestResponse;
 import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONObject;
