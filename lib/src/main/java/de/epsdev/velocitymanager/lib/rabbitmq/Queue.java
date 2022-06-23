@@ -2,7 +2,6 @@ package de.epsdev.velocitymanager.lib.rabbitmq;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DeliverCallback;
-import com.rabbitmq.client.Delivery;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -48,6 +47,10 @@ public class Queue {
         subscribe((consumerTag, delivery) -> {
             Message message = new Message(delivery);
             defaultIMessage.onMessage(message);
+            this.channel.basicAck(
+                    delivery.getEnvelope().getDeliveryTag(),
+                    false
+                );
         });
     }
 
@@ -55,13 +58,17 @@ public class Queue {
         subscribe((consumerTag, delivery) -> {
             Message message = new Message(delivery);
             messageHandler.onMessage(message);
+            this.channel.basicAck(
+                    delivery.getEnvelope().getDeliveryTag(),
+                    false
+                );
         });
     }
 
     private void subscribe(DeliverCallback deliverCallback) throws IOException {
         channel.basicConsume(
             this.name,
-            true,
+            false,
             deliverCallback,
             consumerTag -> {}
         );

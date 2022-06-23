@@ -25,11 +25,16 @@ public class RabbitMQ {
 
         this.connection = factory.newConnection();
         this.channel = this.connection.createChannel();
+        this.channel.basicQos(100);
 
         this.logger = logger;
     }
 
     public Queue createQueue(String name) throws IOException {
         return new Queue(channel, name);
+    }
+
+    public Stream createStream(String name) throws IOException {
+        return new Stream(channel, name);
     }
 }
