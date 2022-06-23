@@ -4,6 +4,7 @@ import de.epsdev.velocitymanager.lib.config.DefaultLogger;
 import de.epsdev.velocitymanager.lib.config.IConfig;
 import de.epsdev.velocitymanager.lib.config.ILogger;
 import de.epsdev.velocitymanager.lib.exeptions.TokenInvalidException;
+import de.epsdev.velocitymanager.lib.rabbitmq.Queue;
 import de.epsdev.velocitymanager.lib.rabbitmq.RabbitMQ;
 import de.epsdev.velocitymanager.lib.wrapper.AuthWrapper;
 import de.epsdev.velocitymanager.lib.wrapper.ServerWrapper;
@@ -53,8 +54,12 @@ public class VelocityServerManager {
 
         try {
             RabbitMQ rabbitMQ = new RabbitMQ(logger);
-            rabbitMQ.send("online", name);
-            rabbitMQ.subscribe("test");
+
+            Queue onlineQueue = rabbitMQ.createQueue("online");
+            onlineQueue.sendMessage(name);
+
+            Queue testQueue = rabbitMQ.createQueue("test");
+            testQueue.subscribe();
         } catch (
             URISyntaxException
             | NoSuchAlgorithmException
