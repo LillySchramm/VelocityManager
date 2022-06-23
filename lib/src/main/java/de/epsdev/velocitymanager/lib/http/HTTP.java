@@ -21,6 +21,12 @@ public class HTTP {
         return authenticatedRequest(new HttpGet(urlBase + urlToRequest));
     }
 
+    /**
+     * An authenticated POST request.
+     *
+     * @param urlToRequest e.g. <b>/i/am/a/path</b>
+     * @param body
+     */
     public static HTTPRequestResponse POST(
         String urlToRequest,
         JSONObject body
@@ -38,10 +44,20 @@ public class HTTP {
         return authenticatedRequest(httpPost);
     }
 
+    /**
+     * An authenticated POST request <b>without</b> body.
+     *
+     * @param urlToRequest e.g. <b>/i/am/a/path</b>
+     */
     public static HTTPRequestResponse PUT(String urlToRequest) {
         return PUT(urlToRequest, null);
     }
 
+    /**
+     * An authenticated POST request.
+     *
+     * @param urlToRequest e.g. <b>/i/am/a/path</b>
+     */
     public static HTTPRequestResponse PUT(
         String urlToRequest,
         JSONObject body
@@ -59,6 +75,11 @@ public class HTTP {
         return authenticatedRequest(httpPut);
     }
 
+    /**
+     * Executes an HTTP Query using headers that contain the set authentication token.
+     *
+     * @param request
+     */
     private static HTTPRequestResponse authenticatedRequest(
         HttpRequestBase request
     ) {
