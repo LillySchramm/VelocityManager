@@ -45,7 +45,7 @@ public class HTTP {
     }
 
     /**
-     * An authenticated POST request <b>without</b> body.
+     * An authenticated PUT request <b>without</b> body.
      *
      * @param urlToRequest e.g. <b>/i/am/a/path</b>
      */
@@ -54,7 +54,7 @@ public class HTTP {
     }
 
     /**
-     * An authenticated POST request.
+     * An authenticated PUT request.
      *
      * @param urlToRequest e.g. <b>/i/am/a/path</b>
      */
