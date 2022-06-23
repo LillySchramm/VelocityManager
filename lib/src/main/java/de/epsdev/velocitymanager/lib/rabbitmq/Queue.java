@@ -44,14 +44,7 @@ public class Queue {
     }
 
     public void subscribe() throws IOException {
-        subscribe((consumerTag, delivery) -> {
-            Message message = new Message(delivery);
-            defaultIMessage.onMessage(message);
-            this.channel.basicAck(
-                    delivery.getEnvelope().getDeliveryTag(),
-                    false
-                );
-        });
+        subscribe(this.defaultIMessage);
     }
 
     public void subscribe(IMessage messageHandler) throws IOException {
