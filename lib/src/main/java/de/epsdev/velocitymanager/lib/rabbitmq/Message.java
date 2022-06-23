@@ -6,16 +6,15 @@ import org.json.JSONObject;
 
 public class Message {
 
-    private final String rawMessage;
+    private final byte[] rawMessage;
 
     public Message(Delivery delivery) {
-        this.rawMessage =
-            new String(delivery.getBody(), StandardCharsets.UTF_8);
+        this.rawMessage = delivery.getBody();
     }
 
     @Override
     public String toString() {
-        return rawMessage;
+        return new String(rawMessage, StandardCharsets.UTF_8);
     }
 
     public JSONObject toJson() {
