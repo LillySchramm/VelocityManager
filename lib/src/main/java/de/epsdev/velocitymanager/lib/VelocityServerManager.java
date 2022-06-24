@@ -21,6 +21,8 @@ public class VelocityServerManager {
     public ServerWrapper server;
     public AuthWrapper auth;
 
+    public RabbitMQ rabbitMQ;
+
     public final ServerType serverType;
     public final IConfig config;
     public UUID uuid;
@@ -37,6 +39,7 @@ public class VelocityServerManager {
         this.server = new ServerWrapper(this);
 
         this.auth.initializeServer();
+        initializeRabbitMQ();
     }
 
     public VelocityServerManager(
@@ -52,23 +55,18 @@ public class VelocityServerManager {
         this.server = new ServerWrapper(this);
 
         this.auth.initializeServer();
+        initializeRabbitMQ();
+    }
 
+    private void initializeRabbitMQ() {
         try {
-            RabbitMQ rabbitMQ = new RabbitMQ(logger);
-
-            Queue testQueue = rabbitMQ.createQueue("test");
-            testQueue.subscribe();
-
-            Stream broadCastStream = rabbitMQ.createStream(
-                "game-server-message-broadcast"
-            );
-            broadCastStream.subscribe();
+            this.rabbitMQ = new RabbitMQ(logger);
         } catch (
             URISyntaxException
-            | NoSuchAlgorithmException
-            | KeyManagementException
-            | IOException
-            | TimeoutException e
+                | NoSuchAlgorithmException
+                | KeyManagementException
+                | IOException
+                | TimeoutException e
         ) {
             e.printStackTrace();
         }
