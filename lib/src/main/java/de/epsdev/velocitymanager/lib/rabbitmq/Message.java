@@ -18,6 +18,6 @@ public class Message {
     }
 
     public JSONObject toJson() {
-        return new JSONObject(rawMessage);
+        return new JSONObject(toString());
     }
 }

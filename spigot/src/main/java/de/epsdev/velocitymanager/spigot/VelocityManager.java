@@ -7,6 +7,10 @@ import de.epsdev.velocitymanager.lib.config.ILogger;
 import de.epsdev.velocitymanager.lib.exeptions.TokenInvalidException;
 import de.epsdev.velocitymanager.spigot.config.Config;
 import de.epsdev.velocitymanager.spigot.config.PluginLogger;
+import de.epsdev.velocitymanager.spigot.messageFunctions.BaseMessageFunction;
+import de.epsdev.velocitymanager.spigot.messageFunctions.MessageBroadcast;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -38,9 +42,18 @@ public final class VelocityManager extends JavaPlugin {
                     0L,
                     20L
                 );
+            initMessageFunctions();
         } catch (TokenInvalidException e) {
             e.printStackTrace();
         }
+    }
+
+    private void initMessageFunctions() {
+        List<BaseMessageFunction> functions = new ArrayList<>();
+
+        functions.add(new MessageBroadcast());
+
+        functions.forEach(function -> function.init(serverManager));
     }
 
     @Override
