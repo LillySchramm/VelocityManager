@@ -63,10 +63,10 @@ public class VelocityServerManager {
             this.rabbitMQ = new RabbitMQ(logger);
         } catch (
             URISyntaxException
-                | NoSuchAlgorithmException
-                | KeyManagementException
-                | IOException
-                | TimeoutException e
+            | NoSuchAlgorithmException
+            | KeyManagementException
+            | IOException
+            | TimeoutException e
         ) {
             e.printStackTrace();
         }
