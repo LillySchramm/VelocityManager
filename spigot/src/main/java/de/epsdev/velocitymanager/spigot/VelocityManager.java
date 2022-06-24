@@ -11,7 +11,6 @@ import de.epsdev.velocitymanager.spigot.messageFunctions.BaseMessageFunction;
 import de.epsdev.velocitymanager.spigot.messageFunctions.MessageBroadcast;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class VelocityManager extends JavaPlugin {
@@ -57,5 +56,7 @@ public final class VelocityManager extends JavaPlugin {
     }
 
     @Override
-    public void onDisable() {}
+    public void onDisable() {
+        this.serverManager.stop();
+    }
 }

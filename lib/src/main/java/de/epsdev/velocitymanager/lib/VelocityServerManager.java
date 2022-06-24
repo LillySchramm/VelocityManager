@@ -72,6 +72,10 @@ public class VelocityServerManager {
         }
     }
 
+    public void stop() {
+        this.rabbitMQ.disconnect();
+    }
+
     public void setLogger(ILogger logger) {
         this.logger = logger;
     }

@@ -37,4 +37,12 @@ public class RabbitMQ {
     public Stream createStream(String name) throws IOException {
         return new Stream(channel, name);
     }
+
+    public void disconnect() {
+        try {
+            this.connection.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
