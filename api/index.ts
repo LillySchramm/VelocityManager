@@ -10,7 +10,6 @@ const prisma = new PrismaClient();
 async function main() {
     await rabbitmq.init();
 
-    await rabbitmq.assertQueue('test');
     await rabbitmq.assertQueue('game-server-message-broadcast', true, {
         'x-queue-type': 'stream',
         'x-max-age': '1D',
@@ -35,8 +34,6 @@ function startExpressServer(): void {
         res.json({
             ping: 'pong',
         });
-
-        rabbitmq.sendMessage('test', Date.now().toString());
     });
 
     app.use(require('./routes/server.route'));
