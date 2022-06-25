@@ -5,10 +5,9 @@ import {
     getAllOnlineProxyServer,
     getGameServer,
     getProxyServer,
-    pingGameServer,
-    pingProxyServer,
     registerGameServer,
     registerProxyServer,
+    updateGameServer,
 } from '../management/servers';
 const router = express.Router();
 
@@ -36,24 +35,13 @@ router.get(`/proxyServer/:id`, async (req, res) => {
     res.json({ ...server, lastContact: Number(server?.lastContact) });
 });
 
-router.post(`/ping/proxyServer/:id`, async (req, res) => {
-    const id = req.params.id;
-
-    const successful = await pingProxyServer(id);
-
-    res.json({
-        ping: 'pong',
-        successful,
-    });
-});
-
-router.post(`/ping/gameServer/:id`, async (req, res) => {
+router.post(`/gameServer/update/:id`, async (req, res) => {
     const id = req.params.id;
     const ip: string = req.ip.split(':').pop() || '';
     const port: number = req.body.port;
     const maximumPlayers = req.body.maximumPlayers;
 
-    const successful = await pingGameServer(id, ip, port, maximumPlayers);
+    const successful = await updateGameServer(id, ip, port, maximumPlayers);
 
     res.json({
         ping: 'pong',

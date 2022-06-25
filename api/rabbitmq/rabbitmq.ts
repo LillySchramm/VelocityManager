@@ -33,13 +33,14 @@ export class RabbitMQ {
         });
     }
 
-    public listen(queueName: string): Observable<string> {
-        const messageObservable = new Subject<string>();
+    public listen(queueName: string): Observable<any> {
+        const messageObservable = new Subject<any>();
 
         this.channel.consume(queueName, async (message) => {
             if (!message) return;
 
-            messageObservable.next(message.content.toString());
+            const rawMessage = message.content.toString();
+            messageObservable.next(JSON.parse(rawMessage));
 
             this.channel.ack(message);
         });
