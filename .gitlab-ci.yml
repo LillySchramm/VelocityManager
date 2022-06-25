@@ -199,7 +199,8 @@ build_electron:
         - build_website
     artifacts:
         untracked: false
-        expire_in: 1 hrs
+        expire_in: 1 week
+        expose_as: 'builds'
         paths:
             - website/.packages
     script:
