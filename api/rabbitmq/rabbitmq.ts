@@ -36,15 +36,13 @@ export class RabbitMQ {
     public listen(queueName: string): Observable<string> {
         const messageObservable = new Subject<string>();
 
-        this.channel.consume(
-            queueName,
-            async (message) => {
-                if (!message) return;
+        this.channel.consume(queueName, async (message) => {
+            if (!message) return;
 
-                messageObservable.next(message.content.toString());
-            },
-            { noAck: true }
-        );
+            messageObservable.next(message.content.toString());
+
+            this.channel.ack(message);
+        });
 
         return messageObservable;
     }

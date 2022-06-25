@@ -3,6 +3,8 @@ import express from 'express';
 import basicAuth from 'express-basic-auth';
 import cors from 'cors';
 import { RabbitMQ } from './rabbitmq/rabbitmq';
+import { PlayerPing } from './models/player.model';
+import { pingPlayers } from './management/players';
 
 export const rabbitmq = new RabbitMQ();
 const prisma = new PrismaClient();
@@ -10,9 +12,16 @@ const prisma = new PrismaClient();
 async function main() {
     await rabbitmq.init();
 
+    await rabbitmq.assertQueue('player-ping');
     await rabbitmq.assertQueue('game-server-message-broadcast', true, {
         'x-queue-type': 'stream',
         'x-max-age': '1D',
+    });
+
+    const playerPing$ = rabbitmq.listen('player-ping');
+    playerPing$.subscribe((message) => {
+        const playerPingMessage = JSON.parse(message) as PlayerPing;
+        pingPlayers(playerPingMessage.playerIds);
     });
 
     startExpressServer();

@@ -1,6 +1,5 @@
 import express from 'express';
 import { rabbitmq } from '..';
-import { pingPlayers } from '../management/players';
 import {
     getAllOnlineGameServer,
     getAllOnlineProxyServer,
@@ -53,10 +52,8 @@ router.post(`/ping/gameServer/:id`, async (req, res) => {
     const ip: string = req.ip.split(':').pop() || '';
     const port: number = req.body.port;
     const maximumPlayers = req.body.maximumPlayers;
-    const players: string[] = req.body.players || [];
 
     const successful = await pingGameServer(id, ip, port, maximumPlayers);
-    await pingPlayers(players);
 
     res.json({
         ping: 'pong',
