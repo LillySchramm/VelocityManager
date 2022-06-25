@@ -64,7 +64,7 @@ public class Velocitymanager {
             .buildTask(
                 this,
                 () -> {
-                    this.serverManager.auth.ping();
+                    this.serverManager.ping();
                     this.updateGameServers();
                 }
             )

@@ -7,35 +7,12 @@ import de.epsdev.velocitymanager.lib.http.HTTP;
 import de.epsdev.velocitymanager.lib.http.HTTPRequestResponse;
 import de.epsdev.velocitymanager.lib.rabbitmq.RabbitMQ;
 import java.util.UUID;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class AuthWrapper extends BaseWrapper {
 
     public AuthWrapper(VelocityServerManager serverManager) {
         super(serverManager);
-    }
-
-    public void ping() {
-        JSONObject serverInfo = null;
-
-        if (this.serverManager.serverType == ServerType.GAME_SERVER) {
-            serverInfo = new JSONObject();
-            serverInfo.put("port", config.getServerPort());
-            serverInfo.put("maximumPlayers", config.getMaxPlayers());
-        }
-
-        HTTP.POST(
-            "ping/" +
-            (
-                this.serverManager.serverType == ServerType.GAME_SERVER
-                    ? "gameServer"
-                    : "proxyServer"
-            ) +
-            "/" +
-            this.serverManager.uuid.toString(),
-            serverInfo
-        );
     }
 
     public void initializeServer() throws TokenInvalidException {
@@ -61,6 +38,20 @@ public class AuthWrapper extends BaseWrapper {
         }
 
         loadServerInformation();
+        updateServerInfo();
+    }
+
+    private void updateServerInfo() {
+        if (serverManager.serverType == ServerType.PROXY_SERVER) return;
+
+        JSONObject serverInfo = new JSONObject();
+        serverInfo.put("port", config.getServerPort());
+        serverInfo.put("maximumPlayers", config.getMaxPlayers());
+
+        HTTP.POST(
+            "gameServer/update/" + this.serverManager.uuid.toString(),
+            serverInfo
+        );
     }
 
     private String registerServer() {

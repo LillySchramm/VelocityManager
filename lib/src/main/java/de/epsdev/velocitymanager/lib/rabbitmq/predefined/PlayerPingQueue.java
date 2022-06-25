@@ -7,7 +7,7 @@ import java.io.IOException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class PlayerPingQueue extends Queue {
+public class PlayerPingQueue extends Queue implements PingQueue {
 
     private final IConfig iConfig;
 
@@ -17,12 +17,13 @@ public class PlayerPingQueue extends Queue {
         this.iConfig = iConfig;
     }
 
+    @Override
     public void ping() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("playerIds", new JSONArray(this.iConfig.getPlayerIds()));
+        JSONObject message = new JSONObject();
+        message.put("playerIds", new JSONArray(this.iConfig.getPlayerIds()));
 
         try {
-            sendMessage(jsonObject);
+            sendMessage(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
