@@ -5,6 +5,7 @@ import com.rabbitmq.client.DeliverCallback;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import org.json.JSONObject;
 
 public class Queue {
 
@@ -41,6 +42,10 @@ public class Queue {
             null,
             message.getBytes(StandardCharsets.UTF_8)
         );
+    }
+
+    public void sendMessage(JSONObject message) throws IOException {
+        sendMessage(message.toString());
     }
 
     public void subscribe() throws IOException {

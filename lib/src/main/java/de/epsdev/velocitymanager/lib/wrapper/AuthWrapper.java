@@ -23,8 +23,6 @@ public class AuthWrapper extends BaseWrapper {
             serverInfo = new JSONObject();
             serverInfo.put("port", config.getServerPort());
             serverInfo.put("maximumPlayers", config.getMaxPlayers());
-
-            serverInfo.put("players", new JSONArray(config.getPlayerIds()));
         }
 
         HTTP.POST(

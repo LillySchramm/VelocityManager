@@ -7,6 +7,7 @@ import de.epsdev.velocitymanager.lib.exeptions.TokenInvalidException;
 import de.epsdev.velocitymanager.lib.rabbitmq.Queue;
 import de.epsdev.velocitymanager.lib.rabbitmq.RabbitMQ;
 import de.epsdev.velocitymanager.lib.rabbitmq.Stream;
+import de.epsdev.velocitymanager.lib.rabbitmq.predefined.PlayerPingQueue;
 import de.epsdev.velocitymanager.lib.wrapper.AuthWrapper;
 import de.epsdev.velocitymanager.lib.wrapper.ServerWrapper;
 import java.io.IOException;
@@ -27,6 +28,8 @@ public class VelocityServerManager {
     public final IConfig config;
     public UUID uuid;
     public String name;
+
+    private PlayerPingQueue playerPingQueue;
 
     public ILogger logger = new DefaultLogger();
 
@@ -61,6 +64,11 @@ public class VelocityServerManager {
     private void initializeRabbitMQ() {
         try {
             this.rabbitMQ = new RabbitMQ(logger);
+
+            if (
+                this.serverType == ServerType.GAME_SERVER
+            ) this.playerPingQueue =
+                new PlayerPingQueue(this.rabbitMQ.getChannel(), this.config);
         } catch (
             URISyntaxException
             | NoSuchAlgorithmException
@@ -70,6 +78,12 @@ public class VelocityServerManager {
         ) {
             e.printStackTrace();
         }
+    }
+
+    public void ping() {
+        this.auth.ping();
+
+        if (this.playerPingQueue != null) this.playerPingQueue.ping();
     }
 
     public void stop() {

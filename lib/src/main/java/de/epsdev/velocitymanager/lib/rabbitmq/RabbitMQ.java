@@ -38,6 +38,10 @@ public class RabbitMQ {
         return new Stream(channel, name);
     }
 
+    public Channel getChannel() {
+        return channel;
+    }
+
     public void disconnect() {
         try {
             this.connection.close();
