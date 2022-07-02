@@ -7,6 +7,7 @@ import { PlayerPing } from './models/player.model';
 import { pingPlayers } from './management/players';
 import { ServerPing, _SERVER_TYPE } from './models/server.model';
 import { pingGameServer, pingProxyServer } from './management/servers';
+import { BIND_PORT } from './tools/config';
 
 export const rabbitmq = new RabbitMQ();
 const prisma = new PrismaClient();
@@ -60,8 +61,8 @@ function startExpressServer(): void {
     app.use('/kpi', require('./routes/kpi.route'));
     app.use('/config', require('./routes/config.route'));
 
-    const server = app.listen(30001, async () => {
-        console.log(`🚀 Server ready at: http://localhost:30001`);
+    const server = app.listen(BIND_PORT, async () => {
+        console.log(`🚀 Server ready at: http://localhost:${BIND_PORT}`);
     });
 }
 

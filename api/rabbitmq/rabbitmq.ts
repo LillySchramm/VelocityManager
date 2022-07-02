@@ -1,17 +1,15 @@
 import * as amqp from 'amqplib';
-import { env } from 'process';
 import { Observable, Subject } from 'rxjs';
+import { RABBIT_MQ_URI } from '../tools/config';
 
 export class RabbitMQ {
-    private URI = env.RABBIT_MQ_URL || 'amqp://localhost';
-
     private connection!: amqp.Connection;
     private channel!: amqp.Channel;
 
     constructor() {}
 
     public async init(): Promise<void> {
-        this.connection = await amqp.connect(this.URI);
+        this.connection = await amqp.connect(RABBIT_MQ_URI);
         this.channel = await this.connection.createChannel();
     }
 

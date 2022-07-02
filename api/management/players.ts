@@ -1,7 +1,8 @@
 import { Player, PrismaClient } from '@prisma/client';
 import { PlayerKPIS } from '../models/kpi.model';
 import { PlayerStatus } from '../models/player.model';
-import { CONTACT_TIMEOUT, getTTLQuery, isServerFull } from './servers';
+import { CONTACT_TIMEOUT_SECONDS } from '../tools/config';
+import { getTTLQuery, isServerFull } from './servers';
 
 const prisma = new PrismaClient();
 
@@ -57,7 +58,9 @@ export async function getPlayers(
     return players.map((player) => {
         return {
             player: player,
-            online: player.lastContact > Date.now() - Number(CONTACT_TIMEOUT),
+            online:
+                player.lastContact >
+                Date.now() - Number(CONTACT_TIMEOUT_SECONDS),
         };
     });
 }

@@ -8,16 +8,16 @@ import {
 import { GameServerKPIS, ProxyServerKPIS } from '../models/kpi.model';
 import { BackendGameServer, BackendProxyServer } from '../models/server.model';
 import { cleanBackendGameServer } from '../tools/cleanup';
+import { CONTACT_TIMEOUT_SECONDS } from '../tools/config';
 
 const prisma = new PrismaClient();
 
-export const CONTACT_TIMEOUT = BigInt(10 * 1000);
 const DEFAULT_SERVER_TYPE_ID = '00000000-0000-0000-0000-000000000001';
 
 export function getTTLQuery(): any {
     return {
         lastContact: {
-            gte: Date.now() - Number(CONTACT_TIMEOUT),
+            gte: Date.now() - Number(CONTACT_TIMEOUT_SECONDS),
         },
     };
 }
@@ -111,7 +111,7 @@ export async function getGameServer(
         const backendServer: BackendGameServer = server;
         backendServer.playerCount = server.Player.length;
         backendServer.isOnline =
-            server.lastContact + CONTACT_TIMEOUT >= Date.now();
+            server.lastContact + CONTACT_TIMEOUT_SECONDS >= Date.now();
 
         return cleanBackendGameServer(backendServer);
     } catch (e) {
@@ -132,7 +132,8 @@ export async function getProxyServer(
             return undefined;
         }
 
-        server.isOnline = server.lastContact + CONTACT_TIMEOUT >= Date.now();
+        server.isOnline =
+            server.lastContact + CONTACT_TIMEOUT_SECONDS >= Date.now();
 
         return server;
     } catch (e) {
@@ -171,7 +172,7 @@ export async function getJoinableServer(
         where: {
             AND: {
                 lastContact: {
-                    gte: Date.now() - Number(CONTACT_TIMEOUT),
+                    gte: Date.now() - Number(CONTACT_TIMEOUT_SECONDS),
                 },
                 serverTypeId: requestedServerTypeId,
             },
