@@ -5,6 +5,7 @@ import {
     colors,
     animals,
 } from 'unique-names-generator';
+import { rabbitmq } from '..';
 import { GameServerKPIS, ProxyServerKPIS } from '../models/kpi.model';
 import { BackendGameServer, BackendProxyServer } from '../models/server.model';
 import { cleanBackendGameServer } from '../tools/cleanup';
@@ -222,6 +223,19 @@ export async function getProxyServerKPIs(): Promise<ProxyServerKPIS> {
     });
 
     return { totalServers, currentServers };
+}
+
+export async function publishAllOnlineGameServer(): Promise<void> {
+    const servers = await getAllOnlineGameServer();
+
+    rabbitmq.sendMessage(
+        'all-online-game-server',
+        JSON.stringify({
+            servers: servers.map((server) => {
+                return { ...server, lastContact: Number(server?.lastContact) };
+            }),
+        })
+    );
 }
 
 function generateName(): string {

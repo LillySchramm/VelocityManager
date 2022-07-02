@@ -6,7 +6,11 @@ import { RabbitMQ } from './rabbitmq/rabbitmq';
 import { PlayerPing } from './models/player.model';
 import { pingPlayers } from './management/players';
 import { ServerPing, _SERVER_TYPE } from './models/server.model';
-import { pingGameServer, pingProxyServer } from './management/servers';
+import {
+    pingGameServer,
+    pingProxyServer,
+    publishAllOnlineGameServer,
+} from './management/servers';
 import { BIND_PORT } from './tools/config';
 
 export const rabbitmq = new RabbitMQ();
@@ -21,6 +25,10 @@ async function main() {
         'x-queue-type': 'stream',
         'x-max-age': '1D',
     });
+    await rabbitmq.assertQueue('all-online-game-server', true, {
+        'x-queue-type': 'stream',
+        'x-max-age': '1m',
+    });
 
     const playerPing$ = rabbitmq.listen('player-ping');
     playerPing$.subscribe((message: PlayerPing) =>
@@ -33,6 +41,8 @@ async function main() {
             pingGameServer(message.id);
         else pingProxyServer(message.id);
     });
+
+    setInterval(async () => await publishAllOnlineGameServer(), 1000);
 
     startExpressServer();
 }
