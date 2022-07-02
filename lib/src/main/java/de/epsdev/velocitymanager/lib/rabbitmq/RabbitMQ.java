@@ -35,7 +35,11 @@ public class RabbitMQ {
     }
 
     public Stream createStream(String name) throws IOException {
-        return new Stream(channel, name);
+        return new Stream(channel, name, "1D");
+    }
+
+    public Stream createStream(String name, String maxAge) throws IOException {
+        return new Stream(channel, name, maxAge);
     }
 
     public Channel getChannel() {

@@ -18,6 +18,10 @@ import de.epsdev.velocitymanager.lib.basic.BasicPlayer;
 import de.epsdev.velocitymanager.lib.basic.BasicServerInfo;
 import de.epsdev.velocitymanager.lib.config.ILogger;
 import de.epsdev.velocitymanager.lib.exeptions.TokenInvalidException;
+import de.epsdev.velocitymanager.lib.rabbitmq.IMessage;
+import de.epsdev.velocitymanager.lib.rabbitmq.Message;
+import de.epsdev.velocitymanager.lib.rabbitmq.Stream;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.*;
@@ -52,7 +56,7 @@ public class Velocitymanager {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event)
-        throws TokenInvalidException {
+        throws TokenInvalidException, IOException {
         this.serverManager =
             new VelocityServerManager(
                 ServerType.PROXY_SERVER,
@@ -60,14 +64,19 @@ public class Velocitymanager {
                 this.logger
             );
 
+        Stream gameServerOnlineStream =
+            this.serverManager.rabbitMQ.createStream(
+                    "all-online-game-server",
+                    "1m"
+                );
+        gameServerOnlineStream.subscribe(message ->
+            this.updateGameServers(
+                    BasicServerInfo.parseAllOnlineGameServerMessage(message)
+                )
+        );
+
         this.proxyServer.getScheduler()
-            .buildTask(
-                this,
-                () -> {
-                    this.serverManager.ping();
-                    this.updateGameServers();
-                }
-            )
+            .buildTask(this, () -> this.serverManager.ping())
             .repeat(1L, TimeUnit.SECONDS)
             .schedule();
 
@@ -107,9 +116,7 @@ public class Velocitymanager {
         logger.logInfo("Player connected: " + player);
     }
 
-    private void updateGameServers() {
-        List<BasicServerInfo> serverInfos = BasicServerInfo.getAllOnlineGameServer();
-
+    private void updateGameServers(List<BasicServerInfo> serverInfos) {
         ArrayList<UUID> currentIds = new ArrayList<>();
         for (BasicServerInfo serverInfo : serverInfos) {
             currentIds.add(serverInfo.getId());

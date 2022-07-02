@@ -6,7 +6,8 @@ import java.util.HashMap;
 
 public class Stream extends Queue {
 
-    public Stream(Channel channel, String name) throws IOException {
+    public Stream(Channel channel, String name, String maxAge)
+        throws IOException {
         super(
             channel,
             name,
@@ -16,7 +17,7 @@ public class Stream extends Queue {
             new HashMap<String, Object>() {
                 {
                     put("x-queue-type", "stream");
-                    put("x-max-age", "1D");
+                    put("x-max-age", maxAge);
                 }
             }
         );

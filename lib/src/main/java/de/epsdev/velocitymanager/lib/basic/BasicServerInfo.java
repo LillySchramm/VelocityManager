@@ -1,6 +1,7 @@
 package de.epsdev.velocitymanager.lib.basic;
 
 import de.epsdev.velocitymanager.lib.http.HTTP;
+import de.epsdev.velocitymanager.lib.rabbitmq.Message;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -37,11 +38,12 @@ public class BasicServerInfo {
         return port;
     }
 
-    public static List<BasicServerInfo> getAllOnlineGameServer() {
+    public static List<BasicServerInfo> parseAllOnlineGameServerMessage(
+        Message message
+    ) {
         List<BasicServerInfo> server = new ArrayList<>();
 
-        JSONObject response = HTTP.GET("gameServer/online").getJsonResponse();
-        JSONArray serverArray = response.getJSONArray("servers");
+        JSONArray serverArray = message.toJson().getJSONArray("servers");
 
         for (int i = 0; i < serverArray.length(); i++) {
             JSONObject rawServer = serverArray.getJSONObject(i);
