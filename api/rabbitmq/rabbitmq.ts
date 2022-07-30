@@ -1,6 +1,6 @@
 import * as amqp from 'amqplib';
 import { Observable, Subject } from 'rxjs';
-import { RABBIT_MQ_URI } from '../tools/config';
+import { RABBIT_MQ_PREFIX, RABBIT_MQ_URI } from '../tools/config';
 
 export class RabbitMQ {
     private connection!: amqp.Connection;
@@ -11,6 +11,10 @@ export class RabbitMQ {
     public async init(): Promise<void> {
         this.connection = await amqp.connect(RABBIT_MQ_URI);
         this.channel = await this.connection.createChannel();
+    }
+
+    private patchQueueName(name: string): string {
+        return RABBIT_MQ_PREFIX ? `${RABBIT_MQ_PREFIX}.${name}` : name;
     }
 
     public async sendMessage(
@@ -25,7 +29,7 @@ export class RabbitMQ {
         durable: boolean = false,
         _arguments: any = {}
     ) {
-        await this.channel.assertQueue(queueName, {
+        await this.channel.assertQueue(this.patchQueueName(queueName), {
             durable,
             arguments: _arguments,
         });
@@ -34,14 +38,17 @@ export class RabbitMQ {
     public listen(queueName: string): Observable<any> {
         const messageObservable = new Subject<any>();
 
-        this.channel.consume(queueName, async (message) => {
-            if (!message) return;
+        this.channel.consume(
+            this.patchQueueName(queueName),
+            async (message) => {
+                if (!message) return;
 
-            const rawMessage = message.content.toString();
-            messageObservable.next(JSON.parse(rawMessage));
+                const rawMessage = message.content.toString();
+                messageObservable.next(JSON.parse(rawMessage));
 
-            this.channel.ack(message);
-        });
+                this.channel.ack(message);
+            }
+        );
 
         return messageObservable;
     }

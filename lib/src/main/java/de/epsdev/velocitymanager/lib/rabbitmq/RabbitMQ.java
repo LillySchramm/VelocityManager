@@ -12,7 +12,7 @@ import java.util.concurrent.TimeoutException;
 
 public class RabbitMQ {
 
-    public static String rabbitMqUrl = "";
+    public static RabbitMQConfig config;
     private Connection connection;
     private Channel channel;
 
@@ -21,7 +21,7 @@ public class RabbitMQ {
     public RabbitMQ(ILogger logger)
         throws URISyntaxException, NoSuchAlgorithmException, KeyManagementException, IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setUri(rabbitMqUrl);
+        factory.setUri(config.URI);
 
         this.connection = factory.newConnection();
         this.channel = this.connection.createChannel();
@@ -31,19 +31,23 @@ public class RabbitMQ {
     }
 
     public Queue createQueue(String name) throws IOException {
-        return new Queue(channel, name);
+        return new Queue(channel, patchQueueName(name));
     }
 
     public Stream createStream(String name) throws IOException {
-        return new Stream(channel, name, "1D");
+        return new Stream(channel, patchQueueName(name), "1D");
     }
 
     public Stream createStream(String name, String maxAge) throws IOException {
-        return new Stream(channel, name, maxAge);
+        return new Stream(channel, patchQueueName(name), maxAge);
     }
 
     public Channel getChannel() {
         return channel;
+    }
+
+    public static String patchQueueName(String name) {
+        return config.PREFIX.equals("") ? name : config.PREFIX + "." + name;
     }
 
     public void disconnect() {

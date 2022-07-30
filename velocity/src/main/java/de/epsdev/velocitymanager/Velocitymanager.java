@@ -18,8 +18,6 @@ import de.epsdev.velocitymanager.lib.basic.BasicPlayer;
 import de.epsdev.velocitymanager.lib.basic.BasicServerInfo;
 import de.epsdev.velocitymanager.lib.config.ILogger;
 import de.epsdev.velocitymanager.lib.exeptions.TokenInvalidException;
-import de.epsdev.velocitymanager.lib.rabbitmq.IMessage;
-import de.epsdev.velocitymanager.lib.rabbitmq.Message;
 import de.epsdev.velocitymanager.lib.rabbitmq.Stream;
 import java.io.IOException;
 import java.net.InetSocketAddress;

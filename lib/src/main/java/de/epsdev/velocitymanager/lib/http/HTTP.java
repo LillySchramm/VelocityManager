@@ -17,6 +17,11 @@ public class HTTP {
     public static String urlBase = "";
     public static String token = "";
 
+    /**
+     * An authenticated GET request.
+     *
+     * @param urlToRequest e.g. <b>/i/am/a/path</b>
+     */
     public static HTTPRequestResponse GET(String urlToRequest) {
         return authenticatedRequest(new HttpGet(urlBase + urlToRequest));
     }
