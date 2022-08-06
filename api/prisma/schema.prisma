@@ -58,7 +58,9 @@ model APIKey {
 
 model Account {
   id              String         @id @default(uuid())
-  name            String
+  name            String         @unique
+  deletable       Boolean        @default(true)
+  createdAt       DateTime       @default(now())
   initialSecret   InitialSecret? @relation(fields: [initialSecretId], references: [id])
   initialSecretId String?
   otp             OTP?           @relation(fields: [oTPId], references: [id])
@@ -66,13 +68,15 @@ model Account {
 }
 
 model InitialSecret {
-  id      String    @id @default(uuid())
-  key     String    @db.VarChar(6)
-  Account Account[]
+  id        String    @id @default(uuid())
+  key       String    @db.VarChar(6)
+  createdAt DateTime  @default(now())
+  Account   Account[]
 }
 
 model OTP {
-  id      String    @id @default(uuid())
-  dataUri String    @db.VarChar(255)
-  Account Account[]
+  id        String    @id @default(uuid())
+  dataUri   String    @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  Account   Account[]
 }

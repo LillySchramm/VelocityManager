@@ -30,8 +30,8 @@ export class RabbitMQ {
         durable: boolean = false,
         _arguments: any = {}
     ) {
-        const name = this.patchQueueName(queueName)
-        logger.info(`Asserting Queue '${name}'`)
+        const name = this.patchQueueName(queueName);
+        logger.info(`Asserting Queue '${name}'`);
         await this.channel.assertQueue(name, {
             durable,
             arguments: _arguments,
@@ -40,8 +40,8 @@ export class RabbitMQ {
 
     public listen(queueName: string): Observable<any> {
         const messageObservable = new Subject<any>();
-        const name = this.patchQueueName(queueName)
-        logger.info(`Listening on Queue '${name}'`)
+        const name = this.patchQueueName(queueName);
+        logger.info(`Listening on Queue '${name}'`);
 
         this.channel.consume(
             this.patchQueueName(queueName),

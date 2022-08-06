@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import express from 'express';
-import basicAuth from 'express-basic-auth';
 import cors from 'cors';
 import { RabbitMQ } from './rabbitmq/rabbitmq';
 import { PlayerPing } from './models/player.model';
@@ -13,6 +12,13 @@ import {
 } from './management/servers';
 import { BIND_PORT } from './tools/config';
 import { logger } from './tools/logging';
+import { appAuth } from './routes/accounts.route';
+import { createNewAccount, getAccountByName, getAccountByNameWithInitialSecret } from './management/accounts';
+import {
+    generateSaveRandomNumber,
+    getRandomString32,
+    getRandomString64,
+} from './tools/random';
 
 export const rabbitmq = new RabbitMQ();
 const prisma = new PrismaClient();
@@ -20,6 +26,7 @@ const prisma = new PrismaClient();
 async function main() {
     logger.info('Starting...');
     await initRabbitMq();
+    await initializeAccounts();
     startExpressServer();
 }
 
@@ -27,11 +34,7 @@ function startExpressServer(): void {
     const app = express();
 
     app.use(cors());
-    app.use(
-        basicAuth({
-            users: { admin: 'admin' },
-        })
-    );
+    app.use(appAuth);
 
     app.use(express.json());
 
@@ -48,7 +51,7 @@ function startExpressServer(): void {
     app.use('/config', require('./routes/config.route'));
 
     const server = app.listen(BIND_PORT, async () => {
-        logger.info("Start-Up Complete!")
+        logger.info('Start-Up Complete!');
         logger.info(`Server ready at: http://localhost:${BIND_PORT}`);
     });
 }
@@ -56,7 +59,7 @@ function startExpressServer(): void {
 setTimeout(async () => main());
 
 async function initRabbitMq() {
-    logger.info("Initializing RabbitMQ")
+    logger.info('Initializing RabbitMQ');
     await rabbitmq.init();
 
     await rabbitmq.assertQueue('player-ping');
@@ -83,5 +86,22 @@ async function initRabbitMq() {
     });
 
     setInterval(async () => await publishAllOnlineGameServer(), 1000);
-    logger.info("Initialized RabbitMQ")
+    logger.info('Initialized RabbitMQ');
+}
+
+async function initializeAccounts() {
+    let adminAccount = await getAccountByName('admin');
+
+    if (adminAccount && adminAccount.otp) {
+        return;
+    }
+
+    if (!adminAccount) {
+        await createNewAccount('admin');
+    }
+
+    const account = await getAccountByNameWithInitialSecret("admin")
+    logger.warn('Initial login has not occurred.');
+    logger.warn('Please log in to the frontend using the following credentials to complete the setup!')
+    logger.warn(`Name: '${account?.name}' Password: '${account?.initialSecret?.key}'`)
 }
