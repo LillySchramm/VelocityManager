@@ -1,6 +1,7 @@
 import * as amqp from 'amqplib';
 import { Observable, Subject } from 'rxjs';
 import { RABBIT_MQ_PREFIX, RABBIT_MQ_URI } from '../tools/config';
+import { logger } from '../tools/logging';
 
 export class RabbitMQ {
     private connection!: amqp.Connection;
@@ -29,7 +30,9 @@ export class RabbitMQ {
         durable: boolean = false,
         _arguments: any = {}
     ) {
-        await this.channel.assertQueue(this.patchQueueName(queueName), {
+        const name = this.patchQueueName(queueName)
+        logger.info(`Asserting Queue '${name}'`)
+        await this.channel.assertQueue(name, {
             durable,
             arguments: _arguments,
         });
@@ -37,6 +40,8 @@ export class RabbitMQ {
 
     public listen(queueName: string): Observable<any> {
         const messageObservable = new Subject<any>();
+        const name = this.patchQueueName(queueName)
+        logger.info(`Listening on Queue '${name}'`)
 
         this.channel.consume(
             this.patchQueueName(queueName),

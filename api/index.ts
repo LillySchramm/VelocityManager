@@ -12,38 +12,14 @@ import {
     publishAllOnlineGameServer,
 } from './management/servers';
 import { BIND_PORT } from './tools/config';
+import { logger } from './tools/logging';
 
 export const rabbitmq = new RabbitMQ();
 const prisma = new PrismaClient();
 
 async function main() {
-    await rabbitmq.init();
-
-    await rabbitmq.assertQueue('player-ping');
-    await rabbitmq.assertQueue('server-ping');
-    await rabbitmq.assertQueue('game-server-message-broadcast', true, {
-        'x-queue-type': 'stream',
-        'x-max-age': '1D',
-    });
-    await rabbitmq.assertQueue('all-online-game-server', true, {
-        'x-queue-type': 'stream',
-        'x-max-age': '1m',
-    });
-
-    const playerPing$ = rabbitmq.listen('player-ping');
-    playerPing$.subscribe((message: PlayerPing) =>
-        pingPlayers(message.playerIds)
-    );
-
-    const serverPing$ = rabbitmq.listen('server-ping');
-    serverPing$.subscribe((message: ServerPing) => {
-        if (message.serverType === _SERVER_TYPE.GAME_SERVER)
-            pingGameServer(message.id);
-        else pingProxyServer(message.id);
-    });
-
-    setInterval(async () => await publishAllOnlineGameServer(), 1000);
-
+    logger.info('Starting...');
+    await initRabbitMq();
     startExpressServer();
 }
 
@@ -72,8 +48,40 @@ function startExpressServer(): void {
     app.use('/config', require('./routes/config.route'));
 
     const server = app.listen(BIND_PORT, async () => {
-        console.log(`🚀 Server ready at: http://localhost:${BIND_PORT}`);
+        logger.info("Start-Up Complete!")
+        logger.info(`Server ready at: http://localhost:${BIND_PORT}`);
     });
 }
 
 setTimeout(async () => main());
+
+async function initRabbitMq() {
+    logger.info("Initializing RabbitMQ")
+    await rabbitmq.init();
+
+    await rabbitmq.assertQueue('player-ping');
+    await rabbitmq.assertQueue('server-ping');
+    await rabbitmq.assertQueue('game-server-message-broadcast', true, {
+        'x-queue-type': 'stream',
+        'x-max-age': '1D',
+    });
+    await rabbitmq.assertQueue('all-online-game-server', true, {
+        'x-queue-type': 'stream',
+        'x-max-age': '1m',
+    });
+
+    const playerPing$ = rabbitmq.listen('player-ping');
+    playerPing$.subscribe((message: PlayerPing) =>
+        pingPlayers(message.playerIds)
+    );
+
+    const serverPing$ = rabbitmq.listen('server-ping');
+    serverPing$.subscribe((message: ServerPing) => {
+        if (message.serverType === _SERVER_TYPE.GAME_SERVER)
+            pingGameServer(message.id);
+        else pingProxyServer(message.id);
+    });
+
+    setInterval(async () => await publishAllOnlineGameServer(), 1000);
+    logger.info("Initialized RabbitMQ")
+}
