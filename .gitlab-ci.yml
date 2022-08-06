@@ -71,7 +71,7 @@ build_api:
             - api/index.js
             - api/dist
     script:
-        - cd api && npm run build
+        - cd api && npm run build-es
 
 build_website:
     image: node:14-alpine

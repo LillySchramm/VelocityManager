@@ -12,3 +12,5 @@ export const RABBIT_MQ_PREFIX =
 export const CONTACT_TIMEOUT_SECONDS = BigInt(
     Number(env.CONTACT_TIMEOUT_SECONDS || '10') * 1000
 );
+
+export const LOG_FILE = env.LOG_FILE || 'logs/combined.log';
