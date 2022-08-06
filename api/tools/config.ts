@@ -14,3 +14,5 @@ export const CONTACT_TIMEOUT_SECONDS = BigInt(
 );
 
 export const LOG_FILE = env.LOG_FILE || 'logs/combined.log';
+
+export const TOTP_ISSUER = env.TOTP_ISSUER || 'VelocityManager';

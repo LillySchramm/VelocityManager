@@ -1,4 +1,6 @@
 import { Account, InitialSecret, OTP, PrismaClient } from '@prisma/client';
+import { TOTP } from 'otpauth';
+import { logger } from '../tools/logging';
 import { getRandomString64 } from '../tools/random';
 
 const prisma = new PrismaClient();
@@ -41,4 +43,20 @@ export async function createNewAccount(
             initialSecret: true,
         },
     });
+}
+
+export async function setTOTP(account: Account, totp: TOTP): Promise<void> {
+    await prisma.account.update({
+        where: { id: account.id },
+        data: {
+            //initialSecretId: null,
+            otp: {
+                create: {
+                    dataUri: totp.toString(),
+                },
+            },
+        },
+    });
+
+    logger.verbose(`Set new TOTP for '${account.name}'.`);
 }

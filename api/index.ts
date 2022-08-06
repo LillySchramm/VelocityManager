@@ -12,13 +12,12 @@ import {
 } from './management/servers';
 import { BIND_PORT } from './tools/config';
 import { logger } from './tools/logging';
-import { appAuth } from './routes/accounts.route';
-import { createNewAccount, getAccountByName, getAccountByNameWithInitialSecret } from './management/accounts';
 import {
-    generateSaveRandomNumber,
-    getRandomString32,
-    getRandomString64,
-} from './tools/random';
+    createNewAccount,
+    getAccountByName,
+    getAccountByNameWithInitialSecret,
+} from './management/accounts';
+import { appAuth } from './middlewares/auth.middleware';
 
 export const rabbitmq = new RabbitMQ();
 const prisma = new PrismaClient();
@@ -49,6 +48,7 @@ function startExpressServer(): void {
     app.use('/player', require('./routes/player.route'));
     app.use('/kpi', require('./routes/kpi.route'));
     app.use('/config', require('./routes/config.route'));
+    app.use('/account', require('./routes/accounts.route'));
 
     const server = app.listen(BIND_PORT, async () => {
         logger.info('Start-Up Complete!');
@@ -100,8 +100,12 @@ async function initializeAccounts() {
         await createNewAccount('admin');
     }
 
-    const account = await getAccountByNameWithInitialSecret("admin")
+    const account = await getAccountByNameWithInitialSecret('admin');
     logger.warn('Initial login has not occurred.');
-    logger.warn('Please log in to the frontend using the following credentials to complete the setup!')
-    logger.warn(`Name: '${account?.name}' Password: '${account?.initialSecret?.key}'`)
+    logger.warn(
+        'Please log in to the frontend using the following credentials to complete the setup!'
+    );
+    logger.warn(
+        `Name: '${account?.name}' Password: '${account?.initialSecret?.key}'`
+    );
 }
