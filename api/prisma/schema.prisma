@@ -50,3 +50,29 @@ model ProxyServer {
   createdAt   DateTime @default(now())
   Player      Player[]
 }
+
+model APIKey {
+  id  String @id @default(uuid())
+  key String @db.VarChar(255)
+}
+
+model Account {
+  id              String         @id @default(uuid())
+  name            String
+  initialSecret   InitialSecret? @relation(fields: [initialSecretId], references: [id])
+  initialSecretId String?
+  otp             OTP?           @relation(fields: [oTPId], references: [id])
+  oTPId           String?
+}
+
+model InitialSecret {
+  id      String    @id @default(uuid())
+  key     String    @db.VarChar(6)
+  Account Account[]
+}
+
+model OTP {
+  id      String    @id @default(uuid())
+  dataUri String    @db.VarChar(255)
+  Account Account[]
+}
