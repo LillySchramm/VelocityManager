@@ -83,3 +83,7 @@ export async function generateNewSession(
 
     return { ...session, bearer };
 }
+
+export async function getSessionById(id: string): Promise<Session | null> {
+    return prisma.session.findFirst({ where: { id } });
+}

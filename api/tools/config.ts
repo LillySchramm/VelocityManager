@@ -16,3 +16,6 @@ export const CONTACT_TIMEOUT_SECONDS = BigInt(
 export const LOG_FILE = env.LOG_FILE || 'logs/combined.log';
 
 export const TOTP_ISSUER = env.TOTP_ISSUER || 'VelocityManager';
+
+export const SESSION_TIMEOUT_IN_MINUTES =
+    Number(env.SESSION_TIMEOUT_IN_MINUTES) || 600;
