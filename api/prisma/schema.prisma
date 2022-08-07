@@ -65,6 +65,7 @@ model Account {
   initialSecretId String?
   otp             OTP?           @relation(fields: [oTPId], references: [id])
   oTPId           String?
+  Session         Session[]
 }
 
 model InitialSecret {
@@ -79,4 +80,13 @@ model OTP {
   dataUri   String    @db.VarChar(255)
   createdAt DateTime  @default(now())
   Account   Account[]
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  name      String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+  key       String   @db.VarChar(512)
+  account   Account  @relation(fields: [accountId], references: [id])
+  accountId String
 }

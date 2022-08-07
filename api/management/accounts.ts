@@ -1,5 +1,12 @@
-import { Account, InitialSecret, OTP, PrismaClient } from '@prisma/client';
+import {
+    Account,
+    InitialSecret,
+    OTP,
+    PrismaClient,
+    Session,
+} from '@prisma/client';
 import { TOTP } from 'otpauth';
+import { secureHash } from '../tools/hash';
 import { logger } from '../tools/logging';
 import { getRandomString64 } from '../tools/random';
 
@@ -59,4 +66,20 @@ export async function setTOTP(account: Account, totp: TOTP): Promise<void> {
     });
 
     logger.verbose(`Set new TOTP for '${account.name}'.`);
+}
+
+export async function generateNewSession(
+    account: Account
+): Promise<Session & { bearer: string }> {
+    const bearer = getRandomString64(512);
+    const hash = await secureHash(bearer);
+
+    const session = await prisma.session.create({
+        data: {
+            key: hash,
+            accountId: account.id,
+        },
+    });
+
+    return { ...session, bearer };
 }

@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+    generateNewSession,
     getAccountByName,
     getAccountByNameWithInitialSecret,
     setTOTP,
@@ -46,8 +47,9 @@ router.post(`/login`, async (req, res) => {
         return;
     }
 
-    logger.verbose(`${account.name} logged in successfully.`);
+    logger.verbose(`'${account.name}' logged in successfully.`);
 
-    res.json({ bearer: getRandomString64(256) }); // Placeholder
+    const session = await generateNewSession(account);
+    res.json({ bearer: `${session.id}@${session.bearer}` });
 });
 module.exports = router;

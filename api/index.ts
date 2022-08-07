@@ -103,7 +103,7 @@ async function initializeAccounts() {
     const account = await getAccountByNameWithInitialSecret('admin');
     logger.warn('Initial login has not occurred.');
     logger.warn(
-        'Please log in to the frontend using the following credentials to complete the setup!'
+        'Please log into the frontend using the following credentials to complete the setup!'
     );
     logger.warn(
         `Name: '${account?.name}' Password: '${account?.initialSecret?.key}'`
