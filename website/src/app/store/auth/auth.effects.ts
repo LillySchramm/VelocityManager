@@ -5,6 +5,7 @@ import { exhaustMap, map, switchMap } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 import { addMessagesToQueue } from '../message/message.actions';
 import {
+    firstLoginSuccess,
     loadCredentials,
     loadCredentialsFail,
     loadCredentialsSuccess,
@@ -43,8 +44,8 @@ export class AuthEffects {
             switchMap((payload) =>
                 this.authService.login(payload.username, payload.password)
             ),
-            map((token) => {
-                if (!token) {
+            map((loginResponse) => {
+                if (!loginResponse) {
                     this.store.dispatch(
                         addMessagesToQueue({
                             messages: [
@@ -59,6 +60,10 @@ export class AuthEffects {
                     return loginFail();
                 }
 
+                if (loginResponse.totp) {
+                    return firstLoginSuccess({ totp: loginResponse.totp });
+                }
+
                 this.store.dispatch(
                     addMessagesToQueue({
                         messages: [
@@ -70,7 +75,7 @@ export class AuthEffects {
                     })
                 );
 
-                return loginSuccess({ token });
+                return loginSuccess({ token: loginResponse.bearer || '' });
             })
         )
     );

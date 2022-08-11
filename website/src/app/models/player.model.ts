@@ -1,7 +1,7 @@
 export interface Player {
-    id: String;
+    id: string;
     online: Boolean;
-    name: String;
+    name: string;
     lastContact: number;
-    gameServerId: String;
+    gameServerId: string;
 }

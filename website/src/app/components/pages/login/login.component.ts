@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { login } from 'src/app/store/auth/auth.actions';
-import { selectAuthToken } from 'src/app/store/auth/auth.selectors';
+import { selectAuthToken, selectTOTP } from 'src/app/store/auth/auth.selectors';
 
 @Component({
     selector: 'app-login',
@@ -22,6 +22,12 @@ export class LoginComponent implements OnInit {
         this.store.select(selectAuthToken).subscribe((token) => {
             if (token) {
                 this.router.navigate(['home']);
+            }
+        });
+
+        this.store.select(selectTOTP).subscribe((totp) => {
+            if (totp) {
+                this.router.navigate(['totp']);
             }
         });
     }

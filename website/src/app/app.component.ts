@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
 
     isLoggedIn$: Observable<Boolean>;
 
-    displayedMessageIds: String[] = [];
+    displayedMessageIds: string[] = [];
 
     constructor(private store: Store, private messageService: MessageService) {
         this.isLoggedIn$ = store.select(selectIsLoggedIn);

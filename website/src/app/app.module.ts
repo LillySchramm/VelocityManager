@@ -33,6 +33,7 @@ import { HeaderComponent } from './components/core/header/header.component';
 import { KpiEffects } from './store/kpi/kpi.effects';
 import { PlayerComponent } from './components/pages/player/player.component';
 import { PlayerEffects } from './store/player/player.effects';
+import { TotpComponent } from './components/pages/totp/totp.component';
 
 @NgModule({
     declarations: [
@@ -41,6 +42,7 @@ import { PlayerEffects } from './store/player/player.effects';
         HomeComponent,
         HeaderComponent,
         PlayerComponent,
+        TotpComponent,
     ],
     imports: [
         BrowserModule,

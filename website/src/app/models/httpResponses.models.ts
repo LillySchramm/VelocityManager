@@ -1,3 +1,8 @@
 export interface PingResponse {
-    ping: String;
+    ping: string;
+}
+
+export interface LoginResponse {
+    bearer?: string;
+    totp?: string;
 }

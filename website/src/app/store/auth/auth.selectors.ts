@@ -4,6 +4,7 @@ import { AuthState } from './auth.reducers';
 export const selectAuth = createFeatureSelector<AuthState>('auth');
 
 export const selectAuthToken = createSelector(selectAuth, (auth) => auth.token);
+export const selectTOTP = createSelector(selectAuth, (auth) => auth.totp);
 
 export const selectAuthLoaded = createSelector(
     selectAuth,

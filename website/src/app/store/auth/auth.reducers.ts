@@ -1,5 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import {
+    firstLoginSuccess,
     loadCredentials,
     loadCredentialsFail,
     loadCredentialsSuccess,
@@ -8,10 +9,12 @@ import {
     loginSuccess,
     logout,
     logoutSuccess,
+    unloadTOTP,
 } from './auth.actions';
 
 export interface AuthState {
-    token?: String;
+    token?: string;
+    totp?: string;
     loaded: boolean;
 }
 
@@ -32,6 +35,12 @@ export const authReducer = createReducer(
     }),
     on(login, (state) => {
         return { ...state, loaded: false };
+    }),
+    on(firstLoginSuccess, (state, { totp }) => {
+        return { ...state, totp, loaded: true };
+    }),
+    on(unloadTOTP, (state) => {
+        return { ...state, totp: undefined, loaded: true };
     }),
     on(loginSuccess, (state, { token }) => {
         return { ...state, token, loaded: true };

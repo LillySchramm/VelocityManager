@@ -8,5 +8,5 @@ export const addMessagesToQueue = createAction(
 
 export const removeMessagesFromQueue = createAction(
     '[MESSAGES] Remove Messages From Queue',
-    props<{ ids: String[] }>()
+    props<{ ids: string[] }>()
 );

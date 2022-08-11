@@ -1,0 +1,16 @@
+<h1>Initial Login Successful!</h1>
+<h2>
+    Please scan the QR-Code with an OTP App like
+    <a
+        href="https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=en&gl=US"
+        target="_blank"
+        >Microsoft Authenticator</a
+    >. <br />
+    This is the only time that you will see this code.
+</h2>
+<div class="container">
+    <img [src]="dataUrl" />
+    <button pButton class="p-button-danger" routerLink="/login">
+        Continue To Login
+    </button>
+</div>
