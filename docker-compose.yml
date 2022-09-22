@@ -1,0 +1,65 @@
+version: "3.6"
+services:
+    frontend:
+        image: thecodingmachine/nodejs:16
+        volumes:
+            - ./website:/usr/src/app
+        environment:
+            - STARTUP_COMMAND_0=yarn
+            - STARTUP_COMMAND_1=npx ng serve --host 0.0.0.0 --disable-host-check
+        expose:
+            - 4200
+        ports:
+            - 4200:4200
+
+    backend:
+        image: thecodingmachine/nodejs:16
+        volumes:
+            - ./api:/usr/src/app
+        environment:
+            - STARTUP_COMMAND_0=yarn
+            - STARTUP_COMMAND_1=bash -c 'while !</dev/tcp/db/5432; do sleep 1; done;'
+            - STARTUP_COMMAND_2=npx prisma migrate deploy
+            - STARTUP_COMMAND_3=npx prisma generate
+            - STARTUP_COMMAND_4=bash -c 'while !</dev/tcp/rabbitmq/5672; do sleep 1; done;'
+            - STARTUP_COMMAND_5=yarn run dev
+            - POSTGRES_URI=postgresql://uwu:owo@db:5432/velocitymanager
+            - RABBIT_MQ_URL=amqp://uwu:owo@rabbitmq
+        expose:
+            - 30001
+        ports:
+            - 30001:30001
+        depends_on:
+            - db
+
+    velocity:
+        build: velocity/
+        expose:
+            - 25577
+        ports:
+            - 25577:25577
+        depends_on:
+            - backend
+        volumes:
+            - ./velocity/target/velocitymanager-1.0-SNAPSHOT-jar-with-dependencies.jar:/app/plugins/velocitymanager-1.0-SNAPSHOT-jar-with-dependencies.jar
+        command: bash -c 'while !</dev/tcp/backend/30001; do sleep 5; done; java -jar server.jar'
+
+    paper:
+        build: spigot/
+        depends_on:
+            - backend
+        volumes:
+            - ./spigot/target/spigot-0.0.1.jar:/app/plugins/spigot-0.0.1.jar
+        command: bash -c 'while !</dev/tcp/backend/30001; do sleep 5; done; java -jar server.jar'
+
+    db:
+        image: postgres:14
+        environment:
+            - POSTGRES_USER=uwu
+            - POSTGRES_PASSWORD=owo
+
+    rabbitmq:
+        image: bitnami/rabbitmq:latest
+        environment:
+            - RABBITMQ_USERNAME=uwu
+            - RABBITMQ_PASSWORD=owo
