@@ -30,8 +30,8 @@ install_npm_dependencies:
             - api/node_modules
             - website/node_modules
     script:
-        - cd api && npm i
-        - cd ../website && npm i
+        - cd api && yarn
+        - cd ../website && yarn
 
 build_spigot:
     image: maven:3.8.4-eclipse-temurin-16
