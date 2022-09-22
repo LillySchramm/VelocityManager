@@ -16,9 +16,9 @@ public class Queue {
 
     public Queue(Channel channel, String name) throws IOException {
         this.channel = channel;
-        this.name = name;
+        this.name = RabbitMQ.patchQueueName(name);
 
-        channel.queueDeclare(name, false, false, false, null);
+        channel.queueDeclare(this.name, false, false, false, null);
     }
 
     public Queue(
@@ -30,9 +30,15 @@ public class Queue {
         Map<String, Object> arguments
     ) throws IOException {
         this.channel = channel;
-        this.name = name;
+        this.name = RabbitMQ.patchQueueName(name);
 
-        channel.queueDeclare(name, durable, exclusive, autoDelete, arguments);
+        channel.queueDeclare(
+            this.name,
+            durable,
+            exclusive,
+            autoDelete,
+            arguments
+        );
     }
 
     public void sendMessage(String message) throws IOException {
