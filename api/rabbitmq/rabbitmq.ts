@@ -22,7 +22,8 @@ export class RabbitMQ {
         queueName: string,
         message: string
     ): Promise<void> {
-        this.channel.sendToQueue(queueName, Buffer.from(message));
+        const name = this.patchQueueName(queueName);
+        this.channel.sendToQueue(name, Buffer.from(message));
     }
 
     public async assertQueue(
