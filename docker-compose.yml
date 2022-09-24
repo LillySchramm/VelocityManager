@@ -4,6 +4,7 @@ services:
         image: thecodingmachine/nodejs:16
         volumes:
             - ./website:/usr/src/app
+            - /usr/src/app/node_modules/
         environment:
             - STARTUP_COMMAND_0=yarn
             - STARTUP_COMMAND_1=npx ng serve --host 0.0.0.0 --disable-host-check
@@ -16,6 +17,7 @@ services:
         image: thecodingmachine/nodejs:16
         volumes:
             - ./api:/usr/src/app
+            - /usr/src/app/node_modules/
         environment:
             - STARTUP_COMMAND_0=yarn
             - STARTUP_COMMAND_1=bash -c 'while !</dev/tcp/db/5432; do sleep 1; done;'
