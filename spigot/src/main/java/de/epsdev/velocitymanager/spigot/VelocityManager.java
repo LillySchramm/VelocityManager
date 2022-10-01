@@ -8,6 +8,7 @@ import de.epsdev.velocitymanager.lib.exeptions.TokenInvalidException;
 import de.epsdev.velocitymanager.spigot.config.Config;
 import de.epsdev.velocitymanager.spigot.config.PluginLogger;
 import de.epsdev.velocitymanager.spigot.messageFunctions.BaseMessageFunction;
+import de.epsdev.velocitymanager.spigot.messageFunctions.KickListener;
 import de.epsdev.velocitymanager.spigot.messageFunctions.MessageBroadcast;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,7 @@ public final class VelocityManager extends JavaPlugin {
         List<BaseMessageFunction> functions = new ArrayList<>();
 
         functions.add(new MessageBroadcast());
+        functions.add(new KickListener());
 
         functions.forEach(function -> function.init(serverManager));
     }
