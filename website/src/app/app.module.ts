@@ -20,6 +20,8 @@ import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { SplitButtonModule } from 'primeng/splitbutton';
+import { DialogModule } from 'primeng/dialog';
 
 import { LoginComponent } from './components/pages/login/login.component';
 import { HomeComponent } from './components/pages/home/home.component';
@@ -63,6 +65,8 @@ import { TotpComponent } from './components/pages/totp/totp.component';
         AvatarGroupModule,
         TableModule,
         TagModule,
+        SplitButtonModule,
+        DialogModule,
         StoreModule.forRoot(reducers, {
             metaReducers,
         }),

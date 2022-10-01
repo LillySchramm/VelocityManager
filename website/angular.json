@@ -76,7 +76,8 @@
                             "browserTarget": "website:build:production"
                         },
                         "development": {
-                            "browserTarget": "website:build:development"
+                            "browserTarget": "website:build:development",
+                            "poll": 1000
                         }
                     },
                     "defaultConfiguration": "development"

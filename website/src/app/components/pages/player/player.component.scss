@@ -2,3 +2,14 @@
     display: flex;
     align-items: center;
 }
+
+.dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-top: 2rem;
+
+    p-button {
+        margin-left: 1rem;
+    }
+}
