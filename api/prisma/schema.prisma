@@ -19,6 +19,16 @@ model Player {
   currentProxyServer ProxyServer? @relation(fields: [proxyServerId], references: [id])
   gameServerId       String?
   proxyServerId      String?
+  kicks              Kick[]
+}
+
+model Kick {
+  id        String   @id @default(uuid())
+  reason    String
+  timestamp DateTime @default(now())
+
+  player   Player @relation(fields: [playerId], references: [id])
+  playerId String
 }
 
 model ServerType {

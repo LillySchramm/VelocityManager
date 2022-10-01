@@ -8,7 +8,7 @@
         "build-es": "tsc --removeComments && esbuild ./dist/index.js --bundle --outfile=index.js --platform=node",
         "prestart": "npm run build",
         "start": "node dist/",
-        "dev": "nodemon index.ts",
+        "dev": "nodemon index.ts --legacy-watch",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],

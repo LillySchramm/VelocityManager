@@ -1,9 +1,12 @@
 import express from 'express';
+import { rabbitmq } from '..';
 import {
     getPlayers,
+    logKick,
     setPlayerGameServer,
     upsertPlayer,
 } from '../management/players';
+import { DEFAULT_KICK_MESSAGE } from '../tools/config';
 
 const router = express.Router();
 
@@ -23,6 +26,23 @@ router.post(`/:id/join`, async (req, res) => {
     const player = await setPlayerGameServer(playerId, serverId);
 
     res.json({ success: !!player });
+});
+
+router.post(`/:id/kick`, async (req, res) => {
+    const playerId: string = req.params.id;
+    const reason: string = req.body.reason || DEFAULT_KICK_MESSAGE;
+
+    rabbitmq.sendMessage(
+        'player-kick',
+        JSON.stringify({
+            playerId,
+            reason,
+        })
+    );
+
+    logKick(playerId, reason);
+
+    res.json({ playerId, reason });
 });
 
 router.get(`/all`, async (req, res) => {

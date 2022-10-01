@@ -71,3 +71,12 @@ export async function getPlayerKPIs(): Promise<PlayerKPIS> {
 
     return { currentPlayers, totalPlayers };
 }
+
+export async function logKick(playerId: string, reason: string): Promise<void> {
+    const player = await prisma.player.findFirst({ where: { id: playerId } });
+    if (!player) {
+        return;
+    }
+
+    await prisma.kick.create({ data: { reason, playerId } });
+}

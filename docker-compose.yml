@@ -59,6 +59,10 @@ services:
         environment:
             - POSTGRES_USER=uwu
             - POSTGRES_PASSWORD=owo
+        expose:
+            - 5432
+        ports:
+            - 5432:5432
 
     rabbitmq:
         image: bitnami/rabbitmq:latest

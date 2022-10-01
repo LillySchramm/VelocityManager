@@ -19,3 +19,5 @@ export const TOTP_ISSUER = env.TOTP_ISSUER || 'VelocityManager';
 
 export const SESSION_TIMEOUT_IN_MINUTES =
     Number(env.SESSION_TIMEOUT_IN_MINUTES) || 600;
+
+export const DEFAULT_KICK_MESSAGE = 'You have been kicked by an admin.';

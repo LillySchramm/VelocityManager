@@ -63,6 +63,10 @@ async function initRabbitMq() {
     await rabbitmq.init();
 
     await rabbitmq.assertQueue('player-ping');
+    await rabbitmq.assertQueue('player-kick', true, {
+        'x-queue-type': 'stream',
+        'x-max-age': '5m',
+    });
     await rabbitmq.assertQueue('server-ping');
     await rabbitmq.assertQueue('game-server-message-broadcast', true, {
         'x-queue-type': 'stream',
