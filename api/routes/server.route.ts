@@ -9,6 +9,10 @@ import {
     registerProxyServer,
     updateGameServer,
 } from '../management/servers';
+import {
+    MaintenanceCommand,
+    MaintenanceMessage,
+} from '../models/maintenance.model';
 const router = express.Router();
 
 router.get(`/proxyServer/online`, async (req, res) => {
@@ -35,6 +39,28 @@ router.get(`/proxyServer/:id`, async (req, res) => {
     res.json({ ...server, lastContact: Number(server?.lastContact) });
 });
 
+router.post(`/proxyServer/global/maintenance`, async (req, res) => {
+    const command = req.query.command;
+    if (
+        !command ||
+        typeof command !== 'string' ||
+        !(command in MaintenanceCommand)
+    ) {
+        res.status(400).json({ error: 'Unknown command.' });
+        return;
+    }
+    const message: MaintenanceMessage = {
+        command: command as MaintenanceCommand,
+    };
+
+    rabbitmq.sendMessage(
+        'proxy-server.maintenance.global',
+        JSON.stringify(message)
+    );
+
+    res.json({ message });
+});
+
 router.post(`/gameServer/update/:id`, async (req, res) => {
     const id = req.params.id;
     const ip: string = req.ip.split(':').pop() || '';
@@ -47,6 +73,28 @@ router.post(`/gameServer/update/:id`, async (req, res) => {
         ping: 'pong',
         successful,
     });
+});
+
+router.post(`/gameServer/global/maintenance`, async (req, res) => {
+    const command = req.query.command;
+    if (
+        !command ||
+        typeof command !== 'string' ||
+        !(command in MaintenanceCommand)
+    ) {
+        res.status(400).json({ error: 'Unknown command.' });
+        return;
+    }
+    const message: MaintenanceMessage = {
+        command: command as MaintenanceCommand,
+    };
+
+    rabbitmq.sendMessage(
+        'game-server.maintenance.global',
+        JSON.stringify(message)
+    );
+
+    res.json({ message });
 });
 
 router.put(`/registerGameServer`, async (req, res) => {

@@ -77,6 +77,16 @@ async function initRabbitMq() {
         'x-max-age': '1m',
     });
 
+    await rabbitmq.assertQueue('game-server.maintenance.global', true, {
+        'x-queue-type': 'stream',
+        'x-max-age': '1D',
+    });
+
+    await rabbitmq.assertQueue('proxy-server.maintenance.global', true, {
+        'x-queue-type': 'stream',
+        'x-max-age': '1D',
+    });
+
     const playerPing$ = rabbitmq.listen('player-ping');
     playerPing$.subscribe((message: PlayerPing) =>
         pingPlayers(message.playerIds)

@@ -2,7 +2,6 @@
     "name": "api",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
     "scripts": {
         "build": "tsc --removeComments",
         "build-es": "tsc --removeComments && esbuild ./dist/index.js --bundle --outfile=index.js --platform=node",
