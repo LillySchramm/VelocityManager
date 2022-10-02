@@ -9,6 +9,7 @@ import de.epsdev.velocitymanager.spigot.config.Config;
 import de.epsdev.velocitymanager.spigot.config.PluginLogger;
 import de.epsdev.velocitymanager.spigot.messageFunctions.BaseMessageFunction;
 import de.epsdev.velocitymanager.spigot.messageFunctions.KickListener;
+import de.epsdev.velocitymanager.spigot.messageFunctions.MaintenanceListener;
 import de.epsdev.velocitymanager.spigot.messageFunctions.MessageBroadcast;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +19,13 @@ public final class VelocityManager extends JavaPlugin {
 
     public static JavaPlugin plugin;
     public VelocityServerManager serverManager;
-    private ILogger logger;
+    public static ILogger logger;
 
     @Override
     public void onEnable() {
         plugin = this;
         IConfig config = new Config(getConfig(), getServer());
-        this.logger = new PluginLogger(getLogger());
+        logger = new PluginLogger(getLogger());
 
         try {
             this.serverManager =
@@ -53,6 +54,7 @@ public final class VelocityManager extends JavaPlugin {
 
         functions.add(new MessageBroadcast());
         functions.add(new KickListener());
+        functions.add(new MaintenanceListener());
 
         functions.forEach(function -> function.init(serverManager));
     }

@@ -44,7 +44,7 @@ services:
             - backend
         volumes:
             - ./velocity/target/velocitymanager-1.0-SNAPSHOT-jar-with-dependencies.jar:/app/plugins/velocitymanager-1.0-SNAPSHOT-jar-with-dependencies.jar
-        command: bash -c 'while !</dev/tcp/backend/30001; do sleep 5; done; java -jar server.jar'
+        command: bash -c 'while !</dev/tcp/backend/30001; do sleep 5; done; bash server.sh'
 
     paper:
         build: spigot/
@@ -52,7 +52,7 @@ services:
             - backend
         volumes:
             - ./spigot/target/spigot-0.0.1.jar:/app/plugins/spigot-0.0.1.jar
-        command: bash -c 'while !</dev/tcp/backend/30001; do sleep 5; done; java -jar server.jar'
+        command: bash -c 'while !</dev/tcp/backend/30001; do sleep 5; done; bash server.sh'
 
     db:
         image: postgres:14

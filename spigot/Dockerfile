@@ -14,3 +14,4 @@ COPY --chmod=0777 ./paper.yml /app/paper.yml
 COPY --chmod=0777 ./spigot.yml /app/spigot.yml
 COPY --chmod=0777 ./server.properties /app/server.properties
 COPY --chmod=0777 ./ops.json /app/ops.json
+COPY --chmod=0777 ./server.sh /app/server.sh

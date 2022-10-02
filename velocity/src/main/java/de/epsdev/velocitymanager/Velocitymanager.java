@@ -16,6 +16,7 @@ import de.epsdev.velocitymanager.lib.ServerType;
 import de.epsdev.velocitymanager.lib.VelocityServerManager;
 import de.epsdev.velocitymanager.lib.basic.BasicPlayer;
 import de.epsdev.velocitymanager.lib.basic.BasicServerInfo;
+import de.epsdev.velocitymanager.lib.basic.enums.MaintenanceCommand;
 import de.epsdev.velocitymanager.lib.config.ILogger;
 import de.epsdev.velocitymanager.lib.exeptions.TokenInvalidException;
 import de.epsdev.velocitymanager.lib.rabbitmq.Stream;
@@ -24,6 +25,7 @@ import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 
 @Plugin(
@@ -72,6 +74,29 @@ public class Velocitymanager {
                     BasicServerInfo.parseAllOnlineGameServerMessage(message)
                 )
         );
+
+        Stream maintenanceStream =
+            this.serverManager.rabbitMQ.createStream(
+                    "proxy-server.maintenance.global"
+                );
+
+        maintenanceStream.subscribe(message -> {
+            JSONObject messageObject = message.toJson();
+            MaintenanceCommand command = MaintenanceCommand.valueOf(
+                messageObject.getString("command")
+            );
+
+            switch (command) {
+                case RELOAD:
+                    logger.logWarning(
+                        "Reload not supported on proxy servers. Use restart instead."
+                    );
+                    break;
+                case RESTART:
+                    proxyServer.shutdown();
+                    break;
+            }
+        });
 
         this.proxyServer.getScheduler()
             .buildTask(this, () -> this.serverManager.ping())
