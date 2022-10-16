@@ -1,8 +1,8 @@
 FROM httpd
 
-COPY lib/target/site/backenddocs/ /usr/local/apache2/htdocs/lib
-COPY spigot/target/site/backenddocs/ /usr/local/apache2/htdocs/spigot
-COPY velocity/target/site/backenddocs/ /usr/local/apache2/htdocs/velocity
+COPY lib/target/site/apidocs/ /usr/local/apache2/htdocs/lib
+COPY spigot/target/site/apidocs/ /usr/local/apache2/htdocs/spigot
+COPY velocity/target/site/apidocs/ /usr/local/apache2/htdocs/velocity
 
 COPY frontend/.htaccess /usr/local/apache2/htdocs/
 
