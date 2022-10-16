@@ -142,9 +142,9 @@ build-javadocs:
         untracked: false
         expire_in: 1 week
         paths:
-            - lib/target/site/backenddocs/**
-            - spigot/target/site/backenddocs/**
-            - velocity/target/site/backenddocs/**
+            - lib/target/site/apidocs/**
+            - spigot/target/site/apidocs/**
+            - velocity/target/site/apidocs/**
     script:
         - cd lib && mvn javadoc:javadoc
         - cd ../spigot && mvn javadoc:javadoc
