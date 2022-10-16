@@ -1,7 +1,7 @@
-api/index.js
-api/dist
-website/dist
-website/packages
+backend/index.js
+backend/dist
+frontend/dist
+frontend/packages
 *.json
 docs/
 velocity/target

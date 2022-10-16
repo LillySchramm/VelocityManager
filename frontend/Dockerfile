@@ -1,6 +1,6 @@
 FROM httpd
 
-COPY dist/website/ /usr/local/apache2/htdocs/
+COPY dist/frontend/ /usr/local/apache2/htdocs/
 COPY .htaccess /usr/local/apache2/htdocs/
 
 RUN sed -i '/LoadModule rewrite_module/s/^#//g' /usr/local/apache2/conf/httpd.conf && \

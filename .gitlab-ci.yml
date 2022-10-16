@@ -27,11 +27,11 @@ install_npm_dependencies:
         untracked: false
         expire_in: 1 hrs
         paths:
-            - api/node_modules
-            - website/node_modules
+            - backend/node_modules
+            - frontend/node_modules
     script:
-        - cd api && yarn
-        - cd ../website && yarn
+        - cd backend && yarn
+        - cd ../frontend && yarn
 
 build_spigot:
     image: maven:3.8.4-eclipse-temurin-16
@@ -59,7 +59,7 @@ build_velocity:
     script:
         - cd velocity && mvn clean package
 
-build_api:
+build_backend:
     image: node:14-alpine
     stage: build
     needs:
@@ -68,12 +68,12 @@ build_api:
         untracked: false
         expire_in: 1 week
         paths:
-            - api/index.js
-            - api/dist
+            - backend/index.js
+            - backend/dist
     script:
-        - cd api && yarn run build
+        - cd backend && yarn run build
 
-build_website:
+build_frontend:
     image: node:14-alpine
     stage: build
     needs:
@@ -82,44 +82,44 @@ build_website:
         untracked: false
         expire_in: 1 week
         paths:
-            - website/dist
+            - frontend/dist
     script:
-        - cd website && npx ng build --configuration production
+        - cd frontend && npx ng build --configuration production
 
-build_api_container:
+build_backend_container:
     stage: container-build
     image:
         name: "gcr.io/kaniko-project/executor:debug"
         entrypoint: [""]
     needs:
         - install_npm_dependencies
-        - build_api
+        - build_backend
     script:
         - mkdir -p /kaniko/.docker
         - echo "{\"auths\":{\"registry01.eps-dev.de\":{\"auth\":\"$(printf "%s:%s" "${PRIVATE_REG_USER}" "${PRIVATE_REG_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
         - >-
             /kaniko/executor
-            --context "${CI_PROJECT_DIR}/api"
-            --dockerfile "${CI_PROJECT_DIR}/api/Dockerfile"
-            --destination "registry01.eps-dev.de/velocitymanager/api/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}"
-            --destination "registry01.eps-dev.de/velocitymanager/api/${CI_COMMIT_REF_SLUG}:latest"
+            --context "${CI_PROJECT_DIR}/backend"
+            --dockerfile "${CI_PROJECT_DIR}/backend/Dockerfile"
+            --destination "registry01.eps-dev.de/velocitymanager/backend/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}"
+            --destination "registry01.eps-dev.de/velocitymanager/backend/${CI_COMMIT_REF_SLUG}:latest"
 
-build_website_container:
+build_frontend_container:
     stage: container-build
     image:
         name: "gcr.io/kaniko-project/executor:debug"
         entrypoint: [""]
     needs:
-        - build_website
+        - build_frontend
     script:
         - mkdir -p /kaniko/.docker
         - echo "{\"auths\":{\"registry01.eps-dev.de\":{\"auth\":\"$(printf "%s:%s" "${PRIVATE_REG_USER}" "${PRIVATE_REG_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
         - >-
             /kaniko/executor
-            --context "${CI_PROJECT_DIR}/website"
-            --dockerfile "${CI_PROJECT_DIR}/website/Dockerfile"
-            --destination "registry01.eps-dev.de/velocitymanager/website/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}"
-            --destination "registry01.eps-dev.de/velocitymanager/website/${CI_COMMIT_REF_SLUG}:latest"
+            --context "${CI_PROJECT_DIR}/frontend"
+            --dockerfile "${CI_PROJECT_DIR}/frontend/Dockerfile"
+            --destination "registry01.eps-dev.de/velocitymanager/frontend/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}"
+            --destination "registry01.eps-dev.de/velocitymanager/frontend/${CI_COMMIT_REF_SLUG}:latest"
 
 prettier:
     image: node:14-alpine
@@ -142,9 +142,9 @@ build-javadocs:
         untracked: false
         expire_in: 1 week
         paths:
-            - lib/target/site/apidocs/**
-            - spigot/target/site/apidocs/**
-            - velocity/target/site/apidocs/**
+            - lib/target/site/backenddocs/**
+            - spigot/target/site/backenddocs/**
+            - velocity/target/site/backenddocs/**
     script:
         - cd lib && mvn javadoc:javadoc
         - cd ../spigot && mvn javadoc:javadoc

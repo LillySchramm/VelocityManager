@@ -15,7 +15,7 @@ import { selectMessageQueue } from './store/message/message.selectors';
     providers: [MessageService],
 })
 export class AppComponent implements OnInit {
-    title = 'website';
+    title = 'frontend';
 
     items: MenuItem[] = [];
     activeItem!: MenuItem;
