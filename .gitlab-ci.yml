@@ -5,6 +5,10 @@ stages:
     - java-docs
     - linting
 
+default:
+  tags:
+    - aws
+
 variables:
     MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
     MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
@@ -12,8 +16,7 @@ variables:
 build_lib:
     image: maven:3.8.4-eclipse-temurin-16
     stage: pre-build
-    tags: 
-        - aws
+
     artifacts:
         untracked: false
         expire_in: 1 week
