@@ -12,6 +12,8 @@ variables:
 build_lib:
     image: maven:3.8.4-eclipse-temurin-16
     stage: pre-build
+    tags: 
+        - aws
     artifacts:
         untracked: false
         expire_in: 1 week
