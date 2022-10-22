@@ -154,8 +154,6 @@ build-javadocs:
         - cd lib && mvn javadoc:javadoc
         - cd ../spigot && mvn javadoc:javadoc
         - cd ../velocity && mvn javadoc:javadoc
-    only:
-        - main
 
 build-javadocs-container:
     image:
@@ -172,8 +170,6 @@ build-javadocs-container:
             --context "${CI_PROJECT_DIR}/"
             --dockerfile "${CI_PROJECT_DIR}/docs/javadocs/Dockerfile"
             --destination "registry01.eps-dev.de/velocitymanager/javadocs/${CI_COMMIT_REF_SLUG}:latest"
-    only:
-        - main
 
 deploy-javadocs-container:
     stage: java-docs
@@ -192,5 +188,3 @@ deploy-javadocs-container:
           --set ingress.tls[0].secretName=velocitymanager.docs.eps-dev.de-tls
           --set ingress.tls[0].hosts[0]=velocitymanager.docs.eps-dev.de
           --namespace velocity-manager-dev
-    only:
-        - main
