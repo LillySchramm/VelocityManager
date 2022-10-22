@@ -82,6 +82,7 @@ build_backend:
         paths:
             - backend/index.js
             - backend/dist
+            - backend/node_modules/.prisma/client/libquery_engine-linux-musl.so.node
     cache:
         <<: *npm-cache
     script:
