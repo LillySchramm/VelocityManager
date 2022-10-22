@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { login } from 'src/app/store/auth/auth.actions';
@@ -11,9 +11,9 @@ import { selectAuthToken, selectTOTP } from 'src/app/store/auth/auth.selectors';
     styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
-    formGroup = new FormGroup({
-        username: new FormControl(''),
-        password: new FormControl(''),
+    formGroup = new UntypedFormGroup({
+        username: new UntypedFormControl(''),
+        password: new UntypedFormControl(''),
     });
 
     constructor(private router: Router, private store: Store) {}
