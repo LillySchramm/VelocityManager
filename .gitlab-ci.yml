@@ -9,26 +9,34 @@ variables:
     MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
     MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
 
+.cache0: &npm-cache
+    key: $CI_COMMIT_REF_SLUG-npm
+    paths:
+        - backend/node_modules/
+        - frontend/node_modules/
+    policy: pull
+
+.cache1: &maven-cache
+    key: $CI_COMMIT_REF_SLUG-maven
+    paths:
+        - .m2/repository
+    policy: pull
+
 build_lib:
     image: maven:3.8.4-eclipse-temurin-16
     stage: pre-build
-    artifacts:
-        untracked: false
-        expire_in: 1 week
-        paths:
-            - .m2/repository
+    cache:
+        <<: *maven-cache
+        policy: pull-push
     script:
-        - cd lib && mvn clean install
+        - cd lib && mvn install
 
 install_npm_dependencies:
     image: node:14-alpine
     stage: pre-build
-    artifacts:
-        untracked: false
-        expire_in: 1 hrs
-        paths:
-            - backend/node_modules
-            - frontend/node_modules
+    cache:
+        <<: *npm-cache
+        policy: pull-push
     script:
         - cd backend && yarn
         - cd ../frontend && yarn
@@ -44,7 +52,9 @@ build_spigot:
         paths:
             - spigot/target/*.jar
     script:
-        - cd spigot && mvn clean package
+        - cd spigot && mvn package
+    cache:
+        <<: *maven-cache
 
 build_velocity:
     image: maven:3.8.4-eclipse-temurin-16
@@ -57,7 +67,9 @@ build_velocity:
         paths:
             - velocity/target/*.jar
     script:
-        - cd velocity && mvn clean package
+        - cd velocity && mvn package
+    cache:
+        <<: *maven-cache
 
 build_backend:
     image: node:14-alpine
@@ -70,6 +82,9 @@ build_backend:
         paths:
             - backend/index.js
             - backend/dist
+            - backend/node_modules/.prisma/client/libquery_engine-linux-musl.so.node
+    cache:
+        <<: *npm-cache
     script:
         - cd backend && yarn run build
 
@@ -83,6 +98,8 @@ build_frontend:
         expire_in: 1 week
         paths:
             - frontend/dist
+    cache:
+        <<: *npm-cache
     script:
         - cd frontend && npx ng build --configuration production
 
@@ -145,6 +162,8 @@ build-javadocs:
             - lib/target/site/apidocs/**
             - spigot/target/site/apidocs/**
             - velocity/target/site/apidocs/**
+    cache:
+        <<: *maven-cache
     script:
         - cd lib && mvn javadoc:javadoc
         - cd ../spigot && mvn javadoc:javadoc
