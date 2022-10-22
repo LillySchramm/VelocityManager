@@ -29,7 +29,7 @@ build_lib:
         <<: *maven-cache
         policy: pull-push
     script:
-        - cd lib && mvn clean install
+        - cd lib && mvn install
 
 install_npm_dependencies:
     image: node:14-alpine
@@ -52,7 +52,7 @@ build_spigot:
         paths:
             - spigot/target/*.jar
     script:
-        - cd spigot && mvn clean package
+        - cd spigot && mvn package
     cache:
         <<: *maven-cache
 
@@ -67,7 +67,7 @@ build_velocity:
         paths:
             - velocity/target/*.jar
     script:
-        - cd velocity && mvn clean package
+        - cd velocity && mvn package
     cache:
         <<: *maven-cache
 
