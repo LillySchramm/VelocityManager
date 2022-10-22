@@ -3,7 +3,7 @@ import { getSessionById } from '../management/accounts';
 import { SESSION_TIMEOUT_IN_MINUTES } from '../tools/config';
 import { checkHash } from '../tools/hash';
 
-const IGNORED_PATHS = ['/account/login'];
+const IGNORED_PATHS = ['/account/login', '/config/firebase'];
 
 enum AUTH_TYPE {
     BASIC = 'BASIC',
