@@ -23,6 +23,7 @@
     "@ngrx/effects": "^14.2.7",
     "@ngrx/store": "^14.2.7",
     "@ngrx/store-devtools": "^14.2.7",
+    "@types/sync-fetch": "^0.4.0",
     "firebase": "^9.12.1",
     "firebaseui": "^6.0.1",
     "firebaseui-angular": "^6.1.2",
@@ -31,6 +32,7 @@
     "primeng": "^14.1.2",
     "qrcode": "^1.5.1",
     "rxjs": "~6.6.0",
+    "sync-fetch": "^0.4.2",
     "tslib": "^2.1.0",
     "uuid": "^8.3.2",
     "zone.js": "~0.11.4"

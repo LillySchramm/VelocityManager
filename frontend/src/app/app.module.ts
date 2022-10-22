@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { APP_INITIALIZER } from '@angular/core';
 
 import { MenubarModule } from 'primeng/menubar';
 import { TabMenuModule } from 'primeng/tabmenu';
@@ -36,6 +37,24 @@ import { KpiEffects } from './store/kpi/kpi.effects';
 import { PlayerComponent } from './components/pages/player/player.component';
 import { PlayerEffects } from './store/player/player.effects';
 import { TotpComponent } from './components/pages/totp/totp.component';
+import { AngularFireModule, FIREBASE_OPTIONS } from '@angular/fire/compat';
+import { firebase, firebaseui, FirebaseUIModule } from 'firebaseui-angular';
+import { FirebaseOptions } from 'firebase/app';
+import * as syncFetch from 'sync-fetch';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+
+const firebaseUiAuthConfig: firebaseui.auth.Config = {
+    signInFlow: 'popup',
+    signInOptions: [
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebase.auth.GithubAuthProvider.PROVIDER_ID,
+    ],
+    credentialHelper: firebaseui.auth.CredentialHelper.GOOGLE_YOLO,
+};
+
+const firebaseConfig: FirebaseOptions = syncFetch(
+    `${environment.apiUrl}/config/firebase`
+).json();
 
 @NgModule({
     declarations: [
@@ -75,8 +94,11 @@ import { TotpComponent } from './components/pages/totp/totp.component';
             logOnly: environment.production,
         }),
         EffectsModule.forRoot([AuthEffects, KpiEffects, PlayerEffects]),
+        AngularFireModule.initializeApp(firebaseConfig),
+        AngularFireAuthModule,
+        FirebaseUIModule.forRoot(firebaseUiAuthConfig),
     ],
-    providers: [],
     bootstrap: [AppComponent],
+    providers: [{ provide: FIREBASE_OPTIONS, useValue: firebaseConfig }],
 })
 export class AppModule {}
