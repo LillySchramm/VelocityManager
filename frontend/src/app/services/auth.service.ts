@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -10,12 +11,25 @@ import { environment } from './../../environments/environment';
     providedIn: 'root',
 })
 export class AuthService {
-    constructor(private http: HttpClient, private router: Router) {}
+    private idToken = '';
+
+    constructor(
+        private http: HttpClient,
+        private router: Router,
+        private fireauth: AngularFireAuth
+    ) {
+        this.fireauth.onAuthStateChanged(async (user) => {
+            console.log(user);
+            if (user) {
+                this.idToken = await user.getIdToken();
+                return;
+            }
+            this.idToken = '';
+        });
+    }
 
     public isLoggedIn(): Observable<boolean> {
-        const credentials = this.getSavedCredentials();
-
-        return this.verifyCredentials(credentials);
+        return this.verifyCredentials(this.idToken);
     }
 
     public verifyCredentials(credentials: string | null): Observable<boolean> {
@@ -25,25 +39,20 @@ export class AuthService {
 
         return this.http
             .get<PingResponse>(environment.apiUrl + '/ping', {
-                headers: this._generateHeader(credentials),
+                headers: this.generateHeader(),
             })
             .pipe(
                 map(() => {
                     return true;
                 }),
                 catchError(() => {
-                    localStorage.removeItem('credentials');
                     return of(false);
                 })
             );
     }
 
     public generateHeader(): { [header: string]: string } {
-        return { Authorization: 'Basic ' + this.getSavedCredentials() };
-    }
-
-    private _generateHeader(credentials: string): { [header: string]: string } {
-        return { Authorization: 'Bearer ' + credentials };
+        return { Authorization: 'Bearer ' + this.idToken };
     }
 
     public getSavedCredentials(): string | null {
@@ -51,8 +60,7 @@ export class AuthService {
     }
 
     public logout(): void {
-        localStorage.removeItem('credentials');
-        this.router.navigate(['login']);
+        this.fireauth.signOut().then(() => this.router.navigate(['login']));
     }
 
     public login(name: string, otp: string): Observable<LoginResponse | null> {

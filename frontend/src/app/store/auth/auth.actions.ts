@@ -21,7 +21,7 @@ export const logout = createAction('[AUTH] Logout');
 
 export const logoutSuccess = createAction('[AUTH] Logout Success');
 
-export const loadCredentials = createAction('[AUTH] Loading Credentials');
+//export const loadCredentials = createAction('[AUTH] Loading Credentials');
 
 export const unloadTOTP = createAction('[AUTH] Unload TOTP');
 

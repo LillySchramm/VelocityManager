@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Store } from '@ngrx/store';
 import { MenuItem, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
-import { AuthService } from './services/auth.service';
-import { loadCredentials, logout } from './store/auth/auth.actions';
-import { selectIsLoggedIn } from './store/auth/auth.selectors';
+import { BehaviorSubject } from 'rxjs';
 import { removeMessagesFromQueue } from './store/message/message.actions';
 import { selectMessageQueue } from './store/message/message.selectors';
 
@@ -20,15 +18,23 @@ export class AppComponent implements OnInit {
     items: MenuItem[] = [];
     activeItem!: MenuItem;
 
-    isLoggedIn$: Observable<Boolean>;
+    isLoggedIn$: BehaviorSubject<Boolean> = new BehaviorSubject<Boolean>(false);
 
     displayedMessageIds: string[] = [];
 
-    constructor(private store: Store, private messageService: MessageService) {
-        this.isLoggedIn$ = store.select(selectIsLoggedIn);
+    constructor(
+        private store: Store,
+        private messageService: MessageService,
+        private fireauth: AngularFireAuth
+    ) {
+        this.fireauth.onAuthStateChanged(async () => {
+            await this.checkIsLoggedIn();
+        });
     }
 
-    ngOnInit() {
+    async ngOnInit() {
+        await this.checkIsLoggedIn();
+
         this.items = [
             { label: 'Home', icon: 'pi pi-fw pi-home' },
             { label: 'Logout', icon: 'pi pi-fw pi-user' },
@@ -36,10 +42,8 @@ export class AppComponent implements OnInit {
 
         this.activeItem = this.items[0];
         this.items[1].command = () => {
-            this.store.dispatch(logout());
+            this.fireauth.signOut().then(() => 0);
         };
-
-        this.store.dispatch(loadCredentials());
 
         this.store.select(selectMessageQueue).subscribe((messages) => {
             if (messages.length === 0) {
@@ -61,5 +65,13 @@ export class AppComponent implements OnInit {
                 })
             );
         });
+    }
+
+    private async checkIsLoggedIn(): Promise<void> {
+        if (await this.fireauth.currentUser) {
+            this.isLoggedIn$.next(true);
+            return;
+        }
+        this.isLoggedIn$.next(false);
     }
 }
