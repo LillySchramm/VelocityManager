@@ -26,3 +26,6 @@ export const DEFAULT_KICK_MESSAGE =
 export const FIREBASE_API_KEY = env.FIREBASE_API_KEY || '';
 export const FIREBASE_AUTH_DOMAIN = env.FIREBASE_AUTH_DOMAIN || '';
 export const FIREBASE_PROJECT_ID = env.FIREBASE_PROJECT_ID || '';
+
+export const GOOGLE_APPLICATION_CREDENTIALS =
+    env.GOOGLE_APPLICATION_CREDENTIALS || 'creds.json';

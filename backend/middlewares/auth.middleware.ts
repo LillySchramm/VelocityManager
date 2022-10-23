@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { getSessionById } from '../management/accounts';
 import { SESSION_TIMEOUT_IN_MINUTES } from '../tools/config';
+import feAdmin from '../tools/firebase';
 import { checkHash } from '../tools/hash';
+import { logger } from '../tools/logging';
 
 const IGNORED_PATHS = ['/account/login', '/config/firebase'];
 
@@ -10,11 +12,7 @@ enum AUTH_TYPE {
     BEARER = 'BEARER',
 }
 
-export const appAuth = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const appAuth = async (req: any, res: Response, next: NextFunction) => {
     const path = req.path;
     const authorization = req.headers.authorization;
 
@@ -37,8 +35,10 @@ export const appAuth = async (
     }
 
     if (authType === AUTH_TYPE.BEARER && authString) {
-        const valid = await verifyBearer(authString);
-        if (valid) {
+        const uid = await getUserUid(authString);
+        logger.info(JSON.stringify({ uid }));
+        if (uid) {
+            req.uid = uid;
             next();
             return;
         }
@@ -47,32 +47,12 @@ export const appAuth = async (
     res.sendStatus(401);
 };
 
-async function verifyBearer(token: string): Promise<boolean> {
-    const tokenComponents = token.split('@');
-
-    if (tokenComponents.length !== 2) {
-        return false;
+async function getUserUid(token: string): Promise<string> {
+    try {
+        const userInfo = await feAdmin.auth().verifyIdToken(token);
+        return userInfo.uid;
+    } catch (e) {
+        console.log(e);
+        return '';
     }
-
-    const id = tokenComponents[0];
-    const bearer = tokenComponents[1];
-
-    const session = await getSessionById(id);
-    if (!session) {
-        return false;
-    }
-
-    const timeDelta = Date.now() - session.createdAt.getTime();
-    const maxTimeDelta = SESSION_TIMEOUT_IN_MINUTES * 60 * 1000;
-
-    if (timeDelta > maxTimeDelta) {
-        return false;
-    }
-
-    const valid = await checkHash(session.key, bearer);
-    if (!valid) {
-        return false;
-    }
-
-    return true;
 }

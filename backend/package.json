@@ -34,6 +34,7 @@
         "cors": "^2.8.5",
         "esbuild": "^0.14.39",
         "express-basic-auth": "^1.2.1",
+        "firebase-admin": "^11.2.0",
         "otpauth": "^8.0.1",
         "rxjs": "^7.5.5",
         "unique-names-generator": "^4.7.1",

@@ -6,3 +6,4 @@ libquery_engine-linux-musl.so.node
 dev.bat
 dev.sh
 logs/
+creds.json
