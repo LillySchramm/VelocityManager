@@ -1,8 +1,5 @@
-import { NextFunction, Request, Response } from 'express';
-import { getSessionById } from '../management/accounts';
-import { SESSION_TIMEOUT_IN_MINUTES } from '../tools/config';
+import { NextFunction, Response } from 'express';
 import feAdmin from '../tools/firebase';
-import { checkHash } from '../tools/hash';
 import { logger } from '../tools/logging';
 
 const IGNORED_PATHS = ['/account/login', '/config/firebase'];

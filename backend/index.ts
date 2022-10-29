@@ -12,11 +12,6 @@ import {
 } from './management/servers';
 import { BIND_PORT } from './tools/config';
 import { logger } from './tools/logging';
-import {
-    createNewAccount,
-    getAccountByName,
-    getAccountByNameWithInitialSecret,
-} from './management/accounts';
 import { appAuth } from './middlewares/auth.middleware';
 
 export const rabbitmq = new RabbitMQ();
@@ -104,22 +99,13 @@ async function initRabbitMq() {
 }
 
 async function initializeAccounts() {
-    let adminAccount = await getAccountByName('admin');
-
-    if (adminAccount && adminAccount.otp) {
-        return;
-    }
-
-    if (!adminAccount) {
-        await createNewAccount('admin');
-    }
-
-    const account = await getAccountByNameWithInitialSecret('admin');
+    /*
     logger.warn('Initial login has not occurred.');
     logger.warn(
         'Please log into the frontend using the following credentials to complete the setup!'
     );
     logger.warn(
-        `Name: '${account?.name}' Password: '${account?.initialSecret?.key}'`
+        `Name: '${}' Password: '${account?.initialSecret?.key}'`
     );
+    */
 }

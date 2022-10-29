@@ -65,38 +65,3 @@ model APIKey {
   id  String @id @default(uuid())
   key String @db.VarChar(255)
 }
-
-model Account {
-  id              String         @id @default(uuid())
-  name            String         @unique
-  deletable       Boolean        @default(true)
-  createdAt       DateTime       @default(now())
-  initialSecret   InitialSecret? @relation(fields: [initialSecretId], references: [id])
-  initialSecretId String?
-  otp             OTP?           @relation(fields: [oTPId], references: [id])
-  oTPId           String?
-  Session         Session[]
-}
-
-model InitialSecret {
-  id        String    @id @default(uuid())
-  key       String    @db.VarChar(6)
-  createdAt DateTime  @default(now())
-  Account   Account[]
-}
-
-model OTP {
-  id        String    @id @default(uuid())
-  dataUri   String    @db.VarChar(255)
-  createdAt DateTime  @default(now())
-  Account   Account[]
-}
-
-model Session {
-  id        String   @id @default(uuid())
-  name      String?  @db.VarChar(255)
-  createdAt DateTime @default(now())
-  key       String   @db.VarChar(512)
-  account   Account  @relation(fields: [accountId], references: [id])
-  accountId String
-}
