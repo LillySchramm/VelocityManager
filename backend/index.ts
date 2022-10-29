@@ -13,6 +13,10 @@ import {
 import { BIND_PORT } from './tools/config';
 import { logger } from './tools/logging';
 import { appAuth } from './middlewares/auth.middleware';
+import {
+    initializeAccounts,
+    initializePermissions,
+} from './management/account';
 
 export const rabbitmq = new RabbitMQ();
 const prisma = new PrismaClient();
@@ -21,6 +25,7 @@ async function main() {
     logger.info('Starting...');
     await initRabbitMq();
     await initializeAccounts();
+    await initializePermissions();
     startExpressServer();
 }
 
@@ -96,16 +101,4 @@ async function initRabbitMq() {
 
     setInterval(async () => await publishAllOnlineGameServer(), 1000);
     logger.info('Initialized RabbitMQ');
-}
-
-async function initializeAccounts() {
-    /*
-    logger.warn('Initial login has not occurred.');
-    logger.warn(
-        'Please log into the frontend using the following credentials to complete the setup!'
-    );
-    logger.warn(
-        `Name: '${}' Password: '${account?.initialSecret?.key}'`
-    );
-    */
 }

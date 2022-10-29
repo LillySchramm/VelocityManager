@@ -1,6 +1,8 @@
 import { NextFunction, Response } from 'express';
+import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
+import { canAccess } from '../management/account';
+import { AuthenticatedRequest } from '../models/auth.model';
 import feAdmin from '../tools/firebase';
-import { logger } from '../tools/logging';
 
 const IGNORED_PATHS = ['/account/login', '/config/firebase'];
 
@@ -9,7 +11,11 @@ enum AUTH_TYPE {
     BEARER = 'BEARER',
 }
 
-export const appAuth = async (req: any, res: Response, next: NextFunction) => {
+export const appAuth = async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+) => {
     const path = req.path;
     const authorization = req.headers.authorization;
 
@@ -32,24 +38,26 @@ export const appAuth = async (req: any, res: Response, next: NextFunction) => {
     }
 
     if (authType === AUTH_TYPE.BEARER && authString) {
-        const uid = await getUserUid(authString);
-        logger.info(JSON.stringify({ uid }));
-        if (uid) {
-            req.uid = uid;
-            next();
-            return;
+        const user = await getUserUid(authString);
+        if (user) {
+            req.user = user;
+            const account = await canAccess(user);
+            if (account) {
+                req.permissions = account.AccountPermission;
+                next();
+                return;
+            }
         }
     }
 
     res.sendStatus(401);
 };
 
-async function getUserUid(token: string): Promise<string> {
+async function getUserUid(token: string): Promise<DecodedIdToken | undefined> {
     try {
         const userInfo = await feAdmin.auth().verifyIdToken(token);
-        return userInfo.uid;
+        return userInfo;
     } catch (e) {
         console.log(e);
-        return '';
     }
 }
