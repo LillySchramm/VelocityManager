@@ -86,6 +86,7 @@ build_backend:
     cache:
         <<: *npm-cache
     script:
+        - npx prisma generate
         - cd backend && yarn run build
 
 build_frontend:
