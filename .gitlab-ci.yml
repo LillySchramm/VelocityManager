@@ -86,8 +86,9 @@ build_backend:
     cache:
         <<: *npm-cache
     script:
+        - cd backend
         - npx prisma generate
-        - cd backend && yarn run build
+        - yarn run build
 
 build_frontend:
     image: node:14-alpine
