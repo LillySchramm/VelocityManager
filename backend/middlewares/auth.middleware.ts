@@ -2,6 +2,7 @@ import { NextFunction, Response } from 'express';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 import { canAccess } from '../management/account';
 import { AuthenticatedRequest } from '../models/auth.model';
+import { RequestError } from '../models/error.model';
 import feAdmin from '../tools/firebase';
 
 const IGNORED_PATHS = ['/account/login', '/config/firebase'];
@@ -18,8 +19,6 @@ export const appAuth = async (
 ) => {
     const path = req.path;
     const authorization = req.headers.authorization;
-
-    let message = 'Unauthorized';
 
     if (IGNORED_PATHS.includes(path)) {
         next();
@@ -50,12 +49,12 @@ export const appAuth = async (
                     next();
                     return;
                 }
-                message = 'Account Not Activated';
+                throw new RequestError('Account Not Activated', 401);
             }
         }
     }
 
-    res.status(401).json({ message });
+    throw new RequestError('Unauthorized', 401);
 };
 
 async function getUserUid(token: string): Promise<DecodedIdToken | undefined> {

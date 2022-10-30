@@ -9,6 +9,7 @@ import {
     registerProxyServer,
     updateGameServer,
 } from '../management/servers';
+import { RequestError } from '../models/error.model';
 import {
     MaintenanceCommand,
     MaintenanceMessage,
@@ -30,10 +31,7 @@ router.get(`/proxyServer/:id`, async (req, res) => {
     const server = await getProxyServer(id);
 
     if (!server) {
-        res.status(404);
-        res.json({ msg: 'Could not find server' });
-
-        return;
+        throw new RequestError('Could not find server', 404);
     }
 
     res.json({ ...server, lastContact: Number(server?.lastContact) });
@@ -46,8 +44,7 @@ router.post(`/proxyServer/global/maintenance`, async (req, res) => {
         typeof command !== 'string' ||
         !(command in MaintenanceCommand)
     ) {
-        res.status(400).json({ error: 'Unknown command.' });
-        return;
+        throw new RequestError('Unknown command', 400);
     }
     const message: MaintenanceMessage = {
         command: command as MaintenanceCommand,
@@ -82,8 +79,7 @@ router.post(`/gameServer/global/maintenance`, async (req, res) => {
         typeof command !== 'string' ||
         !(command in MaintenanceCommand)
     ) {
-        res.status(400).json({ error: 'Unknown command.' });
-        return;
+        throw new RequestError('Unknown command', 400);
     }
     const message: MaintenanceMessage = {
         command: command as MaintenanceCommand,
@@ -124,10 +120,7 @@ router.get(`/gameServer/:id`, async (req, res) => {
     const server = await getGameServer(id);
 
     if (!server) {
-        res.status(404);
-        res.json({ msg: 'Could not find server' });
-
-        return;
+        throw new RequestError('Could not find server', 404);
     }
 
     res.json({ ...server, lastContact: Number(server?.lastContact) });

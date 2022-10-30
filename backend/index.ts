@@ -17,6 +17,7 @@ import {
     initializeAccounts,
     initializePermissions,
 } from './management/account';
+import { RequestError } from './models/error.model';
 
 export const rabbitmq = new RabbitMQ();
 const prisma = new PrismaClient();
@@ -49,6 +50,10 @@ function startExpressServer(): void {
     app.use('/kpi', require('./routes/kpi.route'));
     app.use('/config', require('./routes/config.route'));
     app.use('/account', require('./routes/accounts.route'));
+
+    app.use(async (error: RequestError, _req: any, res: any, _next: any) => {
+        res.status(error.code).json({ message: error.message });
+    });
 
     const server = app.listen(BIND_PORT, async () => {
         logger.info('Start-Up Complete!');
