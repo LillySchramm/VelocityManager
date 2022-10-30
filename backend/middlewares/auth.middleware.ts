@@ -19,6 +19,8 @@ export const appAuth = async (
     const path = req.path;
     const authorization = req.headers.authorization;
 
+    let message = 'Unauthorized';
+
     if (IGNORED_PATHS.includes(path)) {
         next();
         return;
@@ -43,14 +45,17 @@ export const appAuth = async (
             req.user = user;
             const account = await canAccess(user);
             if (account) {
-                req.permissions = account.AccountPermission;
-                next();
-                return;
+                if (account.activated) {
+                    req.permissions = account.AccountPermission;
+                    next();
+                    return;
+                }
+                message = 'Account Not Activated';
             }
         }
     }
 
-    res.sendStatus(401);
+    res.status(401).json({ message });
 };
 
 async function getUserUid(token: string): Promise<DecodedIdToken | undefined> {
