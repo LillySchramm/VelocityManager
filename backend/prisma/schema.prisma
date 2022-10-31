@@ -63,7 +63,7 @@ model ProxyServer {
 
 model APIKey {
   id          String       @id @default(uuid())
-  key         String       @db.VarChar(255)
+  key         String       @unique @db.VarChar(255)
   name        String       @db.VarChar(255)
   permissions Permission[]
   createdBy   Account      @relation(fields: [accountId], references: [id])

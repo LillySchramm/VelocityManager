@@ -8,16 +8,18 @@ import { Request } from 'express';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 
 export type AuthenticatedRequest = Request<
-    {},
+    any,
     any,
     any,
     any,
     Record<string, any>
-> & { user?: DecodedIdToken; permissions?: AccountPermission[] };
+> & { user?: DecodedIdToken; permissions?: DeepAccountPermission[] };
 
 export type AuthAccount = Account & {
-    AccountPermission: (AccountPermission & {
-        permission: Permission;
-        scope: PermissionScope | null;
-    })[];
+    AccountPermission: DeepAccountPermission[];
+};
+
+export type DeepAccountPermission = AccountPermission & {
+    permission: Permission;
+    scope: PermissionScope | null;
 };

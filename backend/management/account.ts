@@ -1,6 +1,11 @@
 import { Permission, PrismaClient } from '@prisma/client';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
-import { AuthAccount } from '../models/auth.model';
+import {
+    AuthAccount,
+    AuthenticatedRequest,
+    DeepAccountPermission,
+} from '../models/auth.model';
+import { RequestError } from '../models/error.model';
 import { logger } from '../tools/logging';
 
 const prisma = new PrismaClient();
@@ -25,6 +30,12 @@ const permissions = [
         name: 'api_keys:delete',
         description: 'Allows the deletion of api keys.',
         default: true,
+    },
+    {
+        id: '00000000-0000-0000-0000-000000000004',
+        name: 'api_keys:show_all',
+        description: 'Allows to view all created api keys regardless of owner.',
+        default: false,
     },
 ];
 
@@ -142,4 +153,66 @@ export async function initializeAccounts(): Promise<void> {
 
     logger.warn('Initial login has not occurred.');
     logger.warn('The first user to login will become the admin.');
+}
+
+function matchPermission(
+    accountPermission: DeepAccountPermission,
+    permission: string,
+    scope: string | null = null
+) {
+    return (
+        accountPermission.permission.name === permission &&
+        (accountPermission.permissionScopeId === scope ||
+            !accountPermission.permissionScopeId)
+    );
+}
+
+export function assertPermission(
+    request: AuthenticatedRequest,
+    permission: string,
+    scope: string | null = null
+): void {
+    if (!request.permissions) {
+        throw new RequestError('Permissions not available', 501);
+    }
+
+    const hasPermission = request.permissions.some((accountPermission) =>
+        matchPermission(accountPermission, permission, scope)
+    );
+    if (!hasPermission) {
+        throw new RequestError(
+            `The following permission is missing: '${permission}' on scope: ${
+                scope ? scope : 'globally'
+            }.`,
+            403
+        );
+    }
+}
+
+export function assertPermissions(
+    request: AuthenticatedRequest,
+    permissions: string[],
+    scope: string | null = null
+): void {
+    if (!request.permissions) {
+        throw new RequestError('Permissions not available', 501);
+    }
+
+    let missingPermissions = permissions.filter(
+        (permission) =>
+            !request.permissions?.some((accountPermission) =>
+                matchPermission(accountPermission, permission, scope)
+            )
+    );
+    if (missingPermissions.length) {
+        missingPermissions = missingPermissions.map(
+            (permission) => `'${permission}'`
+        );
+        throw new RequestError(
+            `The following permissions are missing: ${missingPermissions.join(
+                ', '
+            )} on scope: ${scope ? scope : 'globally'}.`,
+            403
+        );
+    }
 }

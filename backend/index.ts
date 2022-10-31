@@ -50,6 +50,7 @@ function startExpressServer(): void {
     app.use('/kpi', require('./routes/kpi.route'));
     app.use('/config', require('./routes/config.route'));
     app.use('/account', require('./routes/accounts.route'));
+    app.use('/api_keys', require('./routes/apiKeys.route'));
 
     app.use(async (error: RequestError, _req: any, res: any, _next: any) => {
         res.status(error.code).json({ message: error.message });
