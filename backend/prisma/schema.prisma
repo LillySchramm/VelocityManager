@@ -62,8 +62,14 @@ model ProxyServer {
 }
 
 model APIKey {
-  id  String @id @default(uuid())
-  key String @db.VarChar(255)
+  id          String       @id @default(uuid())
+  key         String       @db.VarChar(255)
+  name        String       @db.VarChar(255)
+  permissions Permission[]
+  createdBy   Account      @relation(fields: [accountId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  accountId   String       @db.VarChar(255)
 }
 
 model Permission {
@@ -75,6 +81,7 @@ model Permission {
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   AccountPermission AccountPermission[]
+  apiKeys           APIKey[]
 }
 
 model PermissionScope {
@@ -102,8 +109,10 @@ model Account {
   id        String  @id @db.VarChar(255)
   name      String
   activated Boolean @default(false)
+  admin     Boolean @default(false)
 
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   AccountPermission AccountPermission[]
+  APIKey            APIKey[]
 }

@@ -14,6 +14,18 @@ const permissions = [
         description: 'Required to access any service.',
         default: true,
     },
+    {
+        id: '00000000-0000-0000-0000-000000000002',
+        name: 'api_keys:create',
+        description: 'Allows the creation of api keys.',
+        default: true,
+    },
+    {
+        id: '00000000-0000-0000-0000-000000000003',
+        name: 'api_keys:delete',
+        description: 'Allows the deletion of api keys.',
+        default: true,
+    },
 ];
 
 export async function canAccess(
@@ -24,7 +36,7 @@ export async function canAccess(
     if (!account) {
         initialLoginOccurred = await hasInitialLoginOccurred();
         if (!initialLoginOccurred) {
-            return await createAccount(idToken, true);
+            return await createAccount(idToken, true, true);
         }
 
         return null;
@@ -39,10 +51,11 @@ export async function canAccess(
 
 export async function createAccount(
     idToken: DecodedIdToken,
-    activated: boolean = false
+    activated: boolean = false,
+    admin: boolean = false
 ): Promise<AuthAccount> {
     await prisma.account.create({
-        data: { id: idToken.uid, name: idToken.name, activated },
+        data: { id: idToken.uid, name: idToken.name, activated, admin },
     });
 
     const defaultPermissions = await getAllDefaultPermissions();
@@ -70,6 +83,11 @@ export async function getAllDefaultPermissions(): Promise<Permission[]> {
 }
 
 export async function initializePermissions(): Promise<void> {
+    const admins = await prisma.account.findMany({
+        where: { admin: true },
+        include: { AccountPermission: true },
+    });
+
     for (let permission of permissions) {
         await prisma.permission.upsert({
             where: { id: permission.id },
@@ -83,6 +101,24 @@ export async function initializePermissions(): Promise<void> {
                 default: permission.default,
             },
         });
+
+        for (let admin of admins) {
+            const hasPermission = admin.AccountPermission.some(
+                (accountPermission) =>
+                    accountPermission.permissionId === permission.id &&
+                    !accountPermission.permissionScopeId
+            );
+            if (hasPermission) {
+                continue;
+            }
+
+            logger.info(
+                `The admin '${admin.name}' does not have the permission '${permission.name}'. Adding...`
+            );
+            await prisma.accountPermission.create({
+                data: { accountId: admin.id, permissionId: permission.id },
+            });
+        }
     }
 }
 
