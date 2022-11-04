@@ -69,6 +69,7 @@ export const appAuth = async (
 
         req.user = user;
         req.permissions = permissions;
+        req.authType = authType;
         next();
         return;
     }
