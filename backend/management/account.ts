@@ -39,9 +39,7 @@ const permissions = [
     },
 ];
 
-export async function canAccess(
-    idToken: DecodedIdToken
-): Promise<AuthAccount | null> {
+export async function canAccess(idToken: DecodedIdToken): Promise<AuthAccount> {
     let account = await getAccount(idToken.uid);
 
     if (!account) {
@@ -50,14 +48,21 @@ export async function canAccess(
             return await createAccount(idToken, true, true);
         }
 
-        return null;
+        throw new RequestError('Unauthorized', 401);
+    }
+
+    if (!account.activated) {
+        throw new RequestError('Account Not Activated', 401);
     }
 
     const hasAccessRole = account.AccountPermission.some(
         (permission) => permission.permissionId === ACCESS_ID
     );
+    if (!hasAccessRole) {
+        throw new RequestError('Unauthorized', 401);
+    }
 
-    return hasAccessRole ? account : null;
+    return account;
 }
 
 export async function createAccount(

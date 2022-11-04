@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { APIKeyWithCreatorAndPermissions } from '../models/apiKey.model';
+import { RequestError } from '../models/error.model';
 import { getRandomString64 } from '../tools/random';
 
 const prisma = new PrismaClient();
@@ -44,4 +45,19 @@ export async function createNewApiKey(
 
 export async function deleteApiKey(id: string): Promise<void> {
     await prisma.aPIKey.delete({ where: { id } });
+}
+
+export async function verifyApiKey(
+    key: string
+): Promise<APIKeyWithCreatorAndPermissions> {
+    const apiKey = await prisma.aPIKey.findFirst({
+        where: { key },
+        include: { createdBy: true, permissions: true },
+    });
+
+    if (!apiKey) {
+        throw new RequestError('API key does not exist.', 401);
+    }
+
+    return apiKey;
 }

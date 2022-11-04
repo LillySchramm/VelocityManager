@@ -1,7 +1,12 @@
 import { NextFunction, Response } from 'express';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 import { canAccess } from '../management/account';
-import { AuthenticatedRequest } from '../models/auth.model';
+import { verifyApiKey } from '../management/apiKey';
+import {
+    AuthenticatedRequest,
+    AuthType,
+    DeepAccountPermission,
+} from '../models/auth.model';
 import { RequestError } from '../models/error.model';
 import feAdmin from '../tools/firebase';
 
@@ -26,8 +31,7 @@ export const appAuth = async (
     }
 
     if (!authorization) {
-        res.sendStatus(401);
-        return;
+        throw new RequestError('Unauthorized', 401);
     }
 
     const authType = authorization.split(' ')[0].toUpperCase() as AUTH_TYPE;
@@ -39,29 +43,46 @@ export const appAuth = async (
     }
 
     if (authType === AUTH_TYPE.BEARER && authString) {
-        const user = await getUserUid(authString);
-        if (user) {
-            req.user = user;
+        let user, permissions, authType;
+
+        if (authString.startsWith('api-')) {
+            const apiKey = await verifyApiKey(authString);
+            user = {
+                uid: apiKey.accountId,
+                name: apiKey.createdBy.name,
+            } as unknown as DecodedIdToken;
+            permissions = apiKey.permissions.map(
+                (permission) =>
+                    ({
+                        permission,
+                        scope: null,
+                        permissionScopeId: null,
+                    } as DeepAccountPermission)
+            );
+            authType = AuthType.API_KEY;
+        } else {
+            user = await getUserUid(authString);
             const account = await canAccess(user);
-            if (account) {
-                if (account.activated) {
-                    req.permissions = account.AccountPermission;
-                    next();
-                    return;
-                }
-                throw new RequestError('Account Not Activated', 401);
-            }
+            permissions = account.AccountPermission;
+            authType = AuthType.TOKEN;
         }
+
+        req.user = user;
+        req.permissions = permissions;
+        next();
+        return;
     }
 
     throw new RequestError('Unauthorized', 401);
 };
 
-async function getUserUid(token: string): Promise<DecodedIdToken | undefined> {
+async function getUserUid(token: string): Promise<DecodedIdToken> {
     try {
         const userInfo = await feAdmin.auth().verifyIdToken(token);
         return userInfo;
     } catch (e) {
         console.log(e);
     }
+
+    throw new RequestError('AuthToken invalid.', 401);
 }
