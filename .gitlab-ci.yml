@@ -220,4 +220,4 @@ lint_java:
         - apt-get install wget
         - wget -O checkstyle.jar https://github.com/checkstyle/checkstyle/releases/download/checkstyle-9.3/checkstyle-9.3-all.jar
         - cd lib
-        - java -jar checkstyle-9.3-all.jar -c /sun_checks.xml  .
+        - java -jar ../checkstyle-9.3-all.jar -c /sun_checks.xml  .
