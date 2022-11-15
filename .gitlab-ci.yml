@@ -210,3 +210,11 @@ deploy-javadocs-container:
           --namespace velocity-manager-dev
     only:
         - main
+
+lint_java:
+    image: maven:3.8.4-eclipse-temurin-16
+    stage: linting
+    script:
+        - wget -O checkstyle.jar https://github.com/checkstyle/checkstyle/releases/download/checkstyle-9.3/checkstyle-9.3-all.jar
+        - cd lib
+        - java -jar checkstyle-9.3-all.jar -c /sun_checks.xml  .
