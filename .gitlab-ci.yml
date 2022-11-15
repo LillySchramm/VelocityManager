@@ -212,12 +212,9 @@ deploy-javadocs-container:
         - main
 
 lint_java:
-    image: maven:3.8.4-eclipse-temurin-16
+    image: registry01.eps-dev.de/devops/checkstyle:9.3
     stage: linting
     needs: []
     script:
-        - apt-get update
-        - apt-get install wget
-        - wget -O checkstyle.jar https://github.com/checkstyle/checkstyle/releases/download/checkstyle-9.3/checkstyle-9.3-all.jar
         - cd lib
-        - java -jar ../checkstyle.jar -c /sun_checks.xml  .
+        - java -jar /checkstyle.jar -c /sun_checks.xml  .
