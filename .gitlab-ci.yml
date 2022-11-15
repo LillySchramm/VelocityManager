@@ -214,6 +214,7 @@ deploy-javadocs-container:
 lint_java:
     image: maven:3.8.4-eclipse-temurin-16
     stage: linting
+    needs: []
     script:
         - wget -O checkstyle.jar https://github.com/checkstyle/checkstyle/releases/download/checkstyle-9.3/checkstyle-9.3-all.jar
         - cd lib
