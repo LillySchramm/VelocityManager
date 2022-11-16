@@ -23,7 +23,7 @@ variables:
     policy: pull
 
 build_lib:
-    image: maven:3.8.4-eclipse-temurin-16
+    image: maven:3.8.5-eclipse-temurin-16
     stage: pre-build
     cache:
         <<: *maven-cache
@@ -42,7 +42,7 @@ install_npm_dependencies:
         - cd ../frontend && yarn
 
 build_spigot:
-    image: maven:3.8.4-eclipse-temurin-16
+    image: maven:3.8.5-eclipse-temurin-16
     stage: build
     needs:
         - build_lib
@@ -57,7 +57,7 @@ build_spigot:
         <<: *maven-cache
 
 build_velocity:
-    image: maven:3.8.4-eclipse-temurin-16
+    image: maven:3.8.5-eclipse-temurin-16
     stage: build
     needs:
         - build_lib
@@ -151,7 +151,7 @@ prettier:
         - npx prettier --check .
 
 build-javadocs:
-    image: maven:3.8.4-eclipse-temurin-16
+    image: maven:3.8.5-eclipse-temurin-16
     stage: java-docs
     needs:
         - build_lib
