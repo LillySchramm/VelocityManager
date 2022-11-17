@@ -55,7 +55,7 @@ services:
         command: bash -c 'while !</dev/tcp/backend/30001; do sleep 5; done; bash server.sh'
 
     db:
-        image: postgres:14
+        image: postgres:15
         environment:
             - POSTGRES_USER=uwu
             - POSTGRES_PASSWORD=owo
