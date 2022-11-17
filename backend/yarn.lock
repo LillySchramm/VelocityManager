@@ -1592,10 +1592,10 @@ jsonwebtoken@^8.5.1:
     ms "^2.1.1"
     semver "^5.6.0"
 
-jssha@~3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/jssha/-/jssha-3.2.0.tgz#88ec50b866dd1411deaddbe6b3e3692e4c710f16"
-  integrity sha512-QuruyBENDWdN4tZwJbQq7/eAK85FqrI4oDbXjy5IBhYD+2pTJyBUWZe8ctWaCkrV0gy6AaelgOZZBMeswEa/6Q==
+jssha@~3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/jssha/-/jssha-3.3.0.tgz#44b5531bcf55a12f4a388476c647a9a1cca92839"
+  integrity sha512-w9OtT4ALL+fbbwG3gw7erAO0jvS5nfvrukGPMWIAoea359B26ALXGpzy4YJSp9yGnpUvuvOw1nSjSoHDfWSr1w==
 
 jwa@^1.4.1:
   version "1.4.1"
@@ -2003,12 +2003,12 @@ optionator@^0.8.1:
     type-check "~0.3.2"
     word-wrap "~1.2.3"
 
-otpauth@^8.0.1:
-  version "8.0.3"
-  resolved "https://registry.yarnpkg.com/otpauth/-/otpauth-8.0.3.tgz#fdbcb24503e93dd7d930a8651f2dc9f8f7ff9c1b"
-  integrity sha512-5abBweT/POpMdVuM0Zk/tvlTHw8Kc8606XX/w8QNLRBDib+FVpseAx12Z21/iVIeCrJOgCY1dBuLS057IOdybw==
+otpauth@^9.0.0:
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/otpauth/-/otpauth-9.0.2.tgz#5f369bdeb74513fb6c0f25c5ae5ac6b3780ebc89"
+  integrity sha512-0TzpkJYg24VvIK3/K91HKpTtMlwm73UoThhcGY8fZsXcwHDrqf008rfdOjj3NnQuyuT11+vHyyO//qRzi6OZ9A==
   dependencies:
-    jssha "~3.2.0"
+    jssha "~3.3.0"
 
 p-limit@^3.0.1:
   version "3.1.0"
