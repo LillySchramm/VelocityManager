@@ -74,9 +74,15 @@ export async function createAccount(
         data: { id: idToken.uid, name: idToken.name, activated, admin },
     });
 
-    const defaultPermissions = await getAllDefaultPermissions();
+    let permissions: Permission[] = [];
+    if (admin) {
+        permissions = await getAllPermissions();
+    } else {
+        permissions = await getAllDefaultPermissions();
+    }
+
     await prisma.accountPermission.createMany({
-        data: defaultPermissions.map((permission) => ({
+        data: permissions.map((permission) => ({
             accountId: idToken.uid,
             permissionId: permission.id,
         })),
@@ -92,6 +98,10 @@ export async function getAccount(id: string): Promise<AuthAccount | null> {
             AccountPermission: { include: { permission: true, scope: true } },
         },
     });
+}
+
+export async function getAllPermissions(): Promise<Permission[]> {
+    return prisma.permission.findMany({});
 }
 
 export async function getAllDefaultPermissions(): Promise<Permission[]> {
@@ -111,6 +121,7 @@ export async function initializePermissions(): Promise<void> {
                 id: permission.id,
                 name: permission.name,
                 description: permission.description,
+                default: permission.default,
             },
             update: {
                 description: permission.description,
