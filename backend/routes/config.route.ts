@@ -1,4 +1,5 @@
 import express from 'express';
+import { firebaseAuthIsConfigured } from '../management/account';
 import {
     FIREBASE_API_KEY,
     FIREBASE_AUTH_DOMAIN,
@@ -16,11 +17,13 @@ router.get(`/rabbitmq`, async (req, res) => {
 });
 
 router.get(`/firebase`, async (req, res) => {
+    const firebaseConfigured = firebaseAuthIsConfigured();
+
     res.json({
-        apiKey: FIREBASE_API_KEY,
-        authDomain: FIREBASE_AUTH_DOMAIN,
+        apiKey: firebaseConfigured ? FIREBASE_API_KEY : '',
+        authDomain: firebaseConfigured ? FIREBASE_AUTH_DOMAIN : '',
         databaseURL: '',
-        projectId: FIREBASE_PROJECT_ID,
+        projectId: firebaseConfigured ? FIREBASE_PROJECT_ID : '',
         storageBucket: '',
         messagingSenderId: '',
     });

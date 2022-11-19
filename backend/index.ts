@@ -14,6 +14,7 @@ import { BIND_PORT } from './tools/config';
 import { logger } from './tools/logging';
 import { appAuth } from './middlewares/auth.middleware';
 import {
+    checkAuthConfig,
     initializeAccounts,
     initializePermissions,
 } from './management/account';
@@ -24,6 +25,7 @@ const prisma = new PrismaClient();
 
 async function main() {
     logger.info('Starting...');
+    await checkAuthConfig();
     await initRabbitMq();
     await initializeAccounts();
     await initializePermissions();

@@ -29,3 +29,6 @@ export const FIREBASE_PROJECT_ID = env.FIREBASE_PROJECT_ID || '';
 
 export const GOOGLE_APPLICATION_CREDENTIALS =
     env.GOOGLE_APPLICATION_CREDENTIALS || 'creds.json';
+
+export const USER_NAME = env.USER_NAME || '';
+export const PASSWORD = env.PASSWORD || '';

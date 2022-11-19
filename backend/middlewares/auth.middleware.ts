@@ -1,6 +1,11 @@
 import { NextFunction, Response } from 'express';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
-import { canAccess } from '../management/account';
+import {
+    canAccess,
+    canUseBaseAuth,
+    firebaseAuthIsConfigured,
+    getAllPermissions,
+} from '../management/account';
 import { verifyApiKey } from '../management/apiKey';
 import {
     AuthenticatedRequest,
@@ -8,6 +13,7 @@ import {
     DeepAccountPermission,
 } from '../models/auth.model';
 import { RequestError } from '../models/error.model';
+import { PASSWORD, USER_NAME } from '../tools/config';
 import feAdmin from '../tools/firebase';
 
 const IGNORED_PATHS = ['/account/login', '/config/firebase'];
@@ -37,12 +43,44 @@ export const appAuth = async (
     const authType = authorization.split(' ')[0].toUpperCase() as AUTH_TYPE;
     const authString = authorization.split(' ')[1];
 
-    if (authType === AUTH_TYPE.BASIC && authString) {
-        next(); // Placeholder
+    if (
+        authType === AUTH_TYPE.BASIC &&
+        authString &&
+        (await canUseBaseAuth())
+    ) {
+        const decodedAuthString = Buffer.from(authString, 'base64').toString();
+
+        const authParts = decodedAuthString.split(':');
+        if (authParts.length != 2) {
+            throw new RequestError('Unauthorized', 401);
+        }
+        const [username, password] = authParts;
+
+        if (username != USER_NAME || password != PASSWORD) {
+            throw new RequestError('Unauthorized', 401);
+        }
+
+        const allPermissions = await getAllPermissions();
+
+        req.authType = AuthType.BASIC;
+        req.permissions = allPermissions.map(
+            (permission) =>
+                ({
+                    permission,
+                    scope: null,
+                    permissionScopeId: null,
+                } as DeepAccountPermission)
+        );
+
+        next();
         return;
     }
 
-    if (authType === AUTH_TYPE.BEARER && authString) {
+    if (
+        authType === AUTH_TYPE.BEARER &&
+        authString &&
+        firebaseAuthIsConfigured()
+    ) {
         let user, permissions, authType;
 
         if (authString.startsWith('api-')) {

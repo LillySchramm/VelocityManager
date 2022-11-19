@@ -6,6 +6,13 @@ import {
     DeepAccountPermission,
 } from '../models/auth.model';
 import { RequestError } from '../models/error.model';
+import {
+    FIREBASE_API_KEY,
+    FIREBASE_AUTH_DOMAIN,
+    FIREBASE_PROJECT_ID,
+    PASSWORD,
+    USER_NAME,
+} from '../tools/config';
 import { logger } from '../tools/logging';
 
 const prisma = new PrismaClient();
@@ -98,6 +105,10 @@ export async function getAccount(id: string): Promise<AuthAccount | null> {
             AccountPermission: { include: { permission: true, scope: true } },
         },
     });
+}
+
+export async function getAccountCount(): Promise<number> {
+    return prisma.account.count();
 }
 
 export async function getAllPermissions(): Promise<Permission[]> {
@@ -229,6 +240,45 @@ export function assertPermissions(
                 ', '
             )} on scope: ${scope ? scope : 'globally'}.`,
             403
+        );
+    }
+}
+
+export async function canUseBaseAuth(): Promise<boolean> {
+    const accountCount = await getAccountCount();
+    const baseConfigured = baseAuthIsConfigured();
+
+    return !accountCount && baseConfigured;
+}
+
+export function firebaseAuthIsConfigured(): boolean {
+    return (
+        !!FIREBASE_API_KEY && !!FIREBASE_AUTH_DOMAIN && !!FIREBASE_PROJECT_ID
+    );
+}
+
+export function baseAuthIsConfigured(): boolean {
+    return !!USER_NAME && !!PASSWORD;
+}
+
+export async function checkAuthConfig(): Promise<void> {
+    const firebaseConfigured = firebaseAuthIsConfigured();
+    const baseConfigured = baseAuthIsConfigured();
+
+    if (!(firebaseConfigured || baseConfigured)) {
+        throw new Error('No auth has been configured.');
+    }
+
+    if (firebaseConfigured && baseConfigured) {
+        throw new Error(
+            'Both firebaseAuth and baseAuth are configured. It is not possible to use both at thee same time.'
+        );
+    }
+
+    const accountCount = await getAccountCount();
+    if (accountCount && baseConfigured) {
+        throw new Error(
+            'Using baseAuth is prohibited if there are accounts in the system.'
         );
     }
 }
