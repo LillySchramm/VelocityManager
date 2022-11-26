@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Store } from '@ngrx/store';
 import { MenuItem, MessageService } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs';
+import { AppInjector, fireauth } from './app.module';
 import { removeMessagesFromQueue } from './store/message/message.actions';
 import { selectMessageQueue } from './store/message/message.selectors';
 
@@ -24,12 +25,15 @@ export class AppComponent implements OnInit {
 
     constructor(
         private store: Store,
-        private messageService: MessageService,
-        private fireauth: AngularFireAuth
+        private messageService: MessageService
     ) {
-        this.fireauth.onAuthStateChanged(async () => {
-            await this.checkIsLoggedIn();
-        });
+
+
+        if (fireauth) {
+            fireauth.onAuthStateChanged(async () => {
+                await this.checkIsLoggedIn();
+            });
+        }
     }
 
     async ngOnInit() {
@@ -42,7 +46,9 @@ export class AppComponent implements OnInit {
 
         this.activeItem = this.items[0];
         this.items[1].command = () => {
-            this.fireauth.signOut().then(() => 0);
+            if (fireauth) {
+                fireauth.signOut().then(() => 0);
+            }
         };
 
         this.store.select(selectMessageQueue).subscribe((messages) => {
@@ -68,7 +74,7 @@ export class AppComponent implements OnInit {
     }
 
     private async checkIsLoggedIn(): Promise<void> {
-        if (await this.fireauth.currentUser) {
+        if (fireauth && await fireauth.currentUser) {
             this.isLoggedIn$.next(true);
             return;
         }

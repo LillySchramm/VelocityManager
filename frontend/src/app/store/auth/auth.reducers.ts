@@ -1,29 +1,28 @@
 import { createReducer, on } from '@ngrx/store';
 import {
-    firstLoginSuccess,
     loadCredentialsFail,
     loadCredentialsSuccess,
     login,
     loginFail,
     loginSuccess,
     logoutSuccess,
-    unloadTOTP,
 } from './auth.actions';
 
 export interface AuthState {
-    token?: string;
     totp?: string;
+    loggedIn: boolean;
     loaded: boolean;
 }
 
 export const initialState: AuthState = {
     loaded: false,
+    loggedIn: false
 };
 
 export const authReducer = createReducer(
     initialState,
     on(loadCredentialsFail, (state) => {
-        return { ...state, loaded: true };
+        return { ...state, loaded: true, loggedIn: false };
     }),
     on(loadCredentialsSuccess, (state, { token }) => {
         return { ...state, token, loaded: true };
@@ -31,19 +30,13 @@ export const authReducer = createReducer(
     on(login, (state) => {
         return { ...state, loaded: false };
     }),
-    on(firstLoginSuccess, (state, { totp }) => {
-        return { ...state, totp, loaded: true };
-    }),
-    on(unloadTOTP, (state) => {
-        return { ...state, totp: undefined, loaded: true };
-    }),
-    on(loginSuccess, (state, { token }) => {
-        return { ...state, token, loaded: true };
-    }),
-    on(loginFail, (state) => {
+    on(loginSuccess, (state) => {
         return { ...state, loaded: true };
     }),
+    on(loginFail, (state) => {
+        return { ...state, loaded: true, loggedIn: false };
+    }),
     on(logoutSuccess, (state) => {
-        return { ...state, token: undefined };
+        return { ...state, token: undefined, loggedIn: false };
     })
 );

@@ -1,13 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { exhaustMap, map, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 import { addMessagesToQueue } from '../message/message.actions';
 import {
-    firstLoginSuccess,
-    loadCredentialsFail,
-    loadCredentialsSuccess,
     login,
     loginFail,
     loginSuccess,
@@ -39,9 +36,7 @@ export class AuthEffects {
                     return loginFail();
                 }
 
-                if (loginResponse.totp) {
-                    return firstLoginSuccess({ totp: loginResponse.totp });
-                }
+                console.log("dhjsakhdsajkdhskajhdkjashdkjas")
 
                 this.store.dispatch(
                     addMessagesToQueue({
@@ -54,7 +49,7 @@ export class AuthEffects {
                     })
                 );
 
-                return loginSuccess({ token: loginResponse.bearer || '' });
+                return loginSuccess();
             })
         )
     );

@@ -1,31 +1,43 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Injector, OnInit, Optional } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { AppInjector, fireauth } from '../app.module';
 import { LoginResponse, PingResponse } from '../models/httpResponses.models';
 import { environment } from './../../environments/environment';
+import { ConfigService } from './config.service';
 
 @Injectable({
     providedIn: 'root',
 })
-export class AuthService {
+export class AuthService implements OnInit {
     private idToken = '';
+    private isFirebaseEnabled = true;
 
     constructor(
         private http: HttpClient,
         private router: Router,
-        private fireauth: AngularFireAuth
+        private configService: ConfigService
     ) {
-        this.fireauth.onAuthStateChanged(async (user) => {
-            console.log(user);
-            if (user) {
-                this.idToken = await user.getIdToken();
-                return;
-            }
-            this.idToken = '';
-        });
+        if (fireauth) {
+            fireauth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    this.idToken = await user.getIdToken();
+                    return;
+                }
+                this.idToken = '';
+            });
+        }
+    }
+
+    async ngOnInit(): Promise<void> {
+        this.isFirebaseEnabled = (await this.configService.firebase()).projectId!.length > 0;
+        console.log((await this.configService.firebase()).projectId)
+        if (!this.isFirebaseEnabled) {
+            this.idToken = this.getSavedCredentials() || '';
+        }
     }
 
     public isLoggedIn(): Observable<boolean> {
@@ -39,7 +51,7 @@ export class AuthService {
 
         return this.http
             .get<PingResponse>(environment.apiUrl + '/ping', {
-                headers: this.generateHeader(),
+                headers: this.generateHeader(credentials),
             })
             .pipe(
                 map(() => {
@@ -51,8 +63,10 @@ export class AuthService {
             );
     }
 
-    public generateHeader(): { [header: string]: string } {
-        return { Authorization: 'Bearer ' + this.idToken };
+    public generateHeader(idToken?: string): { [header: string]: string } {
+        const authMethod = this.isFirebaseEnabled ? 'Bearer' : 'Basic';
+
+        return { Authorization: `${authMethod} ${idToken || this.idToken}` };
     }
 
     public getSavedCredentials(): string | null {
@@ -60,25 +74,26 @@ export class AuthService {
     }
 
     public logout(): void {
-        this.fireauth.signOut().then(() => this.router.navigate(['login']));
+        if (fireauth) {
+            fireauth.signOut().then(() => this.router.navigate(['login']));
+        }
     }
 
-    public login(name: string, otp: string): Observable<LoginResponse | null> {
-        return this.http
-            .post<LoginResponse>(environment.apiUrl + '/account/login', {
-                name,
-                otp,
-            })
+    public login(name: string, password: string): Observable<boolean> {
+        const credentials = btoa(`${name}:${password}`)
+
+        return this.verifyCredentials(credentials)
             .pipe(
                 map((response) => {
-                    if (response.bearer) {
-                        localStorage.setItem('credentials', response.bearer);
+                    if (response) {
+                        localStorage.setItem('credentials', credentials);
+                        this.idToken = credentials;
                     }
 
-                    return response;
+                    return true;
                 }),
                 catchError(() => {
-                    return of(null);
+                    return of(false);
                 })
             );
     }
