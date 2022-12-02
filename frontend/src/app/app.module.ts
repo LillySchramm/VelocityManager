@@ -43,7 +43,7 @@ import * as syncFetch from 'sync-fetch';
 import { AngularFireAuth, AngularFireAuthModule } from '@angular/fire/compat/auth';
 
 export let AppInjector: Injector;
-export let fireauth: AngularFireAuth;
+export let fireauth: AngularFireAuth | undefined;
 
 const firebaseUiAuthConfig: firebaseui.auth.Config = {
     signInFlow: 'popup',
@@ -115,8 +115,8 @@ export class AppModule {
     constructor(private injector: Injector) {
         AppInjector = this.injector;
 
-        try {
+        if (firebaseConfig.appId) {
             fireauth = AppInjector.get(AngularFireAuth)
-        }  catch(_) {}
+        }
     }
 }

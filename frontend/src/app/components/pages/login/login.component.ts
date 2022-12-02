@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { login } from 'src/app/store/auth/auth.actions';
 import { ConfigService } from 'src/app/services/config.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { fireauth } from 'src/app/app.module';
 
 @Component({
     selector: 'app-login',
@@ -22,20 +23,20 @@ export class LoginComponent implements OnInit {
     constructor(
         private router: Router,
         private store: Store,
-        private fireauth: AngularFireAuth,
         private configService: ConfigService
     ) {}
 
     async ngOnInit(): Promise<void> {
-        const firebaseConfig = await this.configService.firebase();
-        if (!firebaseConfig.apiKey) {
-            this.firebaseEnabled = false;
+        
+        this.firebaseEnabled = !!fireauth;
+        if (fireauth) {
+            fireauth.user.subscribe((user) => {
+                if (user) {
+                    this.router.navigate(['home']);
+                }
+            });
         }
-        this.fireauth.user.subscribe((user) => {
-            if (user) {
-                this.router.navigate(['home']);
-            }
-        });
+
     }
 
     login(): void {
