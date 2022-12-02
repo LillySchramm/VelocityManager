@@ -36,7 +36,7 @@ export class AuthEffects {
                     return loginFail();
                 }
 
-                console.log("dhjsakhdsajkdhskajhdkjashdkjas")
+                console.log('dhjsakhdsajkdhskajhdkjashdkjas');
 
                 this.store.dispatch(
                     addMessagesToQueue({

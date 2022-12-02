@@ -27,7 +27,6 @@ export class LoginComponent implements OnInit {
     ) {}
 
     async ngOnInit(): Promise<void> {
-        
         this.firebaseEnabled = !!fireauth;
         if (fireauth) {
             fireauth.user.subscribe((user) => {
@@ -36,7 +35,6 @@ export class LoginComponent implements OnInit {
                 }
             });
         }
-
     }
 
     login(): void {

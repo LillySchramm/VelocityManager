@@ -23,12 +23,7 @@ export class AppComponent implements OnInit {
 
     displayedMessageIds: string[] = [];
 
-    constructor(
-        private store: Store,
-        private messageService: MessageService
-    ) {
-
-
+    constructor(private store: Store, private messageService: MessageService) {
         if (fireauth) {
             fireauth.onAuthStateChanged(async () => {
                 await this.checkIsLoggedIn();
@@ -74,7 +69,7 @@ export class AppComponent implements OnInit {
     }
 
     private async checkIsLoggedIn(): Promise<void> {
-        if (fireauth && await fireauth.currentUser) {
+        if (fireauth && (await fireauth.currentUser)) {
             this.isLoggedIn$.next(true);
             return;
         }

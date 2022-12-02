@@ -1,4 +1,9 @@
-import { InjectionToken, Injector, ModuleWithProviders, NgModule } from '@angular/core';
+import {
+    InjectionToken,
+    Injector,
+    ModuleWithProviders,
+    NgModule,
+} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
@@ -40,7 +45,10 @@ import { AngularFireModule, FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { firebase, firebaseui, FirebaseUIModule } from 'firebaseui-angular';
 import { FirebaseOptions } from 'firebase/app';
 import * as syncFetch from 'sync-fetch';
-import { AngularFireAuth, AngularFireAuthModule } from '@angular/fire/compat/auth';
+import {
+    AngularFireAuth,
+    AngularFireAuthModule,
+} from '@angular/fire/compat/auth';
 
 export let AppInjector: Injector;
 export let fireauth: AngularFireAuth | undefined;
@@ -58,16 +66,24 @@ const firebaseConfig: FirebaseOptions = syncFetch(
     `${environment.apiUrl}/config/firebase`
 ).json();
 
-let firebaseModules: (ModuleWithProviders<AngularFireModule> | typeof AngularFireAuthModule)[] = [        FirebaseUIModule.forRoot(firebaseUiAuthConfig),]
-let firebaseProviders: { provide: InjectionToken<FirebaseOptions>; useValue: FirebaseOptions; }[] = [{ provide: FIREBASE_OPTIONS, useValue: {} }]
+let firebaseModules: (
+    | ModuleWithProviders<AngularFireModule>
+    | typeof AngularFireAuthModule
+)[] = [FirebaseUIModule.forRoot(firebaseUiAuthConfig)];
+let firebaseProviders: {
+    provide: InjectionToken<FirebaseOptions>;
+    useValue: FirebaseOptions;
+}[] = [{ provide: FIREBASE_OPTIONS, useValue: {} }];
 
 if (firebaseConfig.appId) {
     firebaseModules = [
         AngularFireModule.initializeApp(firebaseConfig),
         AngularFireAuthModule,
-    ]
+    ];
 
-    firebaseProviders = [{ provide: FIREBASE_OPTIONS, useValue: firebaseConfig }]
+    firebaseProviders = [
+        { provide: FIREBASE_OPTIONS, useValue: firebaseConfig },
+    ];
 }
 @NgModule({
     declarations: [
@@ -106,7 +122,7 @@ if (firebaseConfig.appId) {
             logOnly: environment.production,
         }),
         EffectsModule.forRoot([AuthEffects, KpiEffects, PlayerEffects]),
-        ...firebaseModules
+        ...firebaseModules,
     ],
     bootstrap: [AppComponent],
     providers: [...firebaseProviders],
@@ -116,7 +132,7 @@ export class AppModule {
         AppInjector = this.injector;
 
         if (firebaseConfig.appId) {
-            fireauth = AppInjector.get(AngularFireAuth)
+            fireauth = AppInjector.get(AngularFireAuth);
         }
     }
 }

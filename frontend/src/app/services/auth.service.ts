@@ -33,8 +33,9 @@ export class AuthService implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
-        this.isFirebaseEnabled = (await this.configService.firebase()).projectId!.length > 0;
-        console.log((await this.configService.firebase()).projectId)
+        this.isFirebaseEnabled =
+            (await this.configService.firebase()).projectId!.length > 0;
+        console.log((await this.configService.firebase()).projectId);
         if (!this.isFirebaseEnabled) {
             this.idToken = this.getSavedCredentials() || '';
         }
@@ -80,21 +81,20 @@ export class AuthService implements OnInit {
     }
 
     public login(name: string, password: string): Observable<boolean> {
-        const credentials = btoa(`${name}:${password}`)
+        const credentials = btoa(`${name}:${password}`);
 
-        return this.verifyCredentials(credentials)
-            .pipe(
-                map((response) => {
-                    if (response) {
-                        localStorage.setItem('credentials', credentials);
-                        this.idToken = credentials;
-                    }
+        return this.verifyCredentials(credentials).pipe(
+            map((response) => {
+                if (response) {
+                    localStorage.setItem('credentials', credentials);
+                    this.idToken = credentials;
+                }
 
-                    return true;
-                }),
-                catchError(() => {
-                    return of(false);
-                })
-            );
+                return true;
+            }),
+            catchError(() => {
+                return of(false);
+            })
+        );
     }
 }
