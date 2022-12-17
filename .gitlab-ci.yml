@@ -72,7 +72,7 @@ build_velocity:
         <<: *maven-cache
 
 build_backend:
-    image: node:19-alpine
+    image: node:19
     stage: build
     needs:
         - install_npm_dependencies
