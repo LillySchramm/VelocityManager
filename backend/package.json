@@ -32,7 +32,7 @@
         "amqplib": "^0.10.0",
         "bcrypt": "^5.0.1",
         "cors": "^2.8.5",
-        "esbuild": "^0.16.0",
+        "esbuild": "^0.17.0",
         "express-basic-auth": "^1.2.1",
         "firebase-admin": "^11.2.0",
         "otpauth": "^9.0.0",
