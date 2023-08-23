@@ -1615,9 +1615,9 @@ jsonwebtoken@^8.5.1:
     semver "^5.6.0"
 
 jssha@~3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/jssha/-/jssha-3.3.0.tgz#44b5531bcf55a12f4a388476c647a9a1cca92839"
-  integrity sha512-w9OtT4ALL+fbbwG3gw7erAO0jvS5nfvrukGPMWIAoea359B26ALXGpzy4YJSp9yGnpUvuvOw1nSjSoHDfWSr1w==
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/jssha/-/jssha-3.3.1.tgz#c5b7fc7fb9aa745461923b87df0e247dd59c7ea8"
+  integrity sha512-VCMZj12FCFMQYcFLPRm/0lOBbLi8uM2BhXPTqw3U4YAfs4AZfiApOoBLoN8cQE60Z50m1MYMTQVCfgF/KaCVhQ==
 
 jwa@^1.4.1:
   version "1.4.1"
@@ -2038,9 +2038,9 @@ optionator@^0.8.1:
     word-wrap "~1.2.3"
 
 otpauth@^9.0.0:
-  version "9.0.2"
-  resolved "https://registry.yarnpkg.com/otpauth/-/otpauth-9.0.2.tgz#5f369bdeb74513fb6c0f25c5ae5ac6b3780ebc89"
-  integrity sha512-0TzpkJYg24VvIK3/K91HKpTtMlwm73UoThhcGY8fZsXcwHDrqf008rfdOjj3NnQuyuT11+vHyyO//qRzi6OZ9A==
+  version "9.1.4"
+  resolved "https://registry.yarnpkg.com/otpauth/-/otpauth-9.1.4.tgz#6daed87c5f76f6945005c1d0e9c712ddef053d2b"
+  integrity sha512-T6T0E1WlzwKWESq8K0Ja47u01XjmDmRY/AiUoMAc6xZI/OsTsD4cqBrfpt2WfJ29W5pRiWkuUuyHdNQl0/Ic+Q==
   dependencies:
     jssha "~3.3.0"
 
