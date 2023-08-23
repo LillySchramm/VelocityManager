@@ -24,7 +24,7 @@
     "@ngrx/store": "^14.2.7",
     "@ngrx/store-devtools": "^14.2.7",
     "@types/sync-fetch": "^0.4.0",
-    "firebase": "^9.12.1",
+    "firebase": "^10.0.0",
     "firebaseui": "^6.0.1",
     "firebaseui-angular": "^6.1.2",
     "primeflex": "^3.2.1",
